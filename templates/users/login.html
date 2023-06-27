@@ -24,14 +24,14 @@
         <div class="col-12 col-md-9 col-lg-7 col-xl-6">
           <div class="card" style="border-radius: 15px;">
             <div class="card-body p-5">
-              <h2 class="text-uppercase text-center mb-5">Создайте свой профиль</h2>
+              <h2 class="text-uppercase text-center mb-5">Вход в аккаунт</h2>
 
              <form method="POST" novalidate>
 
                 <div class="form-outline mb-4">
 
 	               {% csrf_token %}
-	               <h3>Регистрация</h3>
+	               <h3>Авторизация</h3>
 
 	               {% for field in form %}
 	                <p>
@@ -50,8 +50,8 @@
 	             <input  class="btn btn-success btn-block btn-lg gradient-custom-4 text-body" type="submit" value="Подтвердить" />
 
                  </div>
-                  <p class="text">Есть аккаунт? <a href="{% url 'login' %}"
-                    class="fw-bold text-body"><u>Авторизация</u></a></p>
+                 <!-- <p class="text">Есть аккаунт? <a href="{% url 'login' %}"
+                    class="fw-bold text-body"><u>Авторизация</u></a></p>-->
                 </div>
 
               </form>
@@ -68,5 +68,7 @@
 </form>
 </body>
 </html>
+
+
 
 

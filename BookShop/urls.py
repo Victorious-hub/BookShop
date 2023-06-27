@@ -4,6 +4,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 import Books
+from Books import views
 from Books.views import sign_up
 
 schema_view = get_schema_view(
@@ -27,4 +28,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', sign_up.as_view(), name='register'),
     path('api/register/',  Books.views.UserRestSignUp.as_view({'post':'list'}), name='register'),
+    path('main/', views.main, name='main'),
+    path('login/', views.sign_in, name='login'),
+    path('logout/', views.sign_out, name='logout'),
 ]

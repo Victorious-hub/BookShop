@@ -7,6 +7,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CSRF_COOKIE_SAMESITE = 'Strict'
+SESSION_COOKIE_SAMESITE = 'Strict'
+CSRF_COOKIE_HTTPONLY = False
+SESSION_COOKIE_HTTPONLY = True
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -18,6 +23,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'Books',
     'drf_yasg',
+    'bootstrap5',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = False

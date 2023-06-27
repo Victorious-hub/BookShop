@@ -1,3 +1,4 @@
+from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
 from django.db import models
 from rest_framework import serializers
@@ -14,7 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SimpleUser
-        fields = ('id', 'created', 'first_name', 'last_name','email','password')
+        fields = ('id', 'created', 'first_name', 'last_name', 'email', 'password')
 
     def create(self, validated_data):
         user = SimpleUser.objects.create(
@@ -40,3 +41,19 @@ class UserSerializer(serializers.ModelSerializer):
         instance.password = validated_data.get("password", instance.password)
         instance.save()
         return instance
+
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
+
+    def validate(self, attrs):
+        user = authenticate(username=attrs['email'], password=attrs['password'])
+
+        if not user:
+            raise serializers.ValidationError('Incorrect email or password.')
+
+        if not user.is_active:
+            raise serializers.ValidationError('User is disabled.')
+
+        return {'user': user}
