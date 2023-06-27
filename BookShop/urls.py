@@ -5,7 +5,10 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 import Books
 from Books import views
-from Books.views import sign_up
+from Books.views import sign_up, sign_out, sign_in
+
+from django.conf import settings
+from django.conf.urls.static import static
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -29,6 +32,13 @@ urlpatterns = [
     path('register/', sign_up.as_view(), name='register'),
     path('api/register/',  Books.views.UserRestSignUp.as_view({'post':'list'}), name='register'),
     path('main/', views.main, name='main'),
-    path('login/', views.sign_in, name='login'),
+
+    path('login/', sign_in.as_view(), name='login'),
+
     path('logout/', views.sign_out, name='logout'),
-]
+
+    path('add_book/', views.add_book, name='add_book'),
+
+    path('book_edit/<int:id>', views.edit_book, name='book_edit'),
+    path('book_delete/<int:id>', views.delete_book, name='book_delete'),
+]+static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)

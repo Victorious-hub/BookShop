@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% load bootstrap5 %}
+   {% bootstrap_css %}
+   {% bootstrap_javascript %}
+
+</head>
+<body>
+ <form method="POST" enctype="multipart/form-data">
+	{% csrf_token %}
+	<h2>Add book</h2>
+	{{form.as_p}}
+	<input type="submit" value="Add" />
+</form>
+</body>
+</html>
+
+

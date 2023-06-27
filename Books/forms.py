@@ -1,7 +1,8 @@
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
+from django.forms import ModelForm
 
-from Books.models import SimpleUser
+from Books.models import SimpleUser, Book
 
 
 class RegisterForm(UserCreationForm):
@@ -23,10 +24,23 @@ class RegisterForm(UserCreationForm):
         self.fields['password1'].widget.attrs['class'] = 'form-control'
 
 
+class BookForm(forms.ModelForm):
+    class Meta:
+        model = Book
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(BookForm, self).__init__(*args, **kwargs)
+        self.fields['book_name'].widget.attrs['class'] = 'form-control'
+        self.fields['author'].widget.attrs['class'] = 'form-control'
+        self.fields['desc'].widget.attrs['class'] = 'form-control'
+        self.fields['price'].widget.attrs['class'] = 'form-control'
+
+
 class LoginForm(forms.Form):
     class Meta:
         model = SimpleUser
-        fields = ['email','password']
+        fields = ['email', 'password']
 
     email = forms.CharField(max_length=255)
     password = forms.CharField(max_length=255, widget=forms.PasswordInput)

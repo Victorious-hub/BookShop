@@ -12,6 +12,27 @@
   		{%else%}
   			<a href="{% url 'login' %}">Login</a>
   		{%endif%}
+
+
+    <h1>My Posts</h1>
+	{% for post in posts %}
+		<h2>{{ post.book_name }}</h2>
+		<small>{{ post.author | title}}</small>
+		<p>{{ post.desc }}</p>
+
+        {% if post.book_image %}
+
+        <img src="{{ post.book_image.url }}" alt="connect" style="height:100px">
+        
+        {% endif %}
+
+		{% if request.user.is_authenticated and user.is_admin%}
+		<p>
+			<a href="{% url 'book_edit' post.id %}">Edit</a>
+			<a href="{% url 'book_delete' post.id%}">Delete</a>
+		</p>
+		{% endif %}
+	{% endfor %}
 </header>
    <h1>Hello World!</h1>
 </body>

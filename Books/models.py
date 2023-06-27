@@ -67,7 +67,9 @@ class SimpleUser(UserAccount):
 class Book(models.Model):
     book_name = models.CharField(max_length=255, null=False)
     author = models.CharField(max_length=255, null=False)
-    sheet_amount = models.CharField(max_length=255, null=False)
+    desc = models.TextField()
+    price = models.CharField(max_length=100,default = 0)
+    book_image = models.ImageField(null = True, blank = True,upload_to = 'images/')
 
     def __str__(self):
         return 'Книга {}'.format(self.book_name)
