@@ -1,12 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAdminUser
 from rest_framework.views import APIView
 from django.db.models import Q
 from .models import Book, SimpleUser
-from .serializer import UserSerializer
+from . import serializer
 from . import models
 from .forms import RegisterForm, LoginForm, BookForm, EditForm
 from django.contrib import messages
@@ -66,11 +66,14 @@ class sign_up(APIView):
             return render(request, 'users/register.html', {'form': form})
 
 
-class UserRestSignUp(viewsets.ModelViewSet):
-    permission_classes = [IsAdminUser]
-
+class ProfileListView(generics.ListCreateAPIView):
     queryset = models.SimpleUser.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = serializer.UserSerializer
+
+
+class ProfileChange(generics.RetrieveUpdateDestroyAPIView):
+    queryset = models.SimpleUser.objects.all()
+    serializer_class = serializer.UserSerializer
 
 
 @login_required
@@ -90,11 +93,10 @@ def delete_book(request, id):
 def search_books(request):
     if request.method == 'POST':
         searched = request.POST['searched']
-        book_names = Book.objects.filter(Q(book_name__contains = searched)|Q(book_author__contains=searched))
-        return render(request, 'books/search_book.html', {'searched':searched,'book_names':book_names,})
+        book_names = Book.objects.filter(Q(book_name__contains=searched) | Q(book_author__contains=searched))
+        return render(request, 'books/search_book.html', {'searched': searched, 'book_names': book_names, })
     else:
         return render(request, 'books/search_book.html', {})
-
 
 
 @login_required
@@ -116,6 +118,7 @@ def edit_book(request, id):
             messages.error(request, 'Please correct the following errors:')
             return render(request, 'books/edit-book.html', {'form': form})
 
+
 @login_required
 def edit_profile(request, id):
     profile = SimpleUser.objects.get(id=id)
@@ -125,12 +128,14 @@ def edit_profile(request, id):
         return render(request, 'users/edit_profile.html', context)
 
     elif request.method == 'POST':
-        form = EditForm(request.POST or None,instance=profile)
+        form = EditForm(request.POST or None, instance=profile)
         if form.is_valid():
             form.save()
             return redirect('main')
         else:
             return render(request, 'users/edit_profile.html', {'form': form})
+
+
 @login_required
 def add_book(request):
     permission_classes = [IsAdminUser]

@@ -30,7 +30,13 @@ urlpatterns = [
     path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('admin/', admin.site.urls),
     path('register/', sign_up.as_view(), name='register'),
-    path('api/register/',  Books.views.UserRestSignUp.as_view({'post':'list'}), name='register'),
+
+    path('api/profilelist/', Books.views.ProfileListView.as_view(),
+                       name="name"),
+
+    path('api/profilelist/<int:pk>', Books.views.ProfileChange.as_view(),
+                       name="name"),
+
     path('main/', views.main, name='main'),
 
     path('login/', sign_in.as_view(), name='login'),

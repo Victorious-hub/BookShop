@@ -7,16 +7,25 @@
    {% bootstrap_css %}
    {% bootstrap_javascript %}
 </head>
-
+<style type="text/css">
+    .card{
+        background-color:#292D2A ;
+        color:white;
+    }
+</style>
 <body>
 <section>
+    <div class="card">
+  <div class="card-header">Header</div>
+
+</div>
     <form class="d-flex" method="POST" action="{% url 'book_search' %}">
       {% csrf_token %}
         <input class="form-control me-2" type="search" placeholder="Search Books" aria-label="Search" name="searched">
         <button class="btn btn-outline-secondary" type="submit">Search</button>
     </form>
 </section>
-<header>
+<br>
 
 
   		{%if request.user.is_authenticated %}
@@ -25,29 +34,38 @@
   		{%else%}
   			<a href="{% url 'login' %}">Login</a>
   		{%endif%}
+    <br></br>
+<br></br>
+
 	{% for book in books %}
-		<h2>{{ book.book_name }}</h2>
-		<small>{{ book.book_author}}</small>
-		<p>{{ book.desc }}</p>
-        <p>{{ book.genre }}</p>
 
         {% if book.book_image %}
 
-        <img src="{{ book.book_image.url }}" alt="connect" style="height:100px">
-        
+        <img src="{{ book.book_image.url }}" align="left" style="height:280px; width:210px"/>
+
         {% endif %}
+
+		<h1 class="card-title">{{ book.book_name }}</h1>
+		<h2>{{ book.book_author}}</h2>
+		<p class="card-text">{{ book.desc }}</p>
+        <p class="card-text">{{ book.genre }}</p>
 
 		{% if request.user.is_authenticated and user.is_admin%}
 		<p>
 			<a href="{% url 'book_edit' book.id %}" class="btn btn-warning">Edit</a>
             <a href="{% url 'book_delete' book.id%}" class="btn btn-danger">Delete</a>
-</div>
-
-		</p>
-		{% endif %}
+            </p>
+         {% endif %}
+        {% if request.user.is_authenticated and not user.is_admin%}
+		<p>
+			<a href="{% url 'book_edit' book.id %}" class="btn btn-success">В коризну</a>
+            </p>
+         {% endif %}
 	{% endfor %}
+
+
+
+
 </header>
-
-
 </body>
 </html>
