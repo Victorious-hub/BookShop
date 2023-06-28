@@ -25,8 +25,10 @@
   		{%else%}
   			<a href="{% url 'login' %}">Login</a>
   		{%endif%}
-	{% for book in books %}
-		<h2>{{ book.book_name }}</h2>
+	<center>
+    {% if searched %}
+        {% for book in book_names %}
+           <h2>{{ book.book_name }}</h2>
 		<small>{{ book.book_author}}</small>
 		<p>{{ book.desc }}</p>
         <p>{{ book.genre }}</p>
@@ -34,20 +36,17 @@
         {% if book.book_image %}
 
         <img src="{{ book.book_image.url }}" alt="connect" style="height:100px">
-        
+
         {% endif %}
+        {% endfor %}
+    {% elif not searched  %}
+        <h1>Nothing found</h1>
+    {% endif %}
 
-		{% if request.user.is_authenticated and user.is_admin%}
-		<p>
-			<a href="{% url 'book_edit' book.id %}" class="btn btn-warning">Edit</a>
-            <a href="{% url 'book_delete' book.id%}" class="btn btn-danger">Delete</a>
-</div>
-
-		</p>
-		{% endif %}
-	{% endfor %}
+</center>
 </header>
 
 
 </body>
 </html>
+

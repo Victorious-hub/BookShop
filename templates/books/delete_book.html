@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% load bootstrap5 %}
+   {% bootstrap_css %}
+   {% bootstrap_javascript %}
+
+</head>
+<style>
+    body {
+  font-family: Arial, sans-serif;
+  background: url(http://www.shukatsu-note.com/wp-content/uploads/2014/12/computer-564136_1280.jpg) no-repeat;
+  background-size: cover;
+  height: 100vh;
+}
+
+h1 {
+  text-align: center;
+  font-family: Tahoma, Arial, sans-serif;
+  color: #06D85F;
+  margin: 80px 0;
+}
+
+.box {
+  width: 40%;
+  margin: 0 auto;
+  background: rgba(255,255,255,0.2);
+  padding: 35px;
+  border: 2px solid #fff;
+  border-radius: 20px/50px;
+  background-clip: padding-box;
+  text-align: center;
+}
+
+.button {
+  font-size: 1em;
+  padding: 10px;
+  background-color: #EC0F0F;
+  border: 2px solid black;
+  border-radius: 20px/50px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button_green {
+  font-size: 10px;
+  padding: 10px;
+  background-color: #0FEC5C;
+  border: 2px solid black;
+  border-radius: 20px/50px;
+  text-decoration: none;
+  cursor: pointer;
+
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+}
+.overlay:target {
+  visibility: visible;
+  opacity: 1;
+}
+
+.popup {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  width: 30%;
+  position: relative;
+  transition: all 5s ease-in-out;
+}
+
+.popup h2 {
+  margin-top: 0;
+  color: #333;
+  font-family: Tahoma, Arial, sans-serif;
+}
+.popup .close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  transition: all 200ms;
+  font-size: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+}
+
+.a_style{
+    text-decoration: none;
+}
+
+.popup .close:hover {
+  color: #06D85F;
+}
+.popup .content {
+  max-height: 30%;
+  overflow: auto;
+}
+
+@media screen and (max-width: 700px){
+  .box{
+    width: 70%;
+  }
+  .popup{
+    width: 70%;
+  }
+}
+</style>
+<body>
+ {% if request.user.is_authenticated and user.is_admin%}
+<div class="mask d-flex align-items-center h-100 gradient-custom-3">
+    <div class="container h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+          <div class="card" style="border-radius: 15px;">
+            <div class="card-body p-5">
+		             <form method="POST" enctype="multipart/form-data">
+                          <div class="form-outline mb-4">
+	               {% csrf_token %}
+	                <h2 class="text-center">Удаление книги</h2>
+	               {{form.as_p}}
+
+<div class="box">
+	<a href="#popup1" class="a_style">Удалить</a>
+</div>
+
+<div id="popup1" class="overlay">
+	<div class="popup">
+		<h3>Вы действительно хотите удалить данную книгу?</h3>
+		<a class="close" href="#">&times;</a>
+		<div class="content">
+			<input class="button" type="submit" value="Удалить" />
+		</div>
+	</div>
+</div>
+               </form>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+ {% endif %}
+</body>
+</html>
+
+

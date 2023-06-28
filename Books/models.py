@@ -65,9 +65,18 @@ class SimpleUser(UserAccount):
 
 
 class Book(models.Model):
+    GENRE = (
+        ('Fantasy','Fantasy'),
+        ('Adventure','Adventure'),
+        ('Love', 'Love'),
+        ('Historic', 'Historic'),
+        ('Detective', 'Detective'),
+    )
+
     book_name = models.CharField(max_length=255, null=False)
-    author = models.CharField(max_length=255, null=False)
+    book_author = models.CharField(max_length=255, null=False)
     desc = models.TextField()
+    genre = models.CharField(max_length=255,null = True,choices = GENRE)
     price = models.CharField(max_length=100,default = 0)
     book_image = models.ImageField(null = True, blank = True,upload_to = 'images/')
 
