@@ -1,20 +1,55 @@
+import json
+
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAdminUser
 from rest_framework.views import APIView
 from django.db.models import Q
-from .models import Book, SimpleUser
+from .models import Book, SimpleUser, CartItem, Cart
 from . import serializer
 from . import models
 from .forms import RegisterForm, LoginForm, BookForm, EditForm
 from django.contrib import messages
+from django.core.paginator import Paginator
 
+
+def cart(request):
+    cart = None
+    cartitems = []
+    if request.user.is_authenticated and not request.user.is_admin:
+        cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
+        cartitems = cart.cartitems.all()
+    context = {"cart": cart, "items": cartitems}
+    return render(request, 'users/cart.html',context)
+
+
+def add_to_cart(request):
+    data = json.loads(request.body)
+    product_id = data["id"]
+    product = Book.objects.get(id=product_id)
+    if request.user.is_authenticated:
+        cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
+        cartitem, created = CartItem.objects.get_or_create(cart=cart, book_product=product)
+        cartitem.quantity += 1
+        cartitem.save()
+
+        num_of_item = cart.num_of_items
+
+        print(cartitem)
+    return JsonResponse("Working", safe=False)
 
 def main(request):
     books = Book.objects.all()
-    context = {'books': books}
+
+    p = Paginator(Book.objects.all(), 2)
+    page = request.GET.get('page')
+    books_page = p.get_page(page)
+    if request.user.is_authenticated and not request.user.is_admin:
+        cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
+    context = {'books': books, 'books_page': books_page,}
     return render(request, 'users/base.html', context)
 
 
@@ -152,3 +187,11 @@ def add_book(request):
         else:
             messages.error(request, 'Please correct the following errors:')
             return render(request, 'books/add_book.html', {'form': form})
+
+
+def confirm_payment(request, pk):
+    cart = Cart.objects.get(id=pk)
+    cart.completed = True
+    cart.save()
+    messages.success(request, "Payment made successfully")
+    return redirect("main")

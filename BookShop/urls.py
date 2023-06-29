@@ -54,4 +54,10 @@ urlpatterns = [
 
     path('profile_edit/<int:id>', views.edit_profile, name='edit_profile'),
 
+    path('cart/', views.cart, name='cart'),
+
+    path('add_to_cart', views.add_to_cart, name='add'),
+
+    path("confirm_payment/<str:pk>", views.confirm_payment, name="add")
+
 ]+static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)

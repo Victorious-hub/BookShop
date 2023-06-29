@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +10,7 @@
 </head>
 <style type="text/css">
     .card{
-        background-color:#292D2A ;
+        background-color:white ;
         color:white;
     }
     .card-header{height:60px;}
@@ -32,6 +33,7 @@
         margin-left:950px;
         color:white;
     }
+    a{text-decoration:none;}
 </style>
 <body>
 <section><div class="card">
@@ -55,8 +57,8 @@
 
 </section>
 <br>
-
-	{% for book in books %}
+<div class="productContainer">
+	{% for book in books_page %}
 
         {% if book.book_image %}
 
@@ -76,15 +78,42 @@
             </p>
          {% endif %}
         {% if request.user.is_authenticated and not user.is_admin%}
+
 		<p>
-			<a href="{% url 'book_edit' book.id %}" class="btn btn-success">В коризну</a>
+			<button class="btn btn-success" value="{{ book.id }}">В коризну</button>
             </p>
+            <a href="{% url 'cart' %}" style="color:white; text-decoration:none">
+                 <div class="cart-container">
+                    <div class="cartitems"><p id="num_of_items">{{cart.num_of_items}}</p></div>
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+            </a>
          {% endif %}
 	{% endfor %}
-
-
-
-
+</div>
 </header>
+<br/>
+ <!--{{ books_page }}<br/>
+Has previous: {{ books_page.has_previous }}
+<br/>
+Has next: {{ books_page.has_next }}
+<br/>
+Current page: {{ books_page.number }}
+<br/>
+Page numbers: {{ books_page.paginator.num_pages }}
+<br/>-->
+<hr>
+{% if books_page.has_previous %}
+    <a href="?page=1">&laquo Начальная</a>
+    <a href="?page={{ books_page.previous_page_number }}">Предыдущая</a>
+{% endif %}
+
+Page {{ books_page.number }} or {{ books_page.paginator.num_pages }}
+
+{% if books_page.has_next %}
+    <a href="?page={{ books_page.next_page_number }}">Следующая</a>
+    <a href="?page={{ books_page.paginator.num_pages}}">Последняя &raquo</a>
+{% endif %}
+<script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>
