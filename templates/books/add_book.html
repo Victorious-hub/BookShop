@@ -27,9 +27,9 @@
 		             <form method="POST" enctype="multipart/form-data">
                           <div class="form-outline mb-4">
 	               {% csrf_token %}
-	                <h2 class="text-center">Добавить книгу</h2>
+	                <h2 class="text-center">Add book</h2>
 	               {{form.as_p}}
-	               <input class="btn btn-success" type="submit" value="Добавить" />
+	               <input class="btn btn-success" type="submit" value="Submit" />
                           </div>
                </form>
 
@@ -40,7 +40,7 @@
     </div>
   </div>
      {% else %}
-        <h1>У вас недостаточно прав работаь с этой страницей</h1>
+        <h1>You don't have enough rights to use this page</h1>
  {% endif %}
 </body>
 </html>

@@ -129,19 +129,19 @@ h1 {
 		             <form method="POST" enctype="multipart/form-data">
                           <div class="form-outline mb-4">
 	               {% csrf_token %}
-	                <h2 class="text-center">Удаление книги</h2>
+	                <h2 class="text-center">Book delete</h2>
 	               {{form.as_p}}
 
 <div class="box">
-	<a href="#popup1" class="a_style">Удалить</a>
+	<a href="#popup1" class="a_style">Delete</a>
 </div>
 
 <div id="popup1" class="overlay">
 	<div class="popup">
-		<h3>Вы действительно хотите удалить данную книгу?</h3>
+		<h3>Are you sure you wanna delete this book?</h3>
 		<a class="close" href="#">&times;</a>
 		<div class="content">
-			<input class="button" type="submit" value="Удалить" />
+			<input class="button" type="submit" value="Delete" />
 		</div>
 	</div>
 </div>

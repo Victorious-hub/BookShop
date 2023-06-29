@@ -24,14 +24,14 @@
         <div class="col-12 col-md-9 col-lg-7 col-xl-6">
           <div class="card" style="border-radius: 15px;">
             <div class="card-body p-5">
-              <h2 class="text-uppercase text-center mb-5">Вход в аккаунт</h2>
+              <h2 class="text-uppercase text-center mb-5">Sign in</h2>
 
              <form method="POST" novalidate>
 
                 <div class="form-outline mb-4">
 
 	               {% csrf_token %}
-	               <h3>Авторизация</h3>
+	               <h3>Authorization</h3>
 
 	               {% for field in form %}
 	                <p>
@@ -47,11 +47,11 @@
                    {% endfor %}
                  <div class="d-flex justify-content-center">
 
-	             <input  class="btn btn-success btn-block btn-lg gradient-custom-4 text-body" type="submit" value="Подтвердить" />
+	             <input  class="btn btn-success btn-block btn-lg gradient-custom-4 text-body" type="submit" value="Submit" />
 
                  </div>
-                  <p class="text">Нет аккаунта? <a href="{% url 'register' %}"
-                    class="fw-bold text-body"><u>Регистрация</u></a></p>
+                  <p class="text">No account? <a href="{% url 'register' %}"
+                    class="fw-bold text-body"><u>Sign up</u></a></p>
                 </div>
 
               </form>

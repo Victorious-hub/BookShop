@@ -1,5 +1,5 @@
 import json
-
+from paypal.standard.forms import PayPalPaymentsForm
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -14,7 +14,7 @@ from . import models
 from .forms import RegisterForm, LoginForm, BookForm, EditForm
 from django.contrib import messages
 from django.core.paginator import Paginator
-
+from django.views.decorators.csrf import csrf_exempt
 
 def cart(request):
     cart = None

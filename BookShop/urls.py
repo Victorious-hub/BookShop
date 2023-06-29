@@ -58,6 +58,8 @@ urlpatterns = [
 
     path('add_to_cart', views.add_to_cart, name='add'),
 
-    path("confirm_payment/<str:pk>", views.confirm_payment, name="add")
+    path("confirm_payment/<str:pk>", views.confirm_payment, name="add"),
+
+
 
 ]+static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)

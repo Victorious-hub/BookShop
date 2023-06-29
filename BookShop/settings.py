@@ -14,6 +14,7 @@ CSRF_COOKIE_HTTPONLY = False
 SESSION_COOKIE_HTTPONLY = True
 
 INSTALLED_APPS = [
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -26,6 +27,9 @@ INSTALLED_APPS = [
     'drf_yasg',
     'bootstrap5',
 ]
+
+PAYPAL_TEST = True
+PAYPAL_RECEIVER_EMAIL = 'sandbox@gmail.com'
 
 CORS_ORIGIN_ALLOW_ALL = False
 
