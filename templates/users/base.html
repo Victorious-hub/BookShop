@@ -12,30 +12,45 @@
         background-color:#292D2A ;
         color:white;
     }
+    .card-header{height:60px;}
+    .logout_ref{
+        position:absolute;
+        text-decoration:none;
+        margin-top:-40px;
+        margin-left:1400px;
+        color:white;
+    }
+    .size{width:200px; margin-top:-40px;
+        margin-left:1100px; height:30px;}
+    .size1{
+        margin-top:-40px;
+    }
+    .add_book_ref{
+        position:absolute;
+        text-decoration:none;
+        margin-top:-40px;
+        margin-left:950px;
+        color:white;
+    }
 </style>
 <body>
-<section>
-    <div class="card">
-  <div class="card-header">Header</div>
-
-</div>
-    <form class="d-flex" method="POST" action="{% url 'book_search' %}">
+<section><div class="card">
+  <div class="card-header">
+      <h2>SmartBook</h2>
+      {% if request.user.is_authenticated and user.is_admin%}
+      <a href="{% url 'add_book' %}" class = "add_book_ref">Добавить книгу</a>
+      {% endif %}
+      <a href="{% url 'logout' %}" class = "logout_ref">Выйти</a>
+       <form class="d-flex" method="POST" action="{% url 'book_search' %}">
       {% csrf_token %}
-        <input class="form-control me-2" type="search" placeholder="Search Books" aria-label="Search" name="searched">
-        <button class="btn btn-outline-secondary" type="submit">Search</button>
+        <input class="form-control me-2 size" type="search" placeholder="Поиск книги" aria-label="Search" name="searched">
+        <button class="btn btn-outline-secondary size1" type="submit">Найти</button>
     </form>
+  </div>
+</div>
+
 </section>
 <br>
-
-
-  		{%if request.user.is_authenticated %}
-  			<span>Hi {{ request.user.first_name | title }}</span>
-  			<a href="{% url 'logout' %}">Logout</a>
-  		{%else%}
-  			<a href="{% url 'login' %}">Login</a>
-  		{%endif%}
-    <br></br>
-<br></br>
 
 	{% for book in books %}
 
@@ -52,8 +67,8 @@
 
 		{% if request.user.is_authenticated and user.is_admin%}
 		<p>
-			<a href="{% url 'book_edit' book.id %}" class="btn btn-warning">Edit</a>
-            <a href="{% url 'book_delete' book.id%}" class="btn btn-danger">Delete</a>
+			<a href="{% url 'book_edit' book.id %}" class="btn btn-warning">Изменить</a>
+            <a href="{% url 'book_delete' book.id%}" class="btn btn-danger">Удалить</a>
             </p>
          {% endif %}
         {% if request.user.is_authenticated and not user.is_admin%}
