@@ -40,6 +40,10 @@
       {% if request.user.is_authenticated and user.is_admin%}
       <a href="{% url 'add_book' %}" class = "add_book_ref">Добавить книгу</a>
       {% endif %}
+  {% if request.user.is_authenticated and not user.is_admin%}
+
+      <a href="{% url 'edit_profile' request.user.id%}" class = "add_book_ref">Изменить профиль</a>
+      {% endif %}
       <a href="{% url 'logout' %}" class = "logout_ref">Выйти</a>
        <form class="d-flex" method="POST" action="{% url 'book_search' %}">
       {% csrf_token %}
