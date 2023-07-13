@@ -1,0 +1,70 @@
+.h2{margin-left:50px;}
+.card{
+        background-color:black;
+        color:white;
+    }
+    .card-header{height:60px;}
+    .logout_ref{
+        position:absolute;
+        text-decoration:none;
+        margin-top:-40px;
+        margin-left:1400px;
+        color:white;
+    }
+    .size{width:200px; margin-top:-40px;
+        margin-left:1100px; height:30px;}
+    .size1{
+        margin-top:-45px;
+        height:40px;
+    }
+    .add_book_ref{
+        position:absolute;
+        text-decoration:none;
+        margin-top:-40px;
+        margin-left:1010px;
+        color:white;
+    }
+    a{text-decoration:none;}
+    .login_ref{
+         position:absolute;
+        text-decoration:none;
+        margin-top:-40px;
+        margin-left:1400px;
+        color:white;
+    }
+    .register_ref{
+         position:absolute;
+        text-decoration:none;
+        margin-top:-40px;
+        margin-left:1450px;
+        color:white;
+    }
+    .cart_ref{
+        position:absolute;
+        text-decoration:none;
+        margin-top:-40px;
+        margin-left:880px;
+        color:white;
+    }
+.contact_ref{
+    position:absolute;
+        text-decoration:none;
+        margin-top:-40px;
+        margin-left:1020px;
+        color:white;
+}
+
+.about_ref{
+    position:absolute;
+        text-decoration:none;
+        margin-top:-40px;
+        margin-left:920px;
+        color:white;
+}
+.service_ref{
+     position:absolute;
+        text-decoration:none;
+        margin-top:-40px;
+        margin-left:830px;
+        color:white;
+}

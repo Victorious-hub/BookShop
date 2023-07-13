@@ -16,6 +16,7 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
 
+
 def cart(request):
     cart = None
     cartitems = []
@@ -23,7 +24,7 @@ def cart(request):
         cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
         cartitems = cart.cartitems.all()
     context = {"cart": cart, "items": cartitems}
-    return render(request, 'users/cart.html',context)
+    return render(request, 'users/cart.html', context)
 
 
 def add_to_cart(request):
@@ -41,6 +42,7 @@ def add_to_cart(request):
         print(cartitem)
     return JsonResponse("Working", safe=False)
 
+
 def main(request):
     books = Book.objects.all()
 
@@ -49,8 +51,20 @@ def main(request):
     books_page = p.get_page(page)
     if request.user.is_authenticated and not request.user.is_admin:
         cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
-    context = {'books': books, 'books_page': books_page,}
+    context = {'books': books, 'books_page': books_page, }
     return render(request, 'users/base.html', context)
+
+@login_required
+def authenticated(request):
+    books = Book.objects.all()
+
+    p = Paginator(Book.objects.all(), 2)
+    page = request.GET.get('page')
+    books_page = p.get_page(page)
+    if request.user.is_authenticated and not request.user.is_admin:
+        cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
+    context = {'books': books, 'books_page': books_page, }
+    return render(request, 'users/authenticated.html', context)
 
 
 def sign_out(request):
@@ -62,7 +76,7 @@ def sign_out(request):
 class sign_in(APIView):
     def get(self, request):
         if request.user.is_authenticated:
-            return redirect('main')
+            return redirect('authenticated')
 
         form = LoginForm()
         return render(request, 'users/login.html', {'form': form})
@@ -77,7 +91,7 @@ class sign_in(APIView):
             if user:
                 login(request, user)
                 messages.success(request, f'Hi {email.title()}, welcome back!')
-                return redirect('main')
+                return redirect('authenticated')
 
         messages.error(request, f'Invalid username or password')
         return render(request, 'users/login.html', {'form': form})
@@ -96,7 +110,7 @@ class sign_up(APIView):
             user.save()
             messages.success(request, 'You have singed up successfully.')
             login(request, user)
-            return redirect('main')
+            return redirect('authenticated')
         else:
             return render(request, 'users/register.html', {'form': form})
 

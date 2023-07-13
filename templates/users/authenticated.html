@@ -1,0 +1,81 @@
+{% extends "users/footer.html" %}
+{% block content %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static "css/list_menu.css" %}">
+<div class="side_menu">
+
+	<div class="burger_box">
+		<div class="menu-icon-container">
+			<a href="#" class="menu-icon js-menu_toggle closed">
+				<span class="menu-icon_box">
+					<span class="menu-icon_line menu-icon_line--1"></span>
+					<span class="menu-icon_line menu-icon_line--2"></span>
+					<span class="menu-icon_line menu-icon_line--3"></span>
+				</span>
+			</a>
+		</div>
+	</div>
+	<div class="px-5">
+        {% if user.is_authenticated %}
+		<h2 class="menu_title">{{ user.first_name }}</h2>
+        {% endif %}
+		<ul class="list_load">
+            {% if request.user.is_authenticated and not user.is_admin%}
+			<li class="list_item"><a href="{% url 'cart'%}">My Cart</a></li>
+			<li class="list_item"><a href="{% url 'edit_profile' request.user.id%}">Change Profile</a></li>
+			<li class="list_item"><a href="{% url 'logout' %}">Logout</a></li>
+            {% endif %}
+           {% if user.is_admin%}
+			<li class="list_item"><a href="{% url 'logout' %}">Logout</a></li>
+            {% endif %}
+			<li class="list_item"><a href="#">List Item 04</a></li>
+			<li class="list_item"><a href="#">List Item 05</a></li>
+			<li class="list_item"><a href="#">List Item 06</a></li>
+			<li class="list_item"><a href="#">List Item 07</a></li>
+			<li class="list_item"><a href="#">List Item 08</a></li>
+		</ul>
+		<div class="spacer_box"><p>This is a spacer box.</p></div>
+	</div>
+</div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+    $(document).ready(function(){
+    // Requires jQuery
+
+$(document).on('click','.js-menu_toggle.closed',function(e){
+	e.preventDefault(); $('.list_load, .list_item').stop();
+	$(this).removeClass('closed').addClass('opened');
+
+	$('.side_menu').css({ 'left':'0px' });
+
+	var count = $('.list_item').length;
+	$('.list_load').slideDown( (count*.6)*100 );
+	$('.list_item').each(function(i){
+		var thisLI = $(this);
+		timeOut = 100*i;
+		setTimeout(function(){
+			thisLI.css({
+				'opacity':'1',
+				'margin-left':'0'
+			});
+		},100*i);
+	});
+});
+
+$(document).on('click','.js-menu_toggle.opened',function(e){
+	e.preventDefault(); $('.list_load, .list_item').stop();
+	$(this).removeClass('opened').addClass('closed');
+
+	$('.side_menu').css({ 'left':'-250px' });
+
+	var count = $('.list_item').length;
+	$('.list_item').css({
+		'opacity':'0',
+		'margin-left':'-20px'
+	});
+	$('.list_load').slideUp(300);
+});
+});
+    </script>
+{% endblock %}

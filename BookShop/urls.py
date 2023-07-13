@@ -60,6 +60,6 @@ urlpatterns = [
 
     path("confirm_payment/<str:pk>", views.confirm_payment, name="add"),
 
-
+    path('authenticated/', views.authenticated, name='authenticated'),
 
 ]+static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)
