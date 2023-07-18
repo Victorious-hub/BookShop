@@ -197,7 +197,7 @@ def add_book(request):
             user = form.save(commit=False)
             user.author = request.user
             user.save()
-            return redirect('main')
+            return redirect('authenticated')
         else:
             messages.error(request, 'Please correct the following errors:')
             return render(request, 'books/add_book.html', {'form': form})

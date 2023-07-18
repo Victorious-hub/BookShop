@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="container">
+<section><div class="card">
+  <div class="card-header">
+      <h2>SmartBook</h2>
+      {% if request.user.is_authenticated and user.is_admin%}
+      <a href="{% url 'add_book' %}" class = "add_book_ref">Add book</a>
+      {% endif %}
+  {% if request.user.is_authenticated and not user.is_admin%}
+      <a href="{% url 'edit_profile' request.user.id%}" class = "add_book_ref">Contacts</a>
+      <a href="{% url 'cart'%}" class = "cart_ref">About us</a>
+      {% endif %}
+  {% if request.user.is_authenticated or user.is_admin%}
+      <a href="{% url 'logout' %}" class = "logout_ref">Logout</a>
+  {% endif %}
+  {% if not request.user.is_authenticated and not user.is_admin%}
+      <a href="{% url 'login' %}" class = "login_ref">Login</a>
+       <a href="{% url 'register' %}" class = "register_ref">Register</a>
+  {% endif %}
+       <form class="d-flex" method="POST" action="{% url 'book_search' %}">
+      {% csrf_token %}
+        <input class="form-control me-2 size" type="search" placeholder="Book Search" aria-label="Search" name="searched">
+        <button class="btn btn-outline-secondary size1" type="submit">Search</button>
+    </form>
+  </div>
+</div>
+
+</section>
+<br>
+</body>
+</html>

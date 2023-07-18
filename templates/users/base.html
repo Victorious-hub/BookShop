@@ -9,73 +9,248 @@
     {% bootstrap_javascript %}
     <link rel="stylesheet" href="{% static "css/footer.css" %}">
     <link rel="stylesheet" href="{% static "css/slidebar.css" %}">
+    <meta name="viewport" content="device-width">
+
 </head>
+<style>
+    .site-footer
+{
+  background-color:#26272b;
+  padding:45px 0 20px;
+  font-size:15px;
+  line-height:24px;
+  color:#737373;
+}
+.site-footer hr
+{
+  border-top-color:#bbb;
+  opacity:0.5
+}
+.site-footer hr.small
+{
+  margin:20px 0
+}
+.site-footer h6
+{
+  color:#fff;
+  font-size:16px;
+  text-transform:uppercase;
+  margin-top:5px;
+  letter-spacing:2px
+}
+.site-footer a
+{
+  color:#737373;
+}
+.site-footer a:hover
+{
+  color:#3366cc;
+  text-decoration:none;
+}
+.footer-links
+{
+  padding-left:0;
+  list-style:none
+}
+.footer-links li
+{
+  display:block
+}
+.footer-links a
+{
+  color:#737373
+}
+.footer-links a:active,.footer-links a:focus,.footer-links a:hover
+{
+  color:#3366cc;
+  text-decoration:none;
+}
+.footer-links.inline li
+{
+  display:inline-block
+}
+.site-footer .social-icons
+{
+  text-align:right
+}
+.site-footer .social-icons a
+{
+  width:40px;
+  height:40px;
+  line-height:40px;
+  margin-left:6px;
+  margin-right:0;
+  border-radius:100%;
+  background-color:#33353d
+}
+.copyright-text
+{
+  margin:0
+}
+@media (max-width:991px)
+{
+  .site-footer [class^=col-]
+  {
+    margin-bottom:30px
+  }
+}
+@media (max-width:767px)
+{
+  .site-footer
+  {
+    padding-bottom:0
+  }
+  .site-footer .copyright-text,.site-footer .social-icons
+  {
+    text-align:center
+  }
+}
+.social-icons
+{
+  padding-left:0;
+  margin-bottom:0;
+  list-style:none
+}
+.social-icons li
+{
+  display:inline-block;
+  margin-bottom:4px
+}
+.social-icons li.title
+{
+  margin-right:15px;
+  text-transform:uppercase;
+  color:#96a2b2;
+  font-weight:700;
+  font-size:13px
+}
+.social-icons a{
+  background-color:#eceeef;
+  color:#818a91;
+  font-size:16px;
+  display:inline-block;
+  line-height:44px;
+  width:44px;
+  height:44px;
+  text-align:center;
+  margin-right:8px;
+  border-radius:100%;
+  -webkit-transition:all .2s linear;
+  -o-transition:all .2s linear;
+  transition:all .2s linear
+}
+.social-icons a:active,.social-icons a:focus,.social-icons a:hover
+{
+  color:#fff;
+  background-color:#29aafe
+}
+.social-icons.size-sm a
+{
+  line-height:34px;
+  height:34px;
+  width:34px;
+  font-size:14px
+}
+.social-icons a.facebook:hover
+{
+  background-color:#3b5998
+}
+.social-icons a.twitter:hover
+{
+  background-color:#00aced
+}
+.social-icons a.linkedin:hover
+{
+  background-color:#007bb6
+}
+.social-icons a.dribbble:hover
+{
+  background-color:#ea4c89
+}
+@media (max-width:767px)
+{
+  .social-icons li.title
+  {
+    display:block;
+    margin-right:0;
+    font-weight:600
+  }
+}
+.Header{
+    width:100%;
+    height:110px;
+    position:relative;
 
-<body>
-<section><div class="card">
-  <div class="card-header">
-      <h2>SmartBook</h2>
-      {% if request.user.is_authenticated and user.is_admin%}
-      <a href="{% url 'add_book' %}" class = "add_book_ref">Add book</a>
-      {% endif %}
-  {% if request.user.is_authenticated and not user.is_admin%}
-      <a href="{% url 'edit_profile' request.user.id%}" class = "add_book_ref">Contacts</a>
-      <a href="{% url 'cart'%}" class = "cart_ref">About us</a>
-      {% endif %}
-  {% if request.user.is_authenticated or user.is_admin%}
-      <a href="{% url 'logout' %}" class = "logout_ref">Logout</a>
-  {% endif %}
-  {% if not request.user.is_authenticated and not user.is_admin%}
-      <a href="{% url 'login' %}" class = "login_ref">Login</a>
-       <a href="{% url 'register' %}" class = "register_ref">Register</a>
-  {% endif %}
-       <form class="d-flex" method="POST" action="{% url 'book_search' %}">
-      {% csrf_token %}
-        <input class="form-control me-2 size" type="search" placeholder="Book Search" aria-label="Search" name="searched">
-        <button class="btn btn-outline-secondary size1" type="submit">Search</button>
-    </form>
-  </div>
+}
+.Section{
+    width:100%;
+    height:65px;
+    position:relative;
+    background-color:orange;
+}
+.Hotline{
+    width:20%;
+    height:40px;
+    position:absolute;
+    background-color:#363434;
+    margin-left:200px;
+    margin-top:15px;
+    padding: 5px 30px;
+    color: white;
+}
+.bookshop{
+    padding: 20px 110px;
+}
+.ref{
+    color:black;
+    position:absolute;
+    margin-left:250px;
+    margin-top:-45px;
+    font-size:20px;
+}
+.ref1{
+    margin-left:350px;
+}
+.ref2{
+    margin-left:480px;
+}
+.ref3{
+    margin-left:570px;
+}
+.grey{
+    width:100%;
+    height:30px;
+    position:relative;
+    background:#9C9696;
+}
+.Booksection{
+    position:relative;
+    margin-left:650px;
+}
+</style>
+
+<header class="Header">
+    <div class = "bookshop">
+        <h1>Book Shop</h1>
+        <a href="#" class="ref">Home</a>
+        <a href="#" class="ref ref1">About us</a>
+        <a href="#" class="ref ref2">Blog</a>
+
+           <a href="{% url 'login' %}" class = "login_ref">Login</a>
+           <a href="{% url 'register' %}" class = "register_ref">Register</a>
+
+       <a href="#" class="ref ref3">Contacts</a>
 </div>
-
-</section>
-<br>
-<div class="productContainer">
-	{% for book in books_page %}
-
-        {% if book.book_image %}
-
-        <img src="{{ book.book_image.url }}" align="left" style="height:280px; width:210px"/>
-
-        {% endif %}
-
-		<h1 class="card-title">{{ book.book_name }}</h1>
-		<h2>{{ book.book_author}}</h2>
-		<p class="card-text">{{ book.desc }}</p>
-        <p class="card-text">{{ book.genre }}</p>
-
-		{% if request.user.is_authenticated and user.is_admin%}
-		<p>
-			<a href="{% url 'book_edit' book.id %}" class="btn btn-warning">Edit</a>
-            <a href="{% url 'book_delete' book.id%}" class="btn btn-danger">Delete</a>
-            </p>
-         {% endif %}
-        {% if request.user.is_authenticated and not user.is_admin%}
-
-		<p>
-			<button class="btn btn-success" value="{{ book.id }}">Add to cart</button>
-            </p>
-            <a href="{% url 'cart' %}" style="color:white; text-decoration:none">
-                 <div class="cart-container">
-                    <div class="cartitems"><p id="num_of_items">{{cart.num_of_items}}</p></div>
-                    <i class="fa-solid fa-cart-shopping"></i>
-                </div>
-            </a>
-         {% endif %}
-	{% endfor %}
-</div>
+    </div>
 </header>
-
-
+<section class="Section">
+    <div class="Hotline">
+      Hotline:+375-29-99-99-999
+    </div>
+    <input class="form-control me-2 size" type="search" placeholder="Book Search" aria-label="Search" name="searched">
+    <button class="btn btn-outline-secondary size1" type="submit">Search</button>
+</section>
+<br></br>
 <section class="cd-slider">
   <ul>
     <li data-color="#FF384B">
@@ -108,10 +283,105 @@
     <div><a class="next" href="#"></a></div>
   </nav>
 </section>
+<br></br>
+<section class="Booksection">
+    <h1>New Books</h1>
+</section>
+<main>
+    <div class="card move" style="width: 16rem; height:25rem;">
+      <div class="card-body">
+       <h5 class="card-title">Special title treatment</h5>
+       <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+       <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+   <div class="card left" style="width: 16rem;height:25rem;">
+      <div class="card-body">
+       <h5 class="card-title">Special title treatment</h5>
+       <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+       <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+  <div class="card left" style="width: 16rem;height:25rem;">
+      <div class="card-body">
+       <h5 class="card-title">Special title treatment</h5>
+       <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+       <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+  <div class="card left" style="width: 16rem;height:25rem;">
+      <div class="card-body">
+       <h5 class="card-title">Special title treatment</h5>
+       <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+       <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+<div class="card left" style="width: 16rem;height:25rem;">
+      <div class="card-body">
+       <h5 class="card-title">Special title treatment</h5>
+       <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+       <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+</div>
 
-<br/>
+</main>
+
+
 
 <hr>
+  <div class="container">
+       <div class = "left_container"></div>
+       <div class = "left_container down"></div>
+       <div class = "left_container right"></div>
+  </div>
+<footer class="site-footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <h6>About</h6>
+            <p class="text-justify">Scanfcode.com <i>CODE WANTS TO BE SIMPLE </i> is an initiative  to help the upcoming programmers with the code. Scanfcode focuses on providing the most efficient code or snippets as the code wants to be simple. We will help programmers build up concepts in different programming languages that include C, C++, Java, HTML, CSS, Bootstrap, JavaScript, PHP, Android, SQL and Algorithm.</p>
+          </div>
+
+          <div class="col-xs-6 col-md-3">
+            <h6>Categories</h6>
+            <ul class="footer-links">
+              <li><a href="https://scanfcode.com/category/c-language/">C</a></li>
+              <li><a href="https://scanfcode.com/category/front-end-development/">UI Design</a></li>
+              <li><a href="https://scanfcode.com/category/back-end-development/">PHP</a></li>
+              <li><a href="https://scanfcode.com/category/java-programming-language/">Java</a></li>
+              <li><a href="https://scanfcode.com/category/android/">Android</a></li>
+              <li><a href="https://scanfcode.com/category/templates/">Templates</a></li>
+            </ul>
+          </div>
+
+          <div class="col-xs-6 col-md-3">
+            <h6>Quick Links</h6>
+            <ul class="footer-links">
+              <li><a href="https://scanfcode.com/about/">About Us</a></li>
+              <li><a href="https://scanfcode.com/contact/">Contact Us</a></li>
+              <li><a href="https://scanfcode.com/contribute-at-scanfcode/">Contribute</a></li>
+              <li><a href="https://scanfcode.com/privacy-policy/">Privacy Policy</a></li>
+              <li><a href="https://scanfcode.com/sitemap/">Sitemap</a></li>
+            </ul>
+          </div>
+        </div>
+        <hr>
+      </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 col-sm-6 col-xs-12">
+            <p class="copyright-text">Copyright &copy; 2017 All Rights Reserved by
+         <a href="#">Scanfcode</a>.
+            </p>
+          </div>
+
+          <div class="col-md-4 col-sm-6 col-xs-12">
+            <ul class="social-icons">
+              <li><a class="facebook" href="#"><i class="fa fa-facebook"></i></a></li>
+              <li><a class="twitter" href="#"><i class="fa fa-twitter"></i></a></li>
+              <li><a class="dribbble" href="#"><i class="fa fa-dribbble"></i></a></li>
+              <li><a class="linkedin" href="#"><i class="fa fa-linkedin"></i></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+</footer>
 {% if books_page.has_previous %}
     <a href="?page=1">&laquo First</a>
     <a href="?page={{ books_page.previous_page_number }}">Previous</a>
@@ -124,137 +394,7 @@ Page {{ books_page.number }} or {{ books_page.paginator.num_pages }}
     <a href="?page={{ books_page.paginator.num_pages}}">Last &raquo</a>
 {% endif %}
 <script src="{% static 'js/script.js' %}"></script>
+<script src="{% static 'js/base.js' %}"></script>
+</div>
 </body>
-<script>
-    (function() {
-
-  var autoUpdate = false,
-      timeTrans = 4000;
-
-	var cdSlider = document.querySelector('.cd-slider'),
-		item = cdSlider.querySelectorAll("li"),
-		nav = cdSlider.querySelector("nav");
-
-	item[0].className = "current_slide";
-
-	for (var i = 0, len = item.length; i < len; i++) {
-		var color = item[i].getAttribute("data-color");
-		item[i].style.backgroundColor=color;
-	}
-
-	// Detect IE
-	// hide ripple effect on IE9
-	var ua = window.navigator.userAgent;
-		var msie = ua.indexOf("MSIE");
-		if ( msie > 0 ) {
-			var version = parseInt(ua.substring(msie+ 5, ua.indexOf(".", msie)));
-			if (version === 9) { cdSlider.className = "cd-slider ie9";}
-	}
-
-	if (item.length <= 1) {
-		nav.style.display = "none";
-	}
-
-	function prevSlide() {
-		var currentSlide = cdSlider.querySelector("li.current_slide"),
-			prevElement = currentSlide.previousElementSibling,
-			prevSlide = ( prevElement !== null) ? prevElement : item[item.length-1],
-			prevColor = prevSlide.getAttribute("data-color"),
-			el = document.createElement('span');
-
-		currentSlide.className = "";
-		prevSlide.className = "current_slide";
-
-		nav.children[0].appendChild(el);
-
-		var size = ( cdSlider.clientWidth >= cdSlider.clientHeight ) ? cdSlider.clientWidth*2 : cdSlider.clientHeight*2,
-		    ripple = nav.children[0].querySelector("span");
-
-		ripple.style.height = size + 'px';
-		ripple.style.width = size + 'px';
-		ripple.style.backgroundColor = prevColor;
-
-		ripple.addEventListener("webkitTransitionEnd", function() {
-			if (this.parentNode) {
-				this.parentNode.removeChild(this);
-			}
-		});
-
-		ripple.addEventListener("transitionend", function() {
-			if (this.parentNode) {
-				this.parentNode.removeChild(this);
-			}
-		});
-
-	}
-
-	function nextSlide() {
-		var currentSlide = cdSlider.querySelector("li.current_slide"),
-			nextElement = currentSlide.nextElementSibling,
-			nextSlide = ( nextElement !== null ) ? nextElement : item[0],
-			nextColor = nextSlide.getAttribute("data-color"),
-			el = document.createElement('span');
-
-		currentSlide.className = "";
-		nextSlide.className = "current_slide";
-
-		nav.children[1].appendChild(el);
-
-		var size = ( cdSlider.clientWidth >= cdSlider.clientHeight ) ? cdSlider.clientWidth*2 : cdSlider.clientHeight*2,
-			  ripple = nav.children[1].querySelector("span");
-
-		ripple.style.height = size + 'px';
-		ripple.style.width = size + 'px';
-		ripple.style.backgroundColor = nextColor;
-
-		ripple.addEventListener("webkitTransitionEnd", function() {
-			if (this.parentNode) {
-				this.parentNode.removeChild(this);
-			}
-		});
-
-		ripple.addEventListener("transitionend", function() {
-			if (this.parentNode) {
-				this.parentNode.removeChild(this);
-			}
-		});
-
-	}
-
-	updateNavColor();
-
-	function updateNavColor () {
-		var currentSlide = cdSlider.querySelector("li.current_slide");
-
-		var nextColor = ( currentSlide.nextElementSibling !== null ) ? currentSlide.nextElementSibling.getAttribute("data-color") : item[0].getAttribute("data-color");
-		var	prevColor = ( currentSlide.previousElementSibling !== null ) ? currentSlide.previousElementSibling.getAttribute("data-color") : item[item.length-1].getAttribute("data-color");
-
-		if (item.length > 2) {
-			nav.querySelector(".prev").style.backgroundColor = prevColor;
-			nav.querySelector(".next").style.backgroundColor = nextColor;
-		}
-	}
-
-	nav.querySelector(".next").addEventListener('click', function(event) {
-		event.preventDefault();
-		nextSlide();
-		updateNavColor();
-	});
-
-	nav.querySelector(".prev").addEventListener("click", function(event) {
-		event.preventDefault();
-		prevSlide();
-		updateNavColor();
-	});
-
-  //autoUpdate
-  setInterval(function() {
-    if (autoUpdate) {
-      nextSlide();
-      updateNavColor();
-    };
-	},timeTrans);
-
-})();
-</script>
 </html>

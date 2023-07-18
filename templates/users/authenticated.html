@@ -2,6 +2,13 @@
 {% block content %}
     {% load static %}
     <link rel="stylesheet" href="{% static "css/list_menu.css" %}">
+    <link rel="stylesheet" href="{% static "css/style.css" %}">
+<style>
+   .container1{
+       padding: 60px 640px;
+   }
+   img {float: left;}
+</style>
 <div class="side_menu">
 
 	<div class="burger_box">
@@ -37,45 +44,39 @@
 		<div class="spacer_box"><p>This is a spacer box.</p></div>
 	</div>
 </div>
+       <div class = "container1">
+          {% for book in books_page %}
+
+        {% if book.book_image %}
+
+        <img src="{{ book.book_image.url }}" align="left" style="height:280px; width:210px"/>
+
+        {% endif %}
+
+		<h1>{{ book.book_name }}</h1>
+		<h2>{{ book.book_author}}</h2>
+		<p>{{ book.desc }}</p>
+        <p>{{ book.genre }}</p>
+
+		{% if request.user.is_authenticated and user.is_admin%}
+		<p>
+			<a href="{% url 'book_edit' book.id %}" class="btn btn-warning">Edit</a>
+            <a href="{% url 'book_delete' book.id%}" class="btn btn-danger">Delete</a>
+            </p>
+         {% endif %}
+        {% if request.user.is_authenticated and not user.is_admin%}
+
+		<p>
+			<button class="btn btn-success" value="{{ book.id }}">Add to cart</button>
+            </p>
+
+         {% endif %}
+              <hr>
+           {% endfor %}
+
+       </div>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script>
-    $(document).ready(function(){
-    // Requires jQuery
-
-$(document).on('click','.js-menu_toggle.closed',function(e){
-	e.preventDefault(); $('.list_load, .list_item').stop();
-	$(this).removeClass('closed').addClass('opened');
-
-	$('.side_menu').css({ 'left':'0px' });
-
-	var count = $('.list_item').length;
-	$('.list_load').slideDown( (count*.6)*100 );
-	$('.list_item').each(function(i){
-		var thisLI = $(this);
-		timeOut = 100*i;
-		setTimeout(function(){
-			thisLI.css({
-				'opacity':'1',
-				'margin-left':'0'
-			});
-		},100*i);
-	});
-});
-
-$(document).on('click','.js-menu_toggle.opened',function(e){
-	e.preventDefault(); $('.list_load, .list_item').stop();
-	$(this).removeClass('opened').addClass('closed');
-
-	$('.side_menu').css({ 'left':'-250px' });
-
-	var count = $('.list_item').length;
-	$('.list_item').css({
-		'opacity':'0',
-		'margin-left':'-20px'
-	});
-	$('.list_load').slideUp(300);
-});
-});
-    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/list_menu.js' %}"></script>
 {% endblock %}
