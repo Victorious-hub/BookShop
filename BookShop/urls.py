@@ -66,6 +66,10 @@ urlpatterns = [
 
     path('add_feedback/<int:id>', views.add_feedback, name='add_feedback'),
 
-    path('feedbacks/<int:id>', views.feedbacks, name='feedbacks')
+    path('feedbacks/<int:id>', views.feedbacks, name='feedbacks'),
+
+    path('checkers', views.checkers, name='checkers'),
+
+    path('price_checkers', views.price_checkers, name='price_checkers'),
 
 ]+static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)

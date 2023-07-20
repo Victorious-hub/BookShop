@@ -285,3 +285,25 @@ def feedbacks(request, id):
     feedbacks = Feedback.objects.filter(book_id=books)
     context = {'feedbacks': feedbacks}
     return render(request, 'Feedback/feedbacks.html', context)
+
+@login_required
+def checkers(request):
+    if request.method == 'POST':
+        searched = request.POST.getlist('searched')
+        books = Book.objects.filter(genre__in=searched)
+        context = {'books': books}
+        return render(request, 'books/checker.html', context)
+
+    return render(request,'books/checker.html',)
+
+
+@login_required
+def price_checkers(request):
+    if request.method == 'POST':
+        price_min = request.POST.get('priceMin')
+        price_max = request.POST.get('priceMax')
+        books = Book.objects.filter(price__gte=price_min,price__lte = price_max)
+        context = {'books': books}
+        return render(request, 'books/price_checker.html', context)
+
+    return render(request, 'books/price_checker.html')

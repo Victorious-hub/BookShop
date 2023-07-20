@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% if books %}
+  <h2>Filtered Books:</h2>
+  <ul>
+    {% for book in books %}
+      {% if book.book_image %}
+
+        <img src="{{ book.book_image.url }}" align="left" style="height:280px; width:210px"/>
+
+        {% endif %}
+
+		<h1>{{ book.book_name }}</h1>
+		<h2>{{ book.book_author}}</h2>
+		<p>{{ book.desc }}</p>
+        <p>{{ book.genre }}</p>
+    {% endfor %}
+  </ul>
+{% else %}
+ <p>No books found.</p>
+{% endif %}
+</body>
+</html>
