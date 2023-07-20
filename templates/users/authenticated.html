@@ -45,7 +45,7 @@
 	</div>
 </div>
        <div class = "container1">
-          {% for book in books_page %}
+          {% for book in books%}
 
         {% if book.book_image %}
 
@@ -68,6 +68,8 @@
 
 		<p>
 			<button class="btn btn-success" value="{{ book.id }}">Add to cart</button>
+            <a class="btn btn-success" href="{% url 'add_feedback' book.id%}">Add feedback</a>
+            <a class="btn btn-success" href="{% url 'feedbacks' book.id%}">feedback</a>
             </p>
 
          {% endif %}
@@ -79,4 +81,5 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="{% static 'js/list_menu.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
 {% endblock %}

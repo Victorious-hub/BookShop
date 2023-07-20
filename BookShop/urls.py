@@ -58,8 +58,14 @@ urlpatterns = [
 
     path('add_to_cart', views.add_to_cart, name='add'),
 
-    path("confirm_payment/<str:pk>", views.confirm_payment, name="add"),
-
     path('authenticated/', views.authenticated, name='authenticated'),
+
+    path('remove_from_cart', views.remove_from_cart, name='add_wishlist'),
+
+    path('remove_all', views.remove_all, name='remove_all_cart'),
+
+    path('add_feedback/<int:id>', views.add_feedback, name='add_feedback'),
+
+    path('feedbacks/<int:id>', views.feedbacks, name='feedbacks')
 
 ]+static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)

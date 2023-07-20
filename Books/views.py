@@ -8,10 +8,10 @@ from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAdminUser
 from rest_framework.views import APIView
 from django.db.models import Q
-from .models import Book, SimpleUser, CartItem, Cart
+from .models import Book, SimpleUser, CartItem, Cart, Feedback
 from . import serializer
 from . import models
-from .forms import RegisterForm, LoginForm, BookForm, EditForm
+from .forms import RegisterForm, LoginForm, BookForm, EditForm, FeedbackForm
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
@@ -31,16 +31,59 @@ def add_to_cart(request):
     data = json.loads(request.body)
     product_id = data["id"]
     product = Book.objects.get(id=product_id)
+
     if request.user.is_authenticated:
         cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
+
         cartitem, created = CartItem.objects.get_or_create(cart=cart, book_product=product)
+
         cartitem.quantity += 1
+
         cartitem.save()
 
         num_of_item = cart.num_of_items
 
         print(cartitem)
     return JsonResponse("Working", safe=False)
+
+
+def remove_from_cart(request):
+    data = json.loads(request.body)
+    product_id = data["id"]
+    product = Book.objects.get(id=product_id)
+
+    if request.user.is_authenticated:
+        cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
+
+        cartitem, created = CartItem.objects.get_or_create(cart=cart, book_product=product)
+
+        cartitem.quantity -= 1
+        if cartitem.quantity == 0:
+            cartitem.delete()
+        else:
+            cartitem.save()
+        num_of_item = cart.num_of_items
+
+        print("Deleted")
+    return JsonResponse({'price': cartitem.price, 'num_of_items': num_of_item}, safe=False)
+
+
+def remove_all(request):
+    data = json.loads(request.body)
+    product_id = data["id"]
+    product = Book.objects.get(id=product_id)
+
+    if request.user.is_authenticated:
+        cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
+
+        cartitem, created = CartItem.objects.get_or_create(cart=cart, book_product=product)
+
+        cartitem.delete()
+
+        num_of_item = cart.num_of_items
+
+        print("Deleted")
+    return JsonResponse({'price': cartitem.price, 'num_of_items': num_of_item}, safe=False)
 
 
 def main(request):
@@ -53,6 +96,7 @@ def main(request):
         cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
     context = {'books': books, 'books_page': books_page, }
     return render(request, 'users/base.html', context)
+
 
 @login_required
 def authenticated(request):
@@ -203,9 +247,41 @@ def add_book(request):
             return render(request, 'books/add_book.html', {'form': form})
 
 
-def confirm_payment(request, pk):
-    cart = Cart.objects.get(id=pk)
-    cart.completed = True
-    cart.save()
-    messages.success(request, "Payment made successfully")
-    return redirect("main")
+@login_required
+def add_feedback(request, id):
+    books = Book.objects.get(id=id)
+
+    if request.method == 'GET':
+        context = {'form': FeedbackForm(instance=books), 'id': id}
+        return render(request, 'Feedback/add_feedback.html', context)
+
+
+    elif request.method == 'POST':
+
+        form = FeedbackForm(request.POST, request.FILES)
+
+        if form.is_valid():
+
+            feedback = form.save(commit=False)
+
+            feedback.author = request.user.simpleuser
+
+            feedback.book_id = books  # Установите значение book_id
+
+            feedback.save()
+
+            return redirect('authenticated')
+
+        else:
+
+            messages.error(request, 'Please correct the following errors:')
+
+            return render(request, 'Feedback/add_feedback.html', {'form': form})
+
+
+@login_required
+def feedbacks(request, id):
+    books = Book.objects.get(id=id)
+    feedbacks = Feedback.objects.filter(book_id=books)
+    context = {'feedbacks': feedbacks}
+    return render(request, 'Feedback/feedbacks.html', context)

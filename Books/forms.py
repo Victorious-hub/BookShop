@@ -2,7 +2,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.forms import ModelForm
 
-from Books.models import SimpleUser, Book
+from Books.models import SimpleUser, Book, Feedback
 
 
 class RegisterForm(UserCreationForm):
@@ -57,6 +57,19 @@ class BookForm(forms.ModelForm):
         self.fields['book_image'].widget.attrs['class'] = 'form-control'
         self.fields['genre'].widget.attrs['class'] = 'form-control'
 
+
+class FeedbackForm(forms.ModelForm):
+    class Meta:
+        model = Feedback
+        fields = ('header','description')
+        widgets = {
+            'desc': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(FeedbackForm, self).__init__(*args, **kwargs)
+        self.fields['header'].widget.attrs['class'] = 'form-control'
+        self.fields['description'].widget.attrs['class'] = 'form-control'
 
 class LoginForm(forms.Form):
     class Meta:

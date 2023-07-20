@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% load bootstrap5 %}
+   {% bootstrap_css %}
+   {% bootstrap_javascript %}
+
+</head>
+<style>
+    body {
+  font-family: Arial, sans-serif;
+  background: url(http://www.shukatsu-note.com/wp-content/uploads/2014/12/computer-564136_1280.jpg) no-repeat;
+  background-size: cover;
+  height: 100vh;
+}
+</style>
+<body>
+ {% if request.user.is_authenticated%}
+<div class="mask d-flex align-items-center h-100 gradient-custom-3">
+    <div class="container h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+          <div class="card" style="border-radius: 15px;">
+            <div class="card-body p-5">
+		             <form method="POST" enctype="multipart/form-data">
+                          <div class="form-outline mb-4">
+	               {% csrf_token %}
+	                <h2 class="text-center">Add book</h2>
+	               {{form.as_p}}
+	               <input class="btn btn-success" type="submit" value="Submit" />
+                          </div>
+               </form>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+     {% else %}
+        <h1>You don't have enough rights to use this page</h1>
+ {% endif %}
+</body>
+</html>
+
+
