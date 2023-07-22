@@ -1,22 +1,17 @@
 import json
-from paypal.standard.forms import PayPalPaymentsForm
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate, logout
-from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAdminUser
-from rest_framework.views import APIView
 from django.db.models import Q
-from .models import Book, SimpleUser, CartItem, Cart, Feedback
-from . import serializer
-from . import models
-from .forms import RegisterForm, LoginForm, BookForm, EditForm, FeedbackForm
+from .models import Book, CartItem, Cart, Feedback, WishList, WisthlistItem
+from .forms import BookForm, FeedbackForm
 from django.contrib import messages
 from django.core.paginator import Paginator
-from django.views.decorators.csrf import csrf_exempt
+from .tasks import sleeptime
 
-
+def payment(request):
+    return render(request, 'Payment/PayPal.html', {})
 def cart(request):
     cart = None
     cartitems = []
@@ -87,6 +82,7 @@ def remove_all(request):
 
 
 def main(request):
+   # sleeptime.delay(15)
     books = Book.objects.all()
 
     p = Paginator(Book.objects.all(), 2)
@@ -111,62 +107,14 @@ def authenticated(request):
     return render(request, 'users/authenticated.html', context)
 
 
-def sign_out(request):
-    logout(request)
-    messages.success(request, f'You have been logged out.')
-    return redirect('login')
-
-
-class sign_in(APIView):
-    def get(self, request):
-        if request.user.is_authenticated:
-            return redirect('authenticated')
-
-        form = LoginForm()
-        return render(request, 'users/login.html', {'form': form})
-
-    def post(self, request):
-        form = LoginForm(request.POST)
-
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
-            user = authenticate(request, email=email, password=password)
-            if user:
-                login(request, user)
-                messages.success(request, f'Hi {email.title()}, welcome back!')
-                return redirect('authenticated')
-
-        messages.error(request, f'Invalid username or password')
-        return render(request, 'users/login.html', {'form': form})
-
-
-class sign_up(APIView):
-    def get(self, request):
-        form = RegisterForm()
-        return render(request, 'users/register.html', {'form': form})
-
-    def post(self, request):
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            # user.username = user.username.lower()
-            user.save()
-            messages.success(request, 'You have singed up successfully.')
-            login(request, user)
-            return redirect('authenticated')
-        else:
-            return render(request, 'users/register.html', {'form': form})
-
-
-class ProfileListView(generics.ListCreateAPIView):
+"""class ProfileListView(generics.ListCreateAPIView):
     queryset = models.SimpleUser.objects.all()
     serializer_class = serializer.UserSerializer
 
 
 class ProfileChange(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.SimpleUser.objects.all()
-    serializer_class = serializer.UserSerializer
+    serializer_class = serializer.UserSerializer"""
 
 
 @login_required
@@ -210,23 +158,6 @@ def edit_book(request, id):
         else:
             messages.error(request, 'Please correct the following errors:')
             return render(request, 'books/edit-book.html', {'form': form})
-
-
-@login_required
-def edit_profile(request, id):
-    profile = SimpleUser.objects.get(id=id)
-
-    if request.method == 'GET':
-        context = {'form': EditForm(instance=profile), 'id': id}
-        return render(request, 'users/edit_profile.html', context)
-
-    elif request.method == 'POST':
-        form = EditForm(request.POST or None, instance=profile)
-        if form.is_valid():
-            form.save()
-            return redirect('main')
-        else:
-            return render(request, 'users/edit_profile.html', {'form': form})
 
 
 @login_required
@@ -286,6 +217,7 @@ def feedbacks(request, id):
     context = {'feedbacks': feedbacks}
     return render(request, 'Feedback/feedbacks.html', context)
 
+
 @login_required
 def checkers(request):
     if request.method == 'POST':
@@ -294,7 +226,7 @@ def checkers(request):
         context = {'books': books}
         return render(request, 'books/checker.html', context)
 
-    return render(request,'books/checker.html',)
+    return render(request, 'books/checker.html', )
 
 
 @login_required
@@ -302,8 +234,50 @@ def price_checkers(request):
     if request.method == 'POST':
         price_min = request.POST.get('priceMin')
         price_max = request.POST.get('priceMax')
-        books = Book.objects.filter(price__gte=price_min,price__lte = price_max)
+        books = Book.objects.filter(price__gte=price_min, price__lte=price_max)
         context = {'books': books}
         return render(request, 'books/price_checker.html', context)
 
     return render(request, 'books/price_checker.html')
+
+
+def add_to_wishlist(request):
+    data = json.loads(request.body)
+    product_id = data["id"]
+    product = Book.objects.get(id=product_id)
+
+    if request.user.is_authenticated:
+        cart, created = WishList.objects.get_or_create(user=request.user.simpleuser, completed=False)
+        cart.save()  # Сохраняем объект cart
+
+        cartitem, created = WisthlistItem.objects.get_or_create(wisthlist_item=cart, book_product=product)
+
+        cartitem.quantity += 1
+        cartitem.save()
+    return JsonResponse("Working", safe=False)
+
+
+def remove_from_wishlist(request):
+    data = json.loads(request.body)
+    product_id = data["id"]
+    product = Book.objects.get(id=product_id)
+
+    if request.user.is_authenticated:
+        cart, created = WishList.objects.get_or_create(user=request.user.simpleuser, completed=False)
+        cart.save()  # Сохраняем объект cart
+
+        cartitem, created = WisthlistItem.objects.get_or_create(wisthlist_item=cart, book_product=product)
+
+        cartitem.quantity -= 1
+        cartitem.remove()
+    return JsonResponse("Working", safe=False)
+
+
+def wishlist(request):
+    cart = None
+    cartitems = []
+    if request.user.is_authenticated and not request.user.is_admin:
+        cart, created = WishList.objects.get_or_create(user=request.user.simpleuser, completed=False)
+        cartitems = cart.wisthlistitems.all()
+    context = {"cart": cart, "items": cartitems}
+    return render(request, 'Feedback/Wishlist.html', context)

@@ -1,3 +1,4 @@
+
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -100,3 +101,61 @@ function removeAll(e){
         console.log(error)
     })
 }
+
+
+let btns4 = document.querySelectorAll(".RemoveFromList button")
+btns4.forEach(btn=>{
+    btn.addEventListener("click", removeFromWishList)
+})
+
+function removeFromWishList(e){
+    let product_id = e.target.value
+    let url = "/remove_wishlist"
+
+    let data = {id:product_id}
+
+    fetch(url, {
+        method: "POST",
+        headers: {"Content-Type":"application/json", 'X-CSRFToken': csrftoken},
+        body: JSON.stringify(data)
+    })
+    .then(res=>res.json())
+    .then(data => {
+    document.getElementById("wish").innerHTML = data;
+    console.log(data);
+})
+    .catch(error=>{
+        console.log(error)
+    })
+}
+
+
+
+
+
+
+let btns3 = document.querySelectorAll(".addwishlist button")
+btns3.forEach(btn=>{
+    btn.addEventListener("click",addWishlist)
+})
+
+function addWishlist(e){
+    let product_id = e.target.value
+    let url = "/add_to_wishlist"
+
+    let data = {id:product_id}
+
+    fetch(url, {
+        method: "POST",
+        headers: {"Content-Type":"application/json", 'X-CSRFToken': csrftoken},
+        body: JSON.stringify(data)
+    })
+    .then(res=>res.json())
+    .then(data => {
+    console.log(data);
+})
+    .catch(error=>{
+        console.log(error)
+    })
+}
+

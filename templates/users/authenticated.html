@@ -3,145 +3,14 @@
     {% load static %}
     <link rel="stylesheet" href="{% static "css/list_menu.css" %}">
     <link rel="stylesheet" href="{% static "css/style.css" %}">
+    <link rel="stylesheet" href="{% static "css/PriceScroll.css" %}">
 <style>
    .container1{
        padding: 60px 640px;
    }
    img {float: left;}
-
-
-   .filter__row.unactive {
-      cursor: default; }
-    .filter__row--nosup .sup {
-      opacity: 0; }
-    .filter__row--color .sup {
-      border: 1px solid #f0f0f0;
-      height: 14px !important;
-      width: 14px !important;
-      border-radius: 2px;
-      overflow: hidden;
-      right: 21px; }
-  .filter__body {
-    padding: 0;
-    background: #ffffff; }
-    .filter__body button + button {
-      margin-top: 15px; }
-  .filter__button {
-    display: block;
-    width: 100%;
-    text-align: left;
-    position: relative;
-    color: #535353;
-    background: #f9fafa;
-    text-transform: uppercase;
-    height: 40px;
-    line-height: 38px;
-    border: 0;
-    padding-left: 15px;
-    font-family: "Exo 2 Condensed", sans-serif;
-    font-weight: 600;
-    font-size: 0.875rem;
-    cursor: pointer;
-    margin: 0; }
-    .filter__button i {
-      position: absolute;
-      right: 10px;
-      font-size: 0.875rem;
-      top: 50%;
-      transform: translateY(-50%) rotate(180deg);
-      transform-origin: 50% 50%;
-      transition: transform 0.35s; }
-  .filter.is-active .filter__button i {
-    transform: translateY(-50%) rotate(0deg); }
-  .filter__cost {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #535353;
-    font-family: "Exo 2 Condensed", sans-serif;
-    text-transform: uppercase; }
-    .filter__cost .table-cell {
-      vertical-align: middle; }
-      .filter__cost .table-cell + .table-cell {
-        padding-left: 2px; }
-    .filter__cost input {
-      width: 44px;
-      background: #f0f6f9;
-      text-align: center;
-      font-weight: 600;
-      color: #535353;
-      padding: 0;
-      font-family: "Exo 2 Condensed", sans-serif;
-      font-size: 0.75rem;
-      height: 30px;
-      line-height: 28px; }
-  .filter__slider {
-    padding-bottom: 35px;
-    padding-top: 10px; }
-  .filter__more {
-    width: 100%;
-    text-align: center;
-    border-top: 1px solid #eaeaea;
-    text-transform: none;
-    font-weight: 400;
-    margin-top: -20px;
-    margin-bottom: 25px; }
-    .filter__more a {
-      text-decoration: none; }
-  .filter__category {
-    margin-bottom: 25px; }
-
-.ui-widget.ui-widget-content {
-  border: 0;
-  height: 3px;
-  border-radius: 0;
-  background: #e6e6e6; }
-
-.ui-slider-horizontal .ui-slider-range {
-  background: #c6bd83; }
-
-.ui-slider .ui-slider-handle {
-  width: 0;
-  height: 0;
-  border: 0;
-  background: none;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  border-left: 10px solid #c6bd83;
-  top: -8px;
-  cursor: pointer;
-  z-index: 10; }
-  .ui-slider .ui-slider-handle:focus {
-    outline: none; }
-  .ui-slider .ui-slider-handle + .ui-slider-handle {
-    border-left: 0;
-    border-right: 10px solid #c6bd83; }
-
-.price-range-min, .price-range-max {
-  font-size: 0.625rem;
-  color: #a9a9a9;
-  position: absolute;
-  left: -11px;
-  top: 9px;
-  font-family: "Exo 2 Condensed", sans-serif;
-  width: 30px;
-  z-index: 10;
-  background-color: #ffffff;
-  display: block; }
-
-.price-range-max {
-  left: -20px;
-  text-align: right; }
-
-.range__zero {
-  font-size: 0.625rem;
-  color: #a9a9a9;
-  position: absolute;
-  margin-top: 9px;
-  z-index: 5; }
-
 </style>
 <div class="side_menu">
-
 	<div class="burger_box">
 		<div class="menu-icon-container">
 			<a href="#" class="menu-icon js-menu_toggle closed">
@@ -177,17 +46,14 @@
 </div>
        <div class = "container1">
           {% for book in books%}
+              {% if book.book_image %}
+                <img src="{{ book.book_image.url }}" align="left" style="height:280px; width:210px"/>
+             {% endif %}
 
-        {% if book.book_image %}
-
-        <img src="{{ book.book_image.url }}" align="left" style="height:280px; width:210px"/>
-
-        {% endif %}
-
-		<h1>{{ book.book_name }}</h1>
-		<h2>{{ book.book_author}}</h2>
-		<p>{{ book.desc }}</p>
-        <p>{{ book.genre }}</p>
+		     <h1>{{ book.book_name }}</h1>
+		     <h2>{{ book.book_author}}</h2>
+		     <p>{{ book.desc }}</p>
+             <p>{{ book.genre }}</p>
               <p>{{ book.price }}</p>
 
 		{% if request.user.is_authenticated and user.is_admin%}
@@ -195,20 +61,22 @@
 			<a href="{% url 'book_edit' book.id %}" class="btn btn-warning">Edit</a>
             <a href="{% url 'book_delete' book.id%}" class="btn btn-danger">Delete</a>
             </p>
-         {% endif %}
+        {% endif %}
         {% if request.user.is_authenticated and not user.is_admin%}
-
-		<p>
+		    <p>
 			<button class="btn btn-success" value="{{ book.id }}">Add to cart</button>
             <a class="btn btn-success" href="{% url 'add_feedback' book.id%}">Add feedback</a>
             <a class="btn btn-success" href="{% url 'feedbacks' book.id%}">feedback</a>
+            <div class="addwishlist">
+            <button class="btn btn-success" value="{{ book.id }}">Add to wishlist</button>
+            </div>
             </p>
 
          {% endif %}
               <hr>
-           {% endfor %}
-
+          {% endfor %}
        </div>
+<section>
    <form method="POST" action="{% url 'checkers' %}">
   {% csrf_token %}
   <div class="form-check">
@@ -219,87 +87,34 @@
     <button class="btn btn-outline-secondary size1" type="submit">Search</button>;
   </div>
 </form>
-
+</section>
+    <section>
+<form id="priceForm" method="POST" action="{% url 'price_checkers' %}">
+  {% csrf_token %}
+<div class="filter__block filter__block--slider">
+    <div class="filter__head">цена изделия</div>
+    <div class="filter__slider">
+        <div class="range__zero">0</div>
+        <div id="filter__range"></div>
+    </div>
+    <div class="filter__cost table">
+        <div class="table-cell"> <span>от</span></div>
+        <div class="table-cell">
+            <input name="priceMin" type="text" value="5000" class="form-control">
+        </div>
+        <div class="table-cell"><span>до</span></div>
+        <div class="table-cell">
+            <input name="priceMax" type="text" value="15000" class="form-control">
+        </div>
+        <div class="table-cell"><span>руб</span></div>
+    </div>
+<button class="btn btn-outline-secondary size1" onclick="submitForm()">Подтвердить</button>
+</div>
+</form>
+</section>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="{% static 'js/list_menu.js' %}"></script>
     <script src="{% static 'js/script.js' %}"></script>
-<form id="priceForm" method="POST" action="{% url 'price_checkers' %}">
-  {% csrf_token %}
-<div class="filter__block filter__block--slider">
-                                        <div class="filter__head">цена изделия</div>
-                                        <div class="filter__slider">
-                                            <div class="range__zero">0</div>
-                                            <div id="filter__range"></div>
-                                        </div>
-                                        <div class="filter__cost table">
-                                            <div class="table-cell"> <span>от</span></div>
-                                            <div class="table-cell">
-                                                <input name="priceMin" type="text" value="5000" class="form-control">
-                                            </div>
-                                            <div class="table-cell"><span>до</span></div>
-                                            <div class="table-cell">
-                                                <input name="priceMax" type="text" value="15000" class="form-control">
-                                            </div>
-                                            <div class="table-cell"><span>руб</span></div>
-                                        </div>
-<button class="btn btn-outline-secondary size1" onclick="submitForm()">Подтвердить</button>
-</div>
-</form>
-    <script>
-    $(function () {
-   $("#filter__range").slider({
-  	min: 0,
-  	max: 20000,
-  	values: [5000,15000],
-  	range: true,
-  	stop: function(event, ui) {
-      $("input#priceMin").val($("#filter__range").slider("values",0));
-      $("input#priceMax").val($("#filter__range").slider("values",1));
-
-      $('.price-range-min.value').html($("#filter__range").slider("values",0));
-      $('.price-range-max.value').html($("#filter__range").slider("values",1));
-    },
-    slide: function(event, ui){
-      $("input#priceMin").val($("#filter__range").slider("values",0));
-      $("input#priceMax").val($("#filter__range").slider("values",1));
-
-      $('.price-range-min.value').html($("#filter__range").slider("values",0));
-      $('.price-range-max.value').html($("#filter__range").slider("values",1));
-    }
-  });
-
-  $("input#priceMin").on('change', function(){
-  	var value1=$("input#priceMin").val();
-  	var value2=$("input#priceMax").val();
-    if(parseInt(value1) > parseInt(value2)){
-  		value1 = value2;
-  		$("input#priceMin").val(value1);
-      $('.price-range-min.value').html(value1);
-  	}
-  	$("#filter__range").slider("values", 0, value1);
-    $('.price-range-min.value').html(value1);
-  });
-
-  $("input#priceMax").on('change', function(){
-  	var value1=$("input#priceMin").val();
-  	var value2=$("input#priceMax").val();
-  	if (value2 > 20000) { value2 = 20000; $("input#priceMax").val(35000)}
-  	if(parseInt(value1) > parseInt(value2)){
-  		value2 = value1;
-  		$("input#priceMax").val(value2);
-      $('.price-range-max.value').html(value2);
-  	}
-  	$("#filter__range").slider("values",1,value2);
-    $('.price-range-max.value').html(value2);
-  });
-
-  $('.ui-slider-handle:eq(0)').append('<span class="price-range-min value">' + $('#filter__range').slider('values', 0 ) + '</span>');
-  $('.ui-slider-handle:eq(1)').append('<span class="price-range-max value">' + $('#filter__range').slider('values', 1 ) + '</span>');
-});
-      function submitForm() {
-    document.getElementById("priceForm").submit();
-  }
-    </script>
-
+    <script src="{% static 'js/PriceScroll.js' %}"></script>
 {% endblock %}

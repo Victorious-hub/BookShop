@@ -25,7 +25,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'Books',
     'drf_yasg',
-    'bootstrap5',
+
+    'useraccount',
 ]
 
 PAYPAL_TEST = True
@@ -37,7 +38,7 @@ CORS_ORIGIN_WHITELIST = (
        'https://localhost:3000',
 )
 
-AUTH_USER_MODEL = 'Books.UserAccount'
+AUTH_USER_MODEL = 'useraccount.UserAccount'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -111,3 +112,10 @@ STATICFILES_DIRS = (
 )
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+#Redis configuration
+
+CELERY_BROKER_URL = 'redis://default:xWy6FlSoEfNEnofjP3lD@containers-us-west-129.railway.app:5479'
+
+CELERY_ACCEPT_CONTENT = ['json']
+
+CELERY_TASK_SERIALIZER = 'json'
