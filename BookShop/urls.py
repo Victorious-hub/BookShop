@@ -43,7 +43,7 @@ urlpatterns = [
 
     path('main/', views.main, name='main'),
 
-    path('login/', sign_in.as_view(), name='login'),
+    path('login/', useraccount.views.sign_in, name='login'),
 
     path('logout/', useraccount.views.sign_out, name='logout'),
 

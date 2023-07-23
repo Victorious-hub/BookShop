@@ -1,6 +1,7 @@
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.views import View
 from rest_framework.views import APIView
 from django.contrib import messages
 from .forms import LoginForm
@@ -31,17 +32,11 @@ def sign_out(request):
     return redirect('login')
 
 
-class sign_in(APIView):
-    def get(self, request):
-        if request.user.is_authenticated:
-            return redirect('authenticated')
-
-        form = LoginForm()
-        return render(request, 'users/login.html', {'form': form})
-
-    def post(self, request):
+def sign_in(request):
+    if request.method == 'POST':
         form = LoginForm(request.POST)
-
+        email = request.POST.get('email')
+        print(email)
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
@@ -55,18 +50,19 @@ class sign_in(APIView):
         return render(request, 'users/login.html', {'form': form})
 
 
-class sign_up(APIView):
+class sign_up(View):
     def get(self, request):
         form = RegisterForm()
         return render(request, 'users/register.html', {'form': form})
 
     def post(self, request):
         form = RegisterForm(request.POST)
+
         if form.is_valid():
             user = form.save(commit=False)
             # user.username = user.username.lower()
             user.save()
-            messages.success(request, 'You have singed up successfully.')
+            messages.success(request, 'You have signed up successfully.')
             login(request, user)
             return redirect('authenticated')
         else:

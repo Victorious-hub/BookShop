@@ -1,62 +1,35 @@
-{% extends "users/footer.html" %}
+{% extends "users/FootHeader.html" %}
 {% block content %}
     {% load static %}
-    <link rel="stylesheet" href="{% static "css/list_menu.css" %}">
-    <link rel="stylesheet" href="{% static "css/style.css" %}">
-    <link rel="stylesheet" href="{% static "css/PriceScroll.css" %}">
+
 <style>
-   .container1{
-       padding: 60px 640px;
-   }
-   img {float: left;}
+.card-title{margin-left:-150px;}
+.card-text{margin-left:-150px;}
+.cart-buy{
+    width:225px;
+    margin-left:-125px;
+}
 </style>
-<div class="side_menu">
-	<div class="burger_box">
-		<div class="menu-icon-container">
-			<a href="#" class="menu-icon js-menu_toggle closed">
-				<span class="menu-icon_box">
-					<span class="menu-icon_line menu-icon_line--1"></span>
-					<span class="menu-icon_line menu-icon_line--2"></span>
-					<span class="menu-icon_line menu-icon_line--3"></span>
-				</span>
-			</a>
-		</div>
-	</div>
-	<div class="px-5">
-        {% if user.is_authenticated %}
-		<h2 class="menu_title">{{ user.first_name }}</h2>
-        {% endif %}
-		<ul class="list_load">
-            {% if request.user.is_authenticated and not user.is_admin%}
-			<li class="list_item"><a href="{% url 'cart'%}">My Cart</a></li>
-			<li class="list_item"><a href="{% url 'edit_profile' request.user.id%}">Change Profile</a></li>
-			<li class="list_item"><a href="{% url 'logout' %}">Logout</a></li>
-            {% endif %}
-           {% if user.is_admin%}
-			<li class="list_item"><a href="{% url 'logout' %}">Logout</a></li>
-            {% endif %}
-			<li class="list_item"><a href="#">List Item 04</a></li>
-			<li class="list_item"><a href="#">List Item 05</a></li>
-			<li class="list_item"><a href="#">List Item 06</a></li>
-			<li class="list_item"><a href="#">List Item 07</a></li>
-			<li class="list_item"><a href="#">List Item 08</a></li>
-		</ul>
-		<div class="spacer_box"><p>This is a spacer box.</p></div>
-	</div>
-</div>
-       <div class = "container1">
-          {% for book in books%}
-              {% if book.book_image %}
-                <img src="{{ book.book_image.url }}" align="left" style="height:280px; width:210px"/>
-             {% endif %}
 
-		     <h1>{{ book.book_name }}</h1>
-		     <h2>{{ book.book_author}}</h2>
-		     <p>{{ book.desc }}</p>
-             <p>{{ book.genre }}</p>
-              <p>{{ book.price }}</p>
+	<div class="dummy_page">
+    <div class = "container1">
+    {% for book in books %}
+<div class="card mb-3" style="max-width: 650px; margin-left: 500px;">
+  <div class="row g-0">
+    <div class="col-md-4">
+      {% if book.book_image %}
+        <img src="{{ book.book_image.url }}" class="img-fluid rounded-start" alt="..." style="height: 290px; width: 310px"/>
+      {% endif %}
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title">{{ book.book_name }}</h5>
+        <p class="card-text">{{ book.desc }}</p>
+        <p class="card-text">{{ book.book_author }}</p>
+        <p class="card-text">{{ book.genre }}</p>
+        <p class="card-text">{{ book.price }}</p>
 
-		{% if request.user.is_authenticated and user.is_admin%}
+          {% if request.user.is_authenticated and user.is_admin%}
 		<p>
 			<a href="{% url 'book_edit' book.id %}" class="btn btn-warning">Edit</a>
             <a href="{% url 'book_delete' book.id%}" class="btn btn-danger">Delete</a>
@@ -64,18 +37,25 @@
         {% endif %}
         {% if request.user.is_authenticated and not user.is_admin%}
 		    <p>
-			<button class="btn btn-success" value="{{ book.id }}">Add to cart</button>
-            <a class="btn btn-success" href="{% url 'add_feedback' book.id%}">Add feedback</a>
-            <a class="btn btn-success" href="{% url 'feedbacks' book.id%}">feedback</a>
+			<button class="btn btn-warning cart-buy" value="{{ book.id }}">Add to cart</button>
+            <!--<a class="btn btn-success" href="{% url 'add_feedback' book.id%}">Add feedback</a>-->
+            <!--<a class="btn btn-success" href="{% url 'feedbacks' book.id%}">feedback</a>-->
             <div class="addwishlist">
-            <button class="btn btn-success" value="{{ book.id }}">Add to wishlist</button>
+            <!--<button class="btn btn-success" value="{{ book.id }}">Add to wishlist</button>-->
             </div>
             </p>
 
          {% endif %}
-              <hr>
-          {% endfor %}
-       </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+
+
+
 <section>
    <form method="POST" action="{% url 'checkers' %}">
   {% csrf_token %}
@@ -117,4 +97,6 @@
     <script src="{% static 'js/list_menu.js' %}"></script>
     <script src="{% static 'js/script.js' %}"></script>
     <script src="{% static 'js/PriceScroll.js' %}"></script>
+
+    </div>
 {% endblock %}
