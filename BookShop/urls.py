@@ -81,6 +81,8 @@ urlpatterns = [
 
     path('price_checkers', views.price_checkers, name='price_checkers'),
 
-    path('pay_paypal',views.payment,name='pay_paypal')
+    path('pay_paypal',views.payment,name='pay_paypal'),
+
+    path('password', views.change_password, name='change_password'),
 
 ]+static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)

@@ -9,6 +9,9 @@ from .forms import BookForm, FeedbackForm
 from django.contrib import messages
 from django.core.paginator import Paginator
 from .tasks import sleeptime
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+
 
 def payment(request):
     return render(request, 'Payment/PayPal.html', {})
@@ -82,18 +85,24 @@ def remove_all(request):
 
 
 def main(request):
-   # sleeptime.delay(15)
-    books = Book.objects.all()
-
-    p = Paginator(Book.objects.all(), 2)
-    page = request.GET.get('page')
-    books_page = p.get_page(page)
-    if request.user.is_authenticated and not request.user.is_admin:
-        cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
-    context = {'books': books, 'books_page': books_page, }
-    return render(request, 'users/base.html', context)
+    return render(request, 'users/profile_change.html',{})
 
 
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('change_password')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'users/base-comments.html', {
+        'form': form
+    })
 @login_required
 def authenticated(request):
     books = Book.objects.all()
@@ -101,9 +110,12 @@ def authenticated(request):
     p = Paginator(Book.objects.all(), 2)
     page = request.GET.get('page')
     books_page = p.get_page(page)
+
+    nums = "a" * books_page.paginator.num_pages
+
     if request.user.is_authenticated and not request.user.is_admin:
         cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
-    context = {'books': books, 'books_page': books_page, }
+    context = {'books': books, 'books_page': books_page,"nums":nums,}
     return render(request, 'users/authenticated.html', context)
 
 

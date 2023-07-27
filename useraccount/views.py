@@ -29,7 +29,7 @@ def edit_profile(request, id):
 def sign_out(request):
     logout(request)
     messages.success(request, f'You have been logged out.')
-    return redirect('login')
+    return redirect('register')
 
 
 def sign_in(request):
@@ -48,6 +48,7 @@ def sign_in(request):
 
         messages.error(request, f'Invalid username or password')
         return render(request, 'users/login.html', {'form': form})
+
 
 
 class sign_up(View):

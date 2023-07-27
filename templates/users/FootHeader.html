@@ -8,14 +8,9 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <style>
-html,body {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, Helvetica, Sans-serif;
-  background-color: #070617;
-}
+
 .dummy_page {
-  height: 1600px;
+  height: 1000px;
   width: 100%;
   background-color: #f0f0f0;
   text-align: center;
@@ -28,6 +23,8 @@ html,body {
   position: relative;
   height: auto;
   background-color: #070617;
+    margin-top:543px;
+
 }
 .footer .col {
   width: 190px;
@@ -169,7 +166,9 @@ html,body {
 </nav>
 
 
-{% block content %}{% endblock %}
+{% block content %}
+{% endblock %}
+
 
 <div class="footer">
   <div class="contain">
@@ -235,17 +234,6 @@ html,body {
 </div>
 
 
-{% if books_page.has_previous %}
-    <a href="?page=1">&laquo First</a>
-    <a href="?page={{ books_page.previous_page_number }}">Previous</a>
-{% endif %}
-
-Page {{ books_page.number }} or {{ books_page.paginator.num_pages }}
-
-{% if books_page.has_next %}
-    <a href="?page={{ books_page.next_page_number }}">Next</a>
-    <a href="?page={{ books_page.paginator.num_pages}}">Last &raquo</a>
-{% endif %}
 <script src="{% static 'js/script.js' %}"></script>
 <script src="{% static 'js/base.js' %}"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
