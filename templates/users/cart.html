@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{% static 'css/all.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
+
 <body>
 <div class="shoppingCart">
   <h2>My Cart</h2>
@@ -20,8 +21,9 @@
   </div>
 
   <div class="itemContainer">
-
+<div class="Remove">
     {% for item in items %}
+        {% csrf_token %}
     <div class="item">
       <div class="iteminfo">
         <div class="p_img">
@@ -30,57 +32,34 @@
         <p>{{item.book_product.book_name}}</p>
       </div>
 
-      <div class="name"><p>{{item.quantity}}</p></div>
-      <div class="name"><p>${{item.book_product.price}}</p></div>
+      <div class="name" ><p id="num_of_items">{{item.quantity}}</p></div>
+      <div class="name" ><p>${{item.book_product.price}}</p></div>
 
     </div>
-
+        <button class="btn btn-warning" value="{{ item.book_product.id }}">{{ item.book_product.id }}</button>
+        <div class="RemoveAll">
+           <button class="btn btn-warning" value="{{ item.book_product.id }}">Remove All</button>
+        </div>
     {% endfor %}
 
+
+
+
   <div class="pay-section">
-    <h3>Grand-Total: ${{cart.total_price}}</h3>
+    <h3>Grand-Total:$ </h3>
+      <h2 id="total_price" class="price"> ${{cart.total_price}}</h2>
     <button onclick = "makePayment()" >Pay</button>
   </div>
 </div>
-
+</div>
   <div class="pay-section">
   </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
    <script src="{% static 'js/script.js' %}"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://checkout.flutterwave.com/v3.js"></script>
 </div>
-<script>
-
-let cart_total = "{{cart.total_price}}"
-let cart_id = "{{cart.id}}"
-
-
-  function makePayment() {
-    FlutterwaveCheckout({
-      public_key: "FLWSECK-fabf2e19de4ac5c9ad3316abf423217f-X",
-      tx_ref: "titanic-48981487343MDI0NzMx",
-      amount: cart_total,
-      currency: "USD",
-      payment_options: "card, mobilemoneyghana, ussd",
-      redirect_url: "http://127.0.0.1:8000/confirm_payment/"+cart_id,
-      meta: {
-        consumer_id: 23,
-        consumer_mac: "92a3-912ba-1192a",
-      },
-      customer: {
-        email: "rose@unsinkableship.com",
-        phone_number: "08102909304",
-        name: "{{request.user.first_name}}",
-      },
-      customizations: {
-        title: "My Shop",
-        description: "Buy with ease",
-        logo: "https://www.logolynx.com/images/logolynx/22/2239ca38f5505fbfce7e55bbc0604386.jpeg",
-      },
-    });
-  }
-
-</script>
 
 </body>
 </html>

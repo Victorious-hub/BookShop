@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="wish">
+ {% for item in items %}
+        {% csrf_token %}
+    <div class="item">
+      <div class="iteminfo">
+        <div class="p_img">
+          <img src="{{item.book_product.book_image.url}}" alt="" />
+        </div>
+        <p>{{item.book_product.book_name}}</p>
+      </div>
+
+      <div class="name" ><p id="num_of_items">{{item.quantity}}</p></div>
+      <div class="name" ><p>${{item.book_product.price}}</p></div>
+
+    </div>
+        <button class="RemoveFromList" value="{{ item.book_product.id }}">{{ item.book_product.id }}</button>
+    {% endfor %}
+</div>
+
+</body>
+</html>

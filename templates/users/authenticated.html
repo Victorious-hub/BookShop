@@ -1,81 +1,384 @@
-{% extends "users/footer.html" %}
+{% extends "users/FootHeader.html" %}
 {% block content %}
     {% load static %}
-    <link rel="stylesheet" href="{% static "css/list_menu.css" %}">
-<div class="side_menu">
 
-	<div class="burger_box">
-		<div class="menu-icon-container">
-			<a href="#" class="menu-icon js-menu_toggle closed">
-				<span class="menu-icon_box">
-					<span class="menu-icon_line menu-icon_line--1"></span>
-					<span class="menu-icon_line menu-icon_line--2"></span>
-					<span class="menu-icon_line menu-icon_line--3"></span>
-				</span>
-			</a>
-		</div>
-	</div>
-	<div class="px-5">
-        {% if user.is_authenticated %}
-		<h2 class="menu_title">{{ user.first_name }}</h2>
+<style>
+.card-title{margin-left:-150px;}
+.card-text{margin-left:-150px;}
+.cart-buy{
+    width:225px;
+    margin-left:-125px;
+}
+@import url('https://fonts.googleapis.com/css?family=Varela+Round');
+html, body {
+    overflow-x: hidden;
+    height: 100%;
+}
+body {
+    background: #fff;
+    padding: 0;
+    margin: 0;
+    font-family: 'Varela Round', sans-serif;
+}
+.header {
+    display: block;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+    box-shadow: none;
+    background-color: #FC466B;
+    position: fixed;
+    height: 60px!important;
+    overflow: hidden;
+    z-index: 10;
+}
+.main {
+    margin: 0 auto;
+    display: block;
+    height: 100%;
+    margin-top: 60px;
+}
+.mainInner{
+    display: table;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+}
+.mainInner div{
+    display:table-cell;
+    vertical-align: middle;
+    font-size: 3em;
+    font-weight: bold;
+    letter-spacing: 1.25px;
+}
+#sidebarMenu {
+    height: 100%;
+    position: fixed;
+    left: 0;
+    width: 250px;
+    margin-top: 0;
+    transform: translateX(-250px);
+    transition: transform 250ms ease-in-out;
+    background: black;
+    z-index:1;
+}
+.sidebarMenuInner{
+    margin:0;
+    padding:0;
+    border-top: 1px solid rgba(255, 255, 255, 0.10);
+}
+.sidebarMenuInner li{
+    list-style: none;
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: bold;
+    padding: 20px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+}
+.sidebarMenuInner li span{
+    display: block;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.50);
+}
+.sidebarMenuInner li a{
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+}
+input[type="checkbox"]:checked ~ #sidebarMenu {
+    transform: translateX(0);
+}
+
+
+.sidebarIconToggle {
+    transition: all 0.3s;
+    box-sizing: border-box;
+    cursor: pointer;
+    position: absolute;
+    z-index: 99;
+    height: 100%;
+    width: 100%;
+    top: 22px;
+    left: 15px;
+    height: 22px;
+    width: 22px;
+}
+.spinner {
+    transition: all 0.3s;
+    box-sizing: border-box;
+    position: absolute;
+    height: 3px;
+    width: 100%;
+    background-color: #fff;
+}
+.horizontal {
+    transition: all 0.3s;
+    box-sizing: border-box;
+    position: relative;
+    float: left;
+    margin-top: 3px;
+}
+.diagonal.part-1 {
+    position: relative;
+    transition: all 0.3s;
+    box-sizing: border-box;
+    float: left;
+}
+.diagonal.part-2 {
+    transition: all 0.3s;
+    box-sizing: border-box;
+    position: relative;
+    float: left;
+    margin-top: 3px;
+}
+input[type=checkbox]:checked ~ .sidebarIconToggle > .horizontal {
+    transition: all 0.3s;
+    box-sizing: border-box;
+    opacity: 0;
+}
+input[type=checkbox]:checked ~ .sidebarIconToggle > .diagonal.part-1 {
+    transition: all 0.3s;
+    box-sizing: border-box;
+    transform: rotate(135deg);
+    margin-top: 8px;
+}
+input[type=checkbox]:checked ~ .sidebarIconToggle > .diagonal.part-2 {
+    transition: all 0.3s;
+    box-sizing: border-box;
+    transform: rotate(-135deg);
+    margin-top: -9px;
+}
+.form-control{width:100px;}
+.filter{
+position: sticky;
+    width:500px;
+    margin-top:-718px;
+}
+.lox{display:none;}
+.price{
+    margin-left:-400px;
+}
+.shift{
+    margin-left:100px;
+    margin-top:-37px;
+}
+.form-check{
+    position:relative;
+}
+
+.ch_genres{
+    margin-left:-410px;
+    margin-top:-10px;
+}
+.fan_left{
+    margin-left:-15px;
+}
+.love_left{
+    margin-left:-38px;
+}  .hist_left{margin-left:-19px;
+}  .det_left{margin-left:-6px;}
+</style>
+
+
+
+
+  <input type="checkbox"  class="lox" id="openSidebarMenu">
+  <label for="openSidebarMenu" class="sidebarIconToggle">
+    <div class="spinner diagonal part-1"></div>
+    <div class="spinner horizontal"></div>
+    <div class="spinner diagonal part-2"></div>
+  </label>
+  <div id="sidebarMenu">
+    <ul class="sidebarMenuInner">
+      <li>Jelena Jovanovic <span>Web Developer</span></li>
+      <li><a href="https://vanila.io" target="_blank">Company</a></li>
+      <li><a href="https://instagram.com/plavookac" target="_blank">Instagram</a></li>
+      <li><a href="https://twitter.com/plavookac" target="_blank">Twitter</a></li>
+      <li><a href="https://www.youtube.com/channel/UCDfZM0IK6RBgud8HYGFXAJg" target="_blank">YouTube</a></li>
+      <li><a href="https://www.linkedin.com/in/plavookac/" target="_blank">Linkedin</a></li>
+    </ul>
+  </div>
+
+
+
+	<div class="dummy_page">
+
+    <div class = "container1">
+    {% for book in books_page %}
+<div class="card mb-3" style="max-width: 650px; margin-left: 500px;">
+  <div class="row g-0">
+    <div class="col-md-4">
+      {% if book.book_image %}
+        <img src="{{ book.book_image.url }}" class="img-fluid rounded-start" alt="..." style="height: 290px; width: 310px"/>
+      {% endif %}
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title">{{ book.book_name }}</h5>
+        <p class="card-text">{{ book.desc }}</p>
+        <p class="card-text">{{ book.book_author }}</p>
+        <p class="card-text">{{ book.genre }}</p>
+        <p class="card-text">{{ book.price }}</p>
+
+          {% if request.user.is_authenticated and user.is_admin%}
+		<p>
+			<a href="{% url 'book_edit' book.id %}" class="btn btn-warning">Edit</a>
+            <a href="{% url 'book_delete' book.id%}" class="btn btn-danger">Delete</a>
+            </p>
         {% endif %}
-		<ul class="list_load">
-            {% if request.user.is_authenticated and not user.is_admin%}
-			<li class="list_item"><a href="{% url 'cart'%}">My Cart</a></li>
-			<li class="list_item"><a href="{% url 'edit_profile' request.user.id%}">Change Profile</a></li>
-			<li class="list_item"><a href="{% url 'logout' %}">Logout</a></li>
-            {% endif %}
-           {% if user.is_admin%}
-			<li class="list_item"><a href="{% url 'logout' %}">Logout</a></li>
-            {% endif %}
-			<li class="list_item"><a href="#">List Item 04</a></li>
-			<li class="list_item"><a href="#">List Item 05</a></li>
-			<li class="list_item"><a href="#">List Item 06</a></li>
-			<li class="list_item"><a href="#">List Item 07</a></li>
-			<li class="list_item"><a href="#">List Item 08</a></li>
-		</ul>
-		<div class="spacer_box"><p>This is a spacer box.</p></div>
-	</div>
+        {% if request.user.is_authenticated and not user.is_admin%}
+		    <p>
+			<button class="btn btn-warning cart-buy" value="{{ book.id }}">Add to cart</button>
+            <!--<a class="btn btn-success" href="{% url 'add_feedback' book.id%}">Add feedback</a>-->
+            <!--<a class="btn btn-success" href="{% url 'feedbacks' book.id%}">feedback</a>-->
+            <div class="addwishlist">
+            <!--<button class="btn btn-success" value="{{ book.id }}">Add to wishlist</button>-->
+            </div>
+            </p>
+
+         {% endif %}
+
+      </div>
+    </div>
+  </div>
 </div>
+    {% endfor %}
+<br></br>
+<nav aria-label="Page navigation example">
+  <ul class="pagination">
+    {% if  books_page.has_previous%}
+        <li class="page-item"><a class="page-link"  href="?page=1">&laquo First</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ books_page.previous_page_number }}">Previous</a></li>
+    {% endif %}
+<hr>
+<!--<li class="page-item disabled"><a href="" class="page-link">Page {{ books_page.number }} or {{ books_page.paginator.num_pages }}</a></li>-->
+
+{% for i in  nums  %}
+<li class="page-item">
+    <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+</li>
+
+{% endfor %}
+
+{% if books_page.has_next %}
+    <li class="page-item"><a class="page-link" href="?page={{ books_page.next_page_number }}">Next</a></li>
+    <li class="page-item"><a class="page-link" href="?page={{ books_page.paginator.num_pages}}">Last &raquo</a></li>
+{% endif %}
+  </ul>
+</nav>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/list_menu.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'js/PriceScroll.js' %}"></script>
+
+<section>
+<div class="filter">
+    <section>
+<form id="priceForm" method="POST" action="{% url 'price_checkers' %}">
+  {% csrf_token %}
+<div class="filter__block filter__block--slider">
+
+    <div class="filter__slider">
+        <div id="filter__range"></div>
+    </div>
+    <div class="filter__cost table">
+
+        <div class="table-cell down">
+            <h4 class="price">Цена</h4>
+            <input name="priceMin" type="text" onkeypress='validate(event)' value="0" class="form-control">
+        </div>
+
+        <div class="table-cell">
+            <input name="priceMax" type="text" onkeypress='validate(event)' value="0" class="form-control shift">
+        </div>
+    </div>
+<button class="btn btn-outline-secondary size1" onclick="submitForm()">Подтвердить</button>
+</div>
+</form>
+</section>
+
+ <div>
+   <form method="POST" action="{% url 'checkers' %}">
+  {% csrf_token %}
+<div class="ch_genres">
+
+<div class="form-check">
+    <input name="searched" type="checkbox" value="Adventure" id="flexCheckChecked">
+    <label class="form-check-label" for="flexCheckChecked">
+        Adventure
+    </label>
+</div>
+
+
+<div class="form-check love_left">
+    <input name="searched" type="checkbox" value="Love" id="flexCheckChecked">
+    <label class="form-check-label" for="flexCheckChecked">
+        Love
+    </label>
+
+</div>
+
+
+
+<div class="form-check fan_left">
+    <input name="searched" type="checkbox" value="Fantasy" id="flexCheckChecked">
+    <label class="form-check-label" for="flexCheckChecked">
+        Fantasy
+    </label>
+
+</div>
+
+<div class="form-check hist_left">
+    <input name="searched" type="checkbox" value="Historic" id="flexCheckChecked">
+    <label class="form-check-label" for="flexCheckChecked">
+        Historic
+    </label>
+
+<div class="form-check det_left">
+    <input name="searched" type="checkbox" value="Detective" id="flexCheckChecked">
+    <label class="form-check-label" for="flexCheckChecked">
+        Detective
+    </label>
+
+</div>
+
+</div>
+       </br>
+       <div>
+    <button class="btn btn-outline-secondary size1" type="submit">Search</button>;
+
+       </div>
+
+  </div>
+</form>
+<br/>
+    </div>
+
+
+</div>
     <script>
-    $(document).ready(function(){
-    // Requires jQuery
+        function validate(evt) {
+  var theEvent = evt || window.event;
 
-$(document).on('click','.js-menu_toggle.closed',function(e){
-	e.preventDefault(); $('.list_load, .list_item').stop();
-	$(this).removeClass('closed').addClass('opened');
-
-	$('.side_menu').css({ 'left':'0px' });
-
-	var count = $('.list_item').length;
-	$('.list_load').slideDown( (count*.6)*100 );
-	$('.list_item').each(function(i){
-		var thisLI = $(this);
-		timeOut = 100*i;
-		setTimeout(function(){
-			thisLI.css({
-				'opacity':'1',
-				'margin-left':'0'
-			});
-		},100*i);
-	});
-});
-
-$(document).on('click','.js-menu_toggle.opened',function(e){
-	e.preventDefault(); $('.list_load, .list_item').stop();
-	$(this).removeClass('opened').addClass('closed');
-
-	$('.side_menu').css({ 'left':'-250px' });
-
-	var count = $('.list_item').length;
-	$('.list_item').css({
-		'opacity':'0',
-		'margin-left':'-20px'
-	});
-	$('.list_load').slideUp(300);
-});
-});
+  // Handle paste
+  if (theEvent.type === 'paste') {
+      key = event.clipboardData.getData('text/plain');
+  } else {
+  // Handle key press
+      var key = theEvent.keyCode || theEvent.which;
+      key = String.fromCharCode(key);
+  }
+  var regex = /[0-9]|\./;
+  if( !regex.test(key) ) {
+    theEvent.returnValue = false;
+    if(theEvent.preventDefault) theEvent.preventDefault();
+  }
+}
     </script>
+
 {% endblock %}

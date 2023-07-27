@@ -1,260 +1,177 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    {% load bootstrap5 %}
-    {% bootstrap_css %}
-    {% bootstrap_javascript %}
-    <link rel="stylesheet" href="{% static "css/footer.css" %}">
-    <link rel="stylesheet" href="{% static "css/slidebar.css" %}">
-</head>
+{% extends "users/FootHeader.html" %}
+{% block content %}
+    {% load static %}
+    <div class="dummy_page">
+<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img class="d-block w-100" src="..." alt="First slide">
+    </div>
+    <div class="carousel-item">
+      <img class="d-block w-100" src="..." alt="Second slide">
+    </div>
+    <div class="carousel-item">
+      <img class="d-block w-100" src="..." alt="Third slide">
+    </div>
+  </div>
+  <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
 
-<body>
-<section><div class="card">
-  <div class="card-header">
-      <h2>SmartBook</h2>
-      {% if request.user.is_authenticated and user.is_admin%}
-      <a href="{% url 'add_book' %}" class = "add_book_ref">Add book</a>
-      {% endif %}
-  {% if request.user.is_authenticated and not user.is_admin%}
-      <a href="{% url 'edit_profile' request.user.id%}" class = "add_book_ref">Contacts</a>
-      <a href="{% url 'cart'%}" class = "cart_ref">About us</a>
-      {% endif %}
-  {% if request.user.is_authenticated or user.is_admin%}
-      <a href="{% url 'logout' %}" class = "logout_ref">Logout</a>
-  {% endif %}
-  {% if not request.user.is_authenticated and not user.is_admin%}
-      <a href="{% url 'login' %}" class = "login_ref">Login</a>
-       <a href="{% url 'register' %}" class = "register_ref">Register</a>
-  {% endif %}
-       <form class="d-flex" method="POST" action="{% url 'book_search' %}">
-      {% csrf_token %}
-        <input class="form-control me-2 size" type="search" placeholder="Book Search" aria-label="Search" name="searched">
-        <button class="btn btn-outline-secondary size1" type="submit">Search</button>
-    </form>
+
+
+<br></br>
+
+
+
+
+
+
+
+     <div class="card-group">
+  <div class="card">
+    <img src="..." class="card-img-top" alt="...">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+    </div>
+  </div>
+  <div class="card">
+    <img src="..." class="card-img-top" alt="...">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
+      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+    </div>
+  </div>
+  <div class="card">
+    <img src="..." class="card-img-top" alt="...">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
+      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+    </div>
+  </div>
+  <div class="card">
+    <img src="..." class="card-img-top" alt="...">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+    </div>
+  </div>
+  <div class="card">
+    <img src="..." class="card-img-top" alt="...">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
+      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+    </div>
   </div>
 </div>
 
-</section>
-<br>
-<div class="productContainer">
-	{% for book in books_page %}
-
-        {% if book.book_image %}
-
-        <img src="{{ book.book_image.url }}" align="left" style="height:280px; width:210px"/>
-
-        {% endif %}
-
-		<h1 class="card-title">{{ book.book_name }}</h1>
-		<h2>{{ book.book_author}}</h2>
-		<p class="card-text">{{ book.desc }}</p>
-        <p class="card-text">{{ book.genre }}</p>
-
-		{% if request.user.is_authenticated and user.is_admin%}
-		<p>
-			<a href="{% url 'book_edit' book.id %}" class="btn btn-warning">Edit</a>
-            <a href="{% url 'book_delete' book.id%}" class="btn btn-danger">Delete</a>
-            </p>
-         {% endif %}
-        {% if request.user.is_authenticated and not user.is_admin%}
-
-		<p>
-			<button class="btn btn-success" value="{{ book.id }}">Add to cart</button>
-            </p>
-            <a href="{% url 'cart' %}" style="color:white; text-decoration:none">
-                 <div class="cart-container">
-                    <div class="cartitems"><p id="num_of_items">{{cart.num_of_items}}</p></div>
-                    <i class="fa-solid fa-cart-shopping"></i>
-                </div>
-            </a>
-         {% endif %}
-	{% endfor %}
+<div class="left">
+  <div class="overlay"></div>
+  Content
 </div>
-</header>
+<div class="left-down">
+  <div class="overlay"></div>
+  Content
+</div>
+<div class="right">
+  <div class="overlay_right"></div>
+  Content
+</div>
+        <style>
+.card {
+  height: 400px; /* Увеличение высоты карты */
+  margin-right: 10px; /* Расстояние между картами по горизонтали */
+}
+.carousel{
+    height:300px;
+}
+.left {
+  position: relative;
+  height: 368px;
+  width: 700px;
+  background: yellow;
+  overflow: hidden;
+}
+
+.left-down {
+  position: relative;
+  height: 368px;
+  width: 700px;
+  background: orange;
+  overflow: hidden;
+}
+
+.right {
+  position: relative;
+  height: 735px;
+  width: 819px;
+  background: green;
+  margin-top: -735px;
+  margin-left: 700px;
+  overflow: hidden;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  transition: left 0.5s ease;
+}
+.right {
+  position: relative;
+  height: 735px;
+  width: 681px;
+  background: green;
+  margin-top: -735px;
+  margin-left: 700px;
+  overflow: hidden;
+}
+
+.overlay_right {
+  position: absolute;
+  top: 0;
+  right: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  transition: right 0.5s ease;
+}
+
+.right:hover .overlay_right {
+  right: 0;
+}
+.left:hover .overlay {
+  left: 0;
+}
+
+.left-down:hover .overlay {
+  left: 0;
+}
 
 
-<section class="cd-slider">
-  <ul>
-    <li data-color="#FF384B">
-      <div class="content" style="background-image:url(https://i.imgur.com/i7VlkGV.png?2)">
-        <blockquote>
-          <p>I got my red dress on tonight dancing in the dark in the pale moonlight.</p>
-          <span>Summertime Sadness - Lana Del Rey</span>
-        </blockquote>
-      </div>
-    </li>
-    <li data-color="#FF9C00">
-      <div class="content" style="background-image:url(https://i.imgur.com/i7VlkGV.png?2)">
-        <blockquote>
-          <p>Will you still love me When I'm no longer young and beautiful Will you still love me</p>
-          <span>Young And Beautiful - Lana Del Rey</span>
-        </blockquote>
-      </div>
-    </li>
-    <li data-color="#002AFF">
-      <div class="content" style="background-image:url(https://i.imgur.com/i7VlkGV.png?2)">
-        <blockquote>
-          <p>Blue jeans White shirt Walked into the room You know you made my eyes burn</p>
-          <span>Blue Jeans - Lana Del Rey</span>
-        </blockquote>
-      </div>
-    </li>
-  </ul>
-  <nav>
-    <div><a class="prev" href="#"></a></div>
-    <div><a class="next" href="#"></a></div>
-  </nav>
-</section>
-
-<br/>
-
-<hr>
-{% if books_page.has_previous %}
-    <a href="?page=1">&laquo First</a>
-    <a href="?page={{ books_page.previous_page_number }}">Previous</a>
-{% endif %}
-
-Page {{ books_page.number }} or {{ books_page.paginator.num_pages }}
-
-{% if books_page.has_next %}
-    <a href="?page={{ books_page.next_page_number }}">Next</a>
-    <a href="?page={{ books_page.paginator.num_pages}}">Last &raquo</a>
-{% endif %}
-<script src="{% static 'js/script.js' %}"></script>
-</body>
-<script>
-    (function() {
-
-  var autoUpdate = false,
-      timeTrans = 4000;
-
-	var cdSlider = document.querySelector('.cd-slider'),
-		item = cdSlider.querySelectorAll("li"),
-		nav = cdSlider.querySelector("nav");
-
-	item[0].className = "current_slide";
-
-	for (var i = 0, len = item.length; i < len; i++) {
-		var color = item[i].getAttribute("data-color");
-		item[i].style.backgroundColor=color;
-	}
-
-	// Detect IE
-	// hide ripple effect on IE9
-	var ua = window.navigator.userAgent;
-		var msie = ua.indexOf("MSIE");
-		if ( msie > 0 ) {
-			var version = parseInt(ua.substring(msie+ 5, ua.indexOf(".", msie)));
-			if (version === 9) { cdSlider.className = "cd-slider ie9";}
-	}
-
-	if (item.length <= 1) {
-		nav.style.display = "none";
-	}
-
-	function prevSlide() {
-		var currentSlide = cdSlider.querySelector("li.current_slide"),
-			prevElement = currentSlide.previousElementSibling,
-			prevSlide = ( prevElement !== null) ? prevElement : item[item.length-1],
-			prevColor = prevSlide.getAttribute("data-color"),
-			el = document.createElement('span');
-
-		currentSlide.className = "";
-		prevSlide.className = "current_slide";
-
-		nav.children[0].appendChild(el);
-
-		var size = ( cdSlider.clientWidth >= cdSlider.clientHeight ) ? cdSlider.clientWidth*2 : cdSlider.clientHeight*2,
-		    ripple = nav.children[0].querySelector("span");
-
-		ripple.style.height = size + 'px';
-		ripple.style.width = size + 'px';
-		ripple.style.backgroundColor = prevColor;
-
-		ripple.addEventListener("webkitTransitionEnd", function() {
-			if (this.parentNode) {
-				this.parentNode.removeChild(this);
-			}
-		});
-
-		ripple.addEventListener("transitionend", function() {
-			if (this.parentNode) {
-				this.parentNode.removeChild(this);
-			}
-		});
-
-	}
-
-	function nextSlide() {
-		var currentSlide = cdSlider.querySelector("li.current_slide"),
-			nextElement = currentSlide.nextElementSibling,
-			nextSlide = ( nextElement !== null ) ? nextElement : item[0],
-			nextColor = nextSlide.getAttribute("data-color"),
-			el = document.createElement('span');
-
-		currentSlide.className = "";
-		nextSlide.className = "current_slide";
-
-		nav.children[1].appendChild(el);
-
-		var size = ( cdSlider.clientWidth >= cdSlider.clientHeight ) ? cdSlider.clientWidth*2 : cdSlider.clientHeight*2,
-			  ripple = nav.children[1].querySelector("span");
-
-		ripple.style.height = size + 'px';
-		ripple.style.width = size + 'px';
-		ripple.style.backgroundColor = nextColor;
-
-		ripple.addEventListener("webkitTransitionEnd", function() {
-			if (this.parentNode) {
-				this.parentNode.removeChild(this);
-			}
-		});
-
-		ripple.addEventListener("transitionend", function() {
-			if (this.parentNode) {
-				this.parentNode.removeChild(this);
-			}
-		});
-
-	}
-
-	updateNavColor();
-
-	function updateNavColor () {
-		var currentSlide = cdSlider.querySelector("li.current_slide");
-
-		var nextColor = ( currentSlide.nextElementSibling !== null ) ? currentSlide.nextElementSibling.getAttribute("data-color") : item[0].getAttribute("data-color");
-		var	prevColor = ( currentSlide.previousElementSibling !== null ) ? currentSlide.previousElementSibling.getAttribute("data-color") : item[item.length-1].getAttribute("data-color");
-
-		if (item.length > 2) {
-			nav.querySelector(".prev").style.backgroundColor = prevColor;
-			nav.querySelector(".next").style.backgroundColor = nextColor;
-		}
-	}
-
-	nav.querySelector(".next").addEventListener('click', function(event) {
-		event.preventDefault();
-		nextSlide();
-		updateNavColor();
-	});
-
-	nav.querySelector(".prev").addEventListener("click", function(event) {
-		event.preventDefault();
-		prevSlide();
-		updateNavColor();
-	});
-
-  //autoUpdate
-  setInterval(function() {
-    if (autoUpdate) {
-      nextSlide();
-      updateNavColor();
-    };
-	},timeTrans);
-
-})();
-</script>
-</html>
+@media (max-width: 768px) {
+  .left,
+  .left-down,
+  .right {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+</style>
+    </div>
+{% endblock %}

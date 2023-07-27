@@ -22,8 +22,9 @@ a {
 .cd-slider {
 	position: relative;
 	width: 100%;
-	height: 60vh;
+	height: 65vh;
 	overflow: hidden;
+	top:0;
 }
 .cd-slider.ie9 nav div span {
 	display: none;

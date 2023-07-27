@@ -1,0 +1,130 @@
+
+
+   .filter__row.unactive {
+      cursor: default; }
+    .filter__row--nosup .sup {
+      opacity: 0; }
+    .filter__row--color .sup {
+      border: 1px solid #f0f0f0;
+      height: 14px !important;
+      width: 14px !important;
+      border-radius: 2px;
+      overflow: hidden;
+      right: 21px; }
+  .filter__body {
+    padding: 0;
+    background: #ffffff; }
+    .filter__body button + button {
+      margin-top: 15px; }
+  .filter__button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    position: relative;
+    color: #535353;
+    background: #f9fafa;
+    text-transform: uppercase;
+    height: 40px;
+    line-height: 38px;
+    border: 0;
+    padding-left: 15px;
+    font-family: "Exo 2 Condensed", sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    margin: 0; }
+    .filter__button i {
+      position: absolute;
+      right: 10px;
+      font-size: 0.875rem;
+      top: 50%;
+      transform: translateY(-50%) rotate(180deg);
+      transform-origin: 50% 50%;
+      transition: transform 0.35s; }
+  .filter.is-active .filter__button i {
+    transform: translateY(-50%) rotate(0deg); }
+  .filter__cost {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #535353;
+    font-family: "Exo 2 Condensed", sans-serif;
+    text-transform: uppercase; }
+    .filter__cost .table-cell {
+      vertical-align: middle; }
+      .filter__cost .table-cell + .table-cell {
+        padding-left: 2px; }
+    .filter__cost input {
+      width: 44px;
+      background: #f0f6f9;
+      text-align: center;
+      font-weight: 600;
+      color: #535353;
+      padding: 0;
+      font-family: "Exo 2 Condensed", sans-serif;
+      font-size: 0.75rem;
+      height: 30px;
+      line-height: 28px; }
+  .filter__slider {
+    padding-bottom: 35px;
+    padding-top: 10px; }
+  .filter__more {
+    width: 100%;
+    text-align: center;
+    border-top: 1px solid #eaeaea;
+    text-transform: none;
+    font-weight: 400;
+    margin-top: -20px;
+    margin-bottom: 25px; }
+    .filter__more a {
+      text-decoration: none; }
+  .filter__category {
+    margin-bottom: 25px; }
+
+.ui-widget.ui-widget-content {
+  border: 0;
+  height: 3px;
+  border-radius: 0;
+  background: #e6e6e6; }
+
+.ui-slider-horizontal .ui-slider-range {
+  background: #c6bd83; }
+
+.ui-slider .ui-slider-handle {
+  width: 0;
+  height: 0;
+  border: 0;
+  background: none;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 10px solid #c6bd83;
+  top: -8px;
+  cursor: pointer;
+  z-index: 10; }
+  .ui-slider .ui-slider-handle:focus {
+    outline: none; }
+  .ui-slider .ui-slider-handle + .ui-slider-handle {
+    border-left: 0;
+    border-right: 10px solid #c6bd83; }
+
+.price-range-min, .price-range-max {
+  font-size: 0.625rem;
+  color: #a9a9a9;
+  position: absolute;
+  left: -11px;
+  top: 9px;
+  font-family: "Exo 2 Condensed", sans-serif;
+  width: 30px;
+  z-index: 10;
+  background-color: #ffffff;
+  display: block; }
+
+.price-range-max {
+  left: -20px;
+  text-align: right; }
+
+.range__zero {
+  font-size: 0.625rem;
+  color: #a9a9a9;
+  position: absolute;
+  margin-top: 9px;
+  z-index: 5; }

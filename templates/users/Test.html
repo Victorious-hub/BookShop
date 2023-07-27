@@ -1,0 +1,206 @@
+!DOCTYPE html>
+html lang="en">
+head>
+    meta charset="UTF-8">
+    title>Title/title>
+/head>
+<body>
+<div class="container">
+<section><div class="card">
+  <div class="card-header">
+      <h2>SmartBook</h2>
+      {% if request.user.is_authenticated and user.is_admin%}
+      <a href="{% url 'add_book' %}" class = "add_book_ref">Add book</a>
+      {% endif %}
+  {% if request.user.is_authenticated and not user.is_admin%}
+      <a href="{% url 'edit_profile' request.user.id%}" class = "add_book_ref">Contacts</a>
+      <a href="{% url 'cart'%}" class = "cart_ref">About us</a>
+      {% endif %}
+  {% if request.user.is_authenticated or user.is_admin%}
+      <a href="{% url 'logout' %}" class = "logout_ref">Logout</a>
+  {% endif %}
+  {% if not request.user.is_authenticated and not user.is_admin%}
+      <a href="{% url 'login' %}" class = "login_ref">Login</a>
+       <a href="{% url 'register' %}" class = "register_ref">Register</a>
+  {% endif %}
+       <form class="d-flex" method="POST" action="{% url 'book_search' %}">
+      {% csrf_token %}
+        <input class="form-control me-2 size" type="search" placeholder="Book Search" aria-label="Search" name="searched">
+        <button class="btn btn-outline-secondary size1" type="submit">Search</button>
+    </form>
+  </div>
+</div>
+
+</section>
+<br>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<style>
+.form-control{height:30px;}
+.alert{height:30px;}
+.btn{margin-left:-390px;}
+.text{margin-left:200px;margin-top:-40px;}
+</style>
+<body>
+<section class="vh-100 bg-image"
+  style="background-image: url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp');width:100%;">
+  <div class="mask d-flex align-items-center h-100 gradient-custom-3">
+    <div class="container h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+          <div class="card" style="border-radius: 15px;">
+            <div class="card-body p-5">
+              <h2 class="text-uppercase text-center mb-5">Create your profile</h2>
+
+             <form method="POST" novalidate>
+
+                <div class="form-outline mb-4">
+
+	               {% csrf_token %}
+	               <h3>Register</h3>
+
+	               {% for field in form %}
+	                <p>
+	               	{% if field.errors %}
+		            <ul class="alert alert-danger my-3 p-1 left" role="alert">
+                        {% for error in field.errors %}
+			            <li class="error">{{ error }}</li>
+			           {% endfor %}
+		            </ul>
+	              	{% endif %}
+	 	            {{ field.label_tag }} {{ field }}
+	             </p>
+                   {% endfor %}
+                 <div class="d-flex justify-content-center">
+
+	             <input  class="btn btn-success btn-block btn-lg gradient-custom-4 text-body" type="submit" value="Submit" />
+
+                 </div>
+                  <p class="text">Have an account? <a href="{% url 'login' %}"
+                    class="fw-bold text-body"><u>Sign in</u></a></p>
+                </div>
+
+              </form>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</form>
+</form>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+</head>
+<style>
+    .card{
+        background-color:white ;
+        color:white;
+    }
+    .card-header{height:60px;
+        margin-left:950px;
+        color:white;
+    }
+    a{text-decoration:none;}
+</style>
+<body>
+<section>
+    <div class="card">
+ <h2>SmartBook</h2>
+    </div>
+</section>
+<br>
+
+	{% for book in books %}
+<div class="productContainer">
+
+
+        {% if book.book_image %}
+
+<h2>{{ book.book_author}}</h2>
+            </p>
+         {% endif %}
+        {% if request.user.is_authenticated and not user.is_admin%}
+
+		<p>
+			<a href="{% url 'book_edit' book.id %}" class="btn btn-success">В коризну</a>
+			<button class="btn btn-success" value="{{ book.id }}">В коризну</button>
+            </p>
+            <a href="{% url 'cart' %}" style="color:white; text-decoration:none">
+                 <div class="cart-container">
+                    <div class="cartitems"><p id="num_of_items">{{cart.num_of_items}}</p></div>
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+            </a>
+         {% endif %}
+	{% endfor %}
+</div>
+</header>
+<br/>
+ <!--{{ books_page }}<br/>
+Has previous: {{ books_page.has_previous }}
+<br/>
+Has next: {{ books_page.has_next }}
+<br/>
+Current page: {{ books_page.number }}
+<br/>
+Page numbers: {{ books_page.paginator.num_pages }}
+<br/>-->
+<hr>
+{% if books_page.has_previous %}
+    <a href="?page=1">&laquo Начальная</a>
+    <a href="?page={{ books_page.previous_page_number }}">Предыдущая</a>
+{% endif %}
+
+Page {{ books_page.number }} or {{ books_page.paginator.num_pages }}
+
+
+
+</header>
+{% if books_page.has_next %}
+    <a href="?page={{ books_page.next_page_number }}">Следующая</a>
+    <a href="?page={{ books_page.paginator.num_pages}}">Последняя &raquo</a>
+{% endif %}
+<script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

@@ -1,4 +1,6 @@
-
+.container{
+	padding:120px 640px;
+}
 @import url(https://fonts.googleapis.com/css?family=Raleway:300,700);
 h1.page_title{color:white;}
 h4.what_to_do{color:white;}
