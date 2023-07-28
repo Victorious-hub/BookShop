@@ -59,3 +59,12 @@ class SimpleUser(UserAccount):
 
     def __str__(self):
         return 'Пользователь {}'.format(self.first_name)
+
+
+class HyperLinks(models.Model):
+    user_linkedin = models.URLField(max_length=200)
+    user_github = models.URLField(max_length=200)
+    user = models.ForeignKey(SimpleUser, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.user)

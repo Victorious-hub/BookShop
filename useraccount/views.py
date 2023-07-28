@@ -15,7 +15,7 @@ def edit_profile(request, id):
 
     if request.method == 'GET':
         context = {'form': EditForm(instance=profile), 'id': id}
-        return render(request, 'users/edit_profile.html', context)
+        return render(request, 'users/profile_change.html', context)
 
     elif request.method == 'POST':
         form = EditForm(request.POST or None, instance=profile)
@@ -23,7 +23,7 @@ def edit_profile(request, id):
             form.save()
             return redirect('main')
         else:
-            return render(request, 'users/edit_profile.html', {'form': form})
+            return render(request, 'users/profile_change.html', {'form': form})
 
 
 def sign_out(request):

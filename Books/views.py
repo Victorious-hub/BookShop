@@ -4,6 +4,9 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from rest_framework.permissions import IsAdminUser
 from django.db.models import Q
+
+from useraccount.forms import HyperLinkkForm
+from useraccount.models import SimpleUser
 from .models import Book, CartItem, Cart, Feedback, WishList, WisthlistItem
 from .forms import BookForm, FeedbackForm
 from django.contrib import messages
@@ -15,6 +18,8 @@ from django.contrib.auth.forms import PasswordChangeForm
 
 def payment(request):
     return render(request, 'Payment/PayPal.html', {})
+
+
 def cart(request):
     cart = None
     cartitems = []
@@ -85,24 +90,28 @@ def remove_all(request):
 
 
 def main(request):
-    return render(request, 'users/profile_change.html',{})
+    return render(request, 'users/profile_change.html', {})
 
 
-def change_password(request):
+@login_required
+def change_password(request, id):
+    profile = SimpleUser.objects.get(id=id)
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)  # Important!
             messages.success(request, 'Your password was successfully updated!')
-            return redirect('change_password')
+            return redirect('register')
         else:
             messages.error(request, 'Please correct the error below.')
     else:
         form = PasswordChangeForm(request.user)
-    return render(request, 'users/base-comments.html', {
+    return render(request, 'users/profile_change.html', {
         'form': form
     })
+
+
 @login_required
 def authenticated(request):
     books = Book.objects.all()
@@ -115,7 +124,7 @@ def authenticated(request):
 
     if request.user.is_authenticated and not request.user.is_admin:
         cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
-    context = {'books': books, 'books_page': books_page,"nums":nums,}
+    context = {'books': books, 'books_page': books_page, "nums": nums, }
     return render(request, 'users/authenticated.html', context)
 
 
@@ -220,6 +229,32 @@ def add_feedback(request, id):
             messages.error(request, 'Please correct the following errors:')
 
             return render(request, 'Feedback/add_feedback.html', {'form': form})
+
+
+@login_required
+def add_hyperlinks(request, id):
+    profile = SimpleUser.objects.get(id=id)
+    if request.method == 'GET':
+        context = {'form': HyperLinkkForm(instance=profile), 'id': id}
+        return render(request, 'users/profile_change.html', context)
+
+    elif request.method == 'POST':
+        form = HyperLinkkForm(request.POST, request.FILES)
+        if form.is_valid():
+
+            hyperlinks = form.save(commit=False)
+
+            hyperlinks.user = request.user.simpleuser
+
+            hyperlinks.save()
+
+            return redirect('authenticated')
+
+        else:
+
+            messages.error(request, 'Please correct the following errors:')
+
+            return render(request, 'users/profile_change.html', {'form': form})
 
 
 @login_required

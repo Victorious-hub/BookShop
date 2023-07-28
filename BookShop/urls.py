@@ -45,6 +45,8 @@ urlpatterns = [
 
     path('login/', useraccount.views.sign_in, name='login'),
 
+    path('edit_profile/<int:id>', useraccount.views.edit_profile, name='edit_profile'),
+
     path('logout/', useraccount.views.sign_out, name='logout'),
 
     path('add_book/', views.add_book, name='add_book'),
@@ -83,6 +85,8 @@ urlpatterns = [
 
     path('pay_paypal',views.payment,name='pay_paypal'),
 
-    path('password', views.change_password, name='change_password'),
+    path('change_password/<int:id>', views.change_password, name='change_password'),
+
+    path('add_hyperlinks/<int:id>',views.add_hyperlinks, name='add_hyperlinks')
 
 ]+static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)
