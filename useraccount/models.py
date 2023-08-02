@@ -39,7 +39,8 @@ class UserAccount(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-
+    user_linkedin = models.URLField(default="",max_length=200)
+    user_github = models.URLField(default="",max_length=200)
     USERNAME_FIELD = "email"
 
     objects = UserAccountManager()

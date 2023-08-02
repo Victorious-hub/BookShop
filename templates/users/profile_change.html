@@ -13,12 +13,13 @@
       <!-- Breadcrumb -->
       <nav aria-label="breadcrumb" class="main-breadcrumb">
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'main'%}">Home</a></li>
           <li class="breadcrumb-item"><a href="#">User</a></li>
           <li class="breadcrumb-item active" aria-current="page">Profile Settings</li>
         </ol>
       </nav>
       <!-- /Breadcrumb -->
+    {% if user.is_authenticated%}
 
       <div class="row gutters-sm">
         <div class="col-md-4 d-none d-md-block">
@@ -29,7 +30,7 @@
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user mr-2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>Profile Information
                 </a>
                 <a href="#account" data-toggle="tab" class="nav-item nav-link has-icon nav-link-faded">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings mr-2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>Account Settings
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings mr-2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>Social Links
                 </a>
                 <a href="#security" data-toggle="tab" class="nav-item nav-link has-icon nav-link-faded">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shield mr-2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>Security
@@ -39,6 +40,7 @@
             </div>
           </div>
         </div>
+
         <div class="col-md-8">
           <div class="card">
             <div class="card-header border-bottom mb-3 d-flex d-md-none">
@@ -58,7 +60,7 @@
               <div class="tab-pane active" id="profile">
                 <h6>YOUR PROFILE INFORMATION</h6>
                 <hr>
-                  {% if user.is_authenticated%}
+
                 <form method="POST" action="{% url 'edit_profile' user.id%}">
                         {% csrf_token %}
                   <div class="form-group">
@@ -82,15 +84,17 @@
                 </form>
               </div>
               <div class="tab-pane" id="account">
-                <h6>ACCOUNT SETTINGS</h6>
+                <h6>SOCIAL LINKS</h6>
                 <hr>
-
+                  <a href="{{ user.user_linkedin }}">{{ user.user_linkedin }}</a>
+                   <br/>
+                  <a href="{{ user.user_github }}">{{ user.user_github }}</a>
                <form method="POST" action="{% url 'add_hyperlinks' user.id%}">
                         {% csrf_token %}
                   <div class="form-group">
-                    <label class="d-block">Change Password</label>
-                    <input type="url" class="form-control" name="user_linkedin" value = "{{ user_linkedin }}" placeholder="LinkedIn">
-                    <input type="url"class="form-control mt-1" name="user_github" placeholder="GitHub">
+                    <label class="d-block">Add social</label>
+                    <input type="url" class="form-control" name="user_linkedin" value="{{ user.user_linkedin }}" placeholder="LinkedIn">
+                    <input type="url"class="form-control mt-1" name="user_github" value="{{ user.user_github }}" placeholder="GitHub">
                      <input  class="btn btn-success btn-block btn-lg gradient-custom-4 text-body" type="submit" value="Submit" />
                   </div>
                 </form>
@@ -98,6 +102,7 @@
               </div>
               <div class="tab-pane" id="security">
                 <h6>SECURITY SETTINGS</h6>
+
                 <hr>
                 <form method="POST" action="{% url 'change_password' user.id%}">
                         {% csrf_token %}
@@ -106,7 +111,7 @@
                     <input type="password" class="form-control" name="old_password" placeholder="Enter your old password">
                     <input type="password"class="form-control mt-1" name="new_password1" placeholder="New password">
                     <input type="password" class="form-control mt-1" name="new_password2" placeholder="Confirm new password">
-                     <button type="submit">Save changes</button>
+                     <input  class="btn btn-success btn-block btn-lg gradient-custom-4 text-body" type="submit" value="Save changes" />
                   </div>
                 </form>
                 <hr>
@@ -134,8 +139,10 @@
                   </div>
                 </form>
               </div>
-                {% endif %}
-    </div>
+             </div>
+              {% endif %}
+
+
 </body>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

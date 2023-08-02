@@ -33,7 +33,7 @@ urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('admin/', admin.site.urls),
-    path('register/', sign_up.as_view(), name='register'),
+    path('register/', useraccount.views.sign_up, name='register'),
 
    # path('api/profilelist/', Books.views.ProfileListView.as_view(),
                        #name="name"),
@@ -79,6 +79,7 @@ urlpatterns = [
 
     path('feedbacks/<int:id>', views.feedbacks, name='feedbacks'),
 
+
     path('checkers', views.checkers, name='checkers'),
 
     path('price_checkers', views.price_checkers, name='price_checkers'),
@@ -87,6 +88,6 @@ urlpatterns = [
 
     path('change_password/<int:id>', views.change_password, name='change_password'),
 
-    path('add_hyperlinks/<int:id>',views.add_hyperlinks, name='add_hyperlinks')
+    path('add_hyperlinks/<int:id>',useraccount.views.add_hyperlinks, name='add_hyperlinks')
 
 ]+static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)

@@ -191,16 +191,18 @@ position: sticky;
     <div class="spinner horizontal"></div>
     <div class="spinner diagonal part-2"></div>
   </label>
+    {% if user.is_authenticated %}
   <div id="sidebarMenu">
     <ul class="sidebarMenuInner">
-      <li>Jelena Jovanovic <span>Web Developer</span></li>
-      <li><a href="https://vanila.io" target="_blank">Company</a></li>
+        <li>Hi {{ user.first_name }}</li>
+      <li><a href="{% url 'edit_profile' user.id%}" target="_blank">Profile</a></li>
       <li><a href="https://instagram.com/plavookac" target="_blank">Instagram</a></li>
       <li><a href="https://twitter.com/plavookac" target="_blank">Twitter</a></li>
       <li><a href="https://www.youtube.com/channel/UCDfZM0IK6RBgud8HYGFXAJg" target="_blank">YouTube</a></li>
       <li><a href="https://www.linkedin.com/in/plavookac/" target="_blank">Linkedin</a></li>
     </ul>
   </div>
+     {%  endif %}
 
 
 

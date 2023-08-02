@@ -4,7 +4,6 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from rest_framework.permissions import IsAdminUser
 from django.db.models import Q
-
 from useraccount.forms import HyperLinkkForm
 from useraccount.models import SimpleUser
 from .models import Book, CartItem, Cart, Feedback, WishList, WisthlistItem
@@ -27,7 +26,7 @@ def cart(request):
         cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
         cartitems = cart.cartitems.all()
     context = {"cart": cart, "items": cartitems}
-    return render(request, 'users/cart.html', context)
+    return render(request, 'Cart/CartTest.html', context)
 
 
 def add_to_cart(request):
@@ -56,18 +55,19 @@ def remove_from_cart(request):
     product = Book.objects.get(id=product_id)
 
     if request.user.is_authenticated:
-        cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
+        cart = Cart.objects.get(user=request.user.simpleuser, completed=False)
 
-        cartitem, created = CartItem.objects.get_or_create(cart=cart, book_product=product)
+        cartitem = CartItem.objects.get(cart=cart, book_product=product)
 
-        cartitem.quantity -= 1
-        if cartitem.quantity == 0:
-            cartitem.delete()
-        else:
+        if cartitem.quantity>=1:
+            cartitem.quantity -= 1
             cartitem.save()
+        else:
+            cartitem.delete()
+
         num_of_item = cart.num_of_items
 
-        print("Deleted")
+        print(cartitem)
     return JsonResponse({'price': cartitem.price, 'num_of_items': num_of_item}, safe=False)
 
 
@@ -90,7 +90,7 @@ def remove_all(request):
 
 
 def main(request):
-    return render(request, 'users/profile_change.html', {})
+    return render(request, 'users/base.html', {})
 
 
 @login_required
@@ -229,32 +229,6 @@ def add_feedback(request, id):
             messages.error(request, 'Please correct the following errors:')
 
             return render(request, 'Feedback/add_feedback.html', {'form': form})
-
-
-@login_required
-def add_hyperlinks(request, id):
-    profile = SimpleUser.objects.get(id=id)
-    if request.method == 'GET':
-        context = {'form': HyperLinkkForm(instance=profile), 'id': id}
-        return render(request, 'users/profile_change.html', context)
-
-    elif request.method == 'POST':
-        form = HyperLinkkForm(request.POST, request.FILES)
-        if form.is_valid():
-
-            hyperlinks = form.save(commit=False)
-
-            hyperlinks.user = request.user.simpleuser
-
-            hyperlinks.save()
-
-            return redirect('authenticated')
-
-        else:
-
-            messages.error(request, 'Please correct the following errors:')
-
-            return render(request, 'users/profile_change.html', {'form': form})
 
 
 @login_required
