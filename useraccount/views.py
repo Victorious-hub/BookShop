@@ -1,12 +1,28 @@
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.views import View
-from rest_framework.views import APIView
 from django.contrib import messages
-from .forms import LoginForm
+from .forms import LoginForm, HyperLinkkForm
 from useraccount.forms import RegisterForm, EditForm
 from useraccount.models import SimpleUser
+
+
+
+@login_required
+def add_hyperlinks(request, id):
+    profile = SimpleUser.objects.get(id=id)
+
+    if request.method == 'GET':
+        context = {'form': HyperLinkkForm(instance=profile), 'id': id}
+        return render(request, 'users/profile_change.html', context)
+
+    elif request.method == 'POST':
+        form = HyperLinkkForm(request.POST or None, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('main')
+        else:
+            return render(request, 'users/profile_change.html', {'form': form})
 
 
 @login_required
@@ -15,7 +31,7 @@ def edit_profile(request, id):
 
     if request.method == 'GET':
         context = {'form': EditForm(instance=profile), 'id': id}
-        return render(request, 'users/edit_profile.html', context)
+        return render(request, 'users/profile_change.html', context)
 
     elif request.method == 'POST':
         form = EditForm(request.POST or None, instance=profile)
@@ -23,7 +39,7 @@ def edit_profile(request, id):
             form.save()
             return redirect('main')
         else:
-            return render(request, 'users/edit_profile.html', {'form': form})
+            return render(request, 'users/profile_change.html', {'form': form})
 
 
 def sign_out(request):
@@ -50,13 +66,15 @@ def sign_in(request):
         return render(request, 'users/login.html', {'form': form})
 
 
+def sign_up(request):
+    if request.user.is_authenticated:
+        return redirect('authenticated')
 
-class sign_up(View):
-    def get(self, request):
+    if request.method == 'GET':
         form = RegisterForm()
         return render(request, 'users/register.html', {'form': form})
 
-    def post(self, request):
+    elif request.method == 'POST':
         form = RegisterForm(request.POST)
 
         if form.is_valid():

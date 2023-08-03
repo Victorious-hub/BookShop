@@ -1,33 +1,32 @@
-{% extends "users/footer.html" %}
+{% extends "users/FootHeader.html" %}
 {% block content %}
     {% load static %}
     <link rel="stylesheet" href="{% static "css/list_menu.css" %}">
     <link rel="stylesheet" href="{% static "css/style.css" %}">
+    <link rel="stylesheet" href="{% static 'css/Cart.css' %}">
 <style>
+.footer{
+    margin-top:-20px;
+}
+.product{margin-left:600px;width:500px;}
 </style>
-<div class="side_menu">
+    <div class="dummy_page">
 
-	<div class="burger_box">
-		<div class="menu-icon-container">
-			<a href="#" class="menu-icon js-menu_toggle closed">
-				<span class="menu-icon_box">
-					<span class="menu-icon_line menu-icon_line--1"></span>
-					<span class="menu-icon_line menu-icon_line--2"></span>
-					<span class="menu-icon_line menu-icon_line--3"></span>
-				</span>
-			</a>
-		</div>
-	</div>
 
-</div>
-    {% for feedback in feedbacks%}
-		   <h1>{{ feedback.author }}</h1>
+{% for feedback in feedbacks%}
+	 <article class="product">
+        <div class="content">
+           <h1>{{ feedback.author }}</h1>
 		   <h2>{{ feedback.header}}</h2>
            <h2>{{ feedback.description}}</h2>
-        {% endfor %}
+        </div>
+      </article>
+    </div>
+ {% endfor %}
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="{% static 'js/list_menu.js' %}"></script>
     <script src="{% static 'js/script.js' %}"></script>
+
 {% endblock %}

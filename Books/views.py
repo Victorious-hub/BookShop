@@ -1,9 +1,11 @@
 import json
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from rest_framework.permissions import IsAdminUser
 from django.db.models import Q
+from useraccount.forms import HyperLinkkForm
+from useraccount.models import SimpleUser
 from .models import Book, CartItem, Cart, Feedback, WishList, WisthlistItem
 from .forms import BookForm, FeedbackForm
 from django.contrib import messages
@@ -11,10 +13,110 @@ from django.core.paginator import Paginator
 from .tasks import sleeptime
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+
+
+def create_pdf(request, id):
+    # book_id = request.POST.get('book_id')
+    book = Book.objects.get(id=id)
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="BookReview.pdf"'
+
+    pdf = canvas.Canvas(response, pagesize=letter)
+
+    title_font_size = 16
+    content_font_size = 12
+    page_width, page_height = letter
+
+    title = book.book_name
+
+    # Add page 1
+    pdf.setFont("Helvetica-Bold", title_font_size)
+    pdf.drawCentredString(page_width / 2, page_height - 50, title)
+
+    pdf.setFont("Helvetica", content_font_size)
+    textobject = pdf.beginText(50, page_height - 100)
+    textobject.setFont("Helvetica", content_font_size)
+    textobject.setTextOrigin(50, page_height - 100)
+
+    text = """
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+    Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis
+    dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
+    pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, 
+    fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, 
+    venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+    Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis
+    dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
+    pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, 
+    fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, 
+    venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+    Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis
+    dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
+    pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, 
+    fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, 
+    venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+    Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis
+    dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
+    pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, 
+    fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, 
+    venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+    Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis
+    dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
+    pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, 
+    fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, 
+    venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+    Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis
+    dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
+    pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, 
+    fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, 
+    venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+    Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis
+    dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
+    pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, 
+    fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, 
+    venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+    """
+
+    lines = text.splitlines()
+    for line in lines:
+        textobject.textLine(line)
+
+    pdf.drawText(textobject)
+
+    # Add page 2
+    pdf.showPage()
+
+    pdf.setFont("Helvetica-Bold", title_font_size)
+
+    pdf.setFont("Helvetica", content_font_size)
+    textobject = pdf.beginText(50, page_height - 100)
+    textobject.setFont("Helvetica", content_font_size)
+    textobject.setTextOrigin(50, page_height - 100)
+
+    for line in lines:
+        textobject.textLine(line)
+
+    pdf.drawText(textobject)
+
+    pdf.showPage()
+    pdf.save()
+
+    return response
 
 
 def payment(request):
     return render(request, 'Payment/PayPal.html', {})
+
+
 def cart(request):
     cart = None
     cartitems = []
@@ -22,7 +124,7 @@ def cart(request):
         cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
         cartitems = cart.cartitems.all()
     context = {"cart": cart, "items": cartitems}
-    return render(request, 'users/cart.html', context)
+    return render(request, 'Cart/CartTest.html', context)
 
 
 def add_to_cart(request):
@@ -51,18 +153,19 @@ def remove_from_cart(request):
     product = Book.objects.get(id=product_id)
 
     if request.user.is_authenticated:
-        cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
+        cart = Cart.objects.get(user=request.user.simpleuser, completed=False)
 
-        cartitem, created = CartItem.objects.get_or_create(cart=cart, book_product=product)
+        cartitem = CartItem.objects.get(cart=cart, book_product=product)
 
-        cartitem.quantity -= 1
-        if cartitem.quantity == 0:
-            cartitem.delete()
-        else:
+        if cartitem.quantity >= 1:
+            cartitem.quantity -= 1
             cartitem.save()
+        else:
+            cartitem.delete()
+
         num_of_item = cart.num_of_items
 
-        print("Deleted")
+        print(cartitem)
     return JsonResponse({'price': cartitem.price, 'num_of_items': num_of_item}, safe=False)
 
 
@@ -85,24 +188,28 @@ def remove_all(request):
 
 
 def main(request):
-    return render(request, 'users/profile_change.html',{})
+    return render(request, 'users/base.html', {})
 
 
-def change_password(request):
+@login_required
+def change_password(request, id):
+    profile = SimpleUser.objects.get(id=id)
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)  # Important!
             messages.success(request, 'Your password was successfully updated!')
-            return redirect('change_password')
+            return redirect('register')
         else:
             messages.error(request, 'Please correct the error below.')
     else:
         form = PasswordChangeForm(request.user)
-    return render(request, 'users/base-comments.html', {
+    return render(request, 'users/profile_change.html', {
         'form': form
     })
+
+
 @login_required
 def authenticated(request):
     books = Book.objects.all()
@@ -115,7 +222,7 @@ def authenticated(request):
 
     if request.user.is_authenticated and not request.user.is_admin:
         cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
-    context = {'books': books, 'books_page': books_page,"nums":nums,}
+    context = {'books': books, 'books_page': books_page, "nums": nums, }
     return render(request, 'users/authenticated.html', context)
 
 

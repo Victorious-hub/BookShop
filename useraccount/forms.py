@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
-from .models import SimpleUser
+from .models import SimpleUser, HyperLinks
 
 
 class RegisterForm(UserCreationForm):
@@ -36,6 +36,8 @@ class EditForm(forms.ModelForm):
         self.fields['first_name'].widget.attrs['class'] = 'form-control'
         self.fields['last_name'].widget.attrs['class'] = 'form-control'
         self.fields['email'].widget.attrs['class'] = 'form-control'
+
+
 class LoginForm(forms.Form):
     class Meta:
         model = SimpleUser
@@ -48,3 +50,14 @@ class LoginForm(forms.Form):
         super(LoginForm, self).__init__(*args, **kwargs)
         self.fields['email'].widget.attrs['class'] = 'form-control'
         self.fields['password'].widget.attrs['class'] = 'form-control'
+
+
+class HyperLinkkForm(forms.ModelForm):
+    class Meta:
+        model = HyperLinks
+        fields = ('user_linkedin', 'user_github')
+
+    def __init__(self, *args, **kwargs):
+        super(HyperLinkkForm, self).__init__(*args, **kwargs)
+        self.fields['user_linkedin'].widget.attrs['class'] = 'form-control'
+        self.fields['user_github'].widget.attrs['class'] = 'form-control'

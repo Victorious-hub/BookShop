@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-
+from django.contrib.auth.models import PermissionsMixin
 
 class UserAccountManager(BaseUserManager):
     def create_user(self, email, password=None):
@@ -28,7 +28,7 @@ class UserAccountManager(BaseUserManager):
         return user
 
 
-class UserAccount(AbstractBaseUser):
+class UserAccount(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(default="", max_length=255)
 
     email = models.EmailField(default="", max_length=200, unique=True)
@@ -39,7 +39,8 @@ class UserAccount(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-
+    user_linkedin = models.URLField(default="",max_length=200)
+    user_github = models.URLField(default="",max_length=200)
     USERNAME_FIELD = "email"
 
     objects = UserAccountManager()
@@ -59,3 +60,12 @@ class SimpleUser(UserAccount):
 
     def __str__(self):
         return 'Пользователь {}'.format(self.first_name)
+
+
+class HyperLinks(models.Model):
+    user_linkedin = models.URLField(max_length=200)
+    user_github = models.URLField(max_length=200)
+    user = models.ForeignKey(SimpleUser, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.user)

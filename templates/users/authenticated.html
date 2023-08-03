@@ -191,16 +191,18 @@ position: sticky;
     <div class="spinner horizontal"></div>
     <div class="spinner diagonal part-2"></div>
   </label>
+    {% if user.is_authenticated %}
   <div id="sidebarMenu">
     <ul class="sidebarMenuInner">
-      <li>Jelena Jovanovic <span>Web Developer</span></li>
-      <li><a href="https://vanila.io" target="_blank">Company</a></li>
+        <li>Hi {{ user.first_name }}</li>
+      <li><a href="{% url 'edit_profile' user.id%}" target="_blank">Profile</a></li>
       <li><a href="https://instagram.com/plavookac" target="_blank">Instagram</a></li>
       <li><a href="https://twitter.com/plavookac" target="_blank">Twitter</a></li>
       <li><a href="https://www.youtube.com/channel/UCDfZM0IK6RBgud8HYGFXAJg" target="_blank">YouTube</a></li>
       <li><a href="https://www.linkedin.com/in/plavookac/" target="_blank">Linkedin</a></li>
     </ul>
   </div>
+     {%  endif %}
 
 
 
@@ -232,10 +234,10 @@ position: sticky;
         {% if request.user.is_authenticated and not user.is_admin%}
 		    <p>
 			<button class="btn btn-warning cart-buy" value="{{ book.id }}">Add to cart</button>
-            <!--<a class="btn btn-success" href="{% url 'add_feedback' book.id%}">Add feedback</a>-->
-            <!--<a class="btn btn-success" href="{% url 'feedbacks' book.id%}">feedback</a>-->
+            <a class="btn btn-success" href="{% url 'add_feedback' book.id%}">Add feedback</a>
+            <a class="btn btn-success" href="{% url 'feedbacks' book.id%}">feedback</a>
             <div class="addwishlist">
-            <!--<button class="btn btn-success" value="{{ book.id }}">Add to wishlist</button>-->
+            <button class="btn btn-success" value="{{ book.id }}">Add to wishlist</button>
             </div>
             </p>
 
