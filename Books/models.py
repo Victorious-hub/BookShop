@@ -34,7 +34,7 @@ class Feedback(models.Model):
     header = models.CharField(max_length=255, default='')
     description = models.CharField(max_length=255, default='')
     book_id = models.ForeignKey(Book, on_delete=models.CASCADE)
-
+    date_released = models.DateTimeField(auto_now=True, null=True)
     def __str__(self):
         return str(self.author)
 

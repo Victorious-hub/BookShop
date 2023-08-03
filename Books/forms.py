@@ -28,7 +28,7 @@ class FeedbackForm(forms.ModelForm):
         model = Feedback
         fields = ('header', 'description')
         widgets = {
-            'desc': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
+            'description': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
         }
 
     def __init__(self, *args, **kwargs):

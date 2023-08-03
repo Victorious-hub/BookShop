@@ -14,7 +14,7 @@ CSRF_COOKIE_HTTPONLY = False
 SESSION_COOKIE_HTTPONLY = True
 
 INSTALLED_APPS = [
-
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -119,3 +119,7 @@ CELERY_BROKER_URL = 'redis://default:xWy6FlSoEfNEnofjP3lD@containers-us-west-129
 CELERY_ACCEPT_CONTENT = ['json']
 
 CELERY_TASK_SERIALIZER = 'json'
+
+JAZZMIN_SETTINGS = {
+"site_header": "BookShop administration",
+}

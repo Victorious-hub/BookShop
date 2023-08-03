@@ -1,12 +1,11 @@
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.views import View
-from rest_framework.views import APIView
 from django.contrib import messages
 from .forms import LoginForm, HyperLinkkForm
 from useraccount.forms import RegisterForm, EditForm
 from useraccount.models import SimpleUser
+
 
 
 @login_required

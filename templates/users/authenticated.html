@@ -234,10 +234,10 @@ position: sticky;
         {% if request.user.is_authenticated and not user.is_admin%}
 		    <p>
 			<button class="btn btn-warning cart-buy" value="{{ book.id }}">Add to cart</button>
-            <!--<a class="btn btn-success" href="{% url 'add_feedback' book.id%}">Add feedback</a>-->
-            <!--<a class="btn btn-success" href="{% url 'feedbacks' book.id%}">feedback</a>-->
+            <a class="btn btn-success" href="{% url 'add_feedback' book.id%}">Add feedback</a>
+            <a class="btn btn-success" href="{% url 'feedbacks' book.id%}">feedback</a>
             <div class="addwishlist">
-            <!--<button class="btn btn-success" value="{{ book.id }}">Add to wishlist</button>-->
+            <button class="btn btn-success" value="{{ book.id }}">Add to wishlist</button>
             </div>
             </p>
 
