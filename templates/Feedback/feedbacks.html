@@ -6,22 +6,47 @@
     <link rel="stylesheet" href="{% static 'css/Cart.css' %}">
 <style>
 .footer{
-    margin-top:-20px;
+    bottom:0;
+    position:relative;
 }
 .product{margin-left:600px;width:500px;}
-</style>
-    <div class="dummy_page">
+  .feedback-block {
+        display: flex;
+        flex-direction: column;
+        background-color: #ffffff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        margin-bottom: 20px;
+    }
 
+    .feedback-block:hover {
+        background-color: #f5faff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .feedback-block h1 {
+        color: #333333;
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    .feedback-block h2 {
+        color: #666666;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+</style>
 
 {% for feedback in feedbacks%}
-	 <article class="product">
-        <div class="content">
-           <h1>{{ feedback.author }}</h1>
-		   <h2>{{ feedback.header}}</h2>
-           <h2>{{ feedback.description}}</h2>
-        </div>
-      </article>
-    </div>
+    </br>
+    </br>
+    </br>
+	<div class="feedback-block">
+    <h1>{{ feedback.author }}</h1>
+    <h2>{{ feedback.header }}</h2>
+    <h2>{{ feedback.description }}</h2>
+</div>
  {% endfor %}
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

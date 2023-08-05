@@ -7,7 +7,6 @@ from useraccount.forms import RegisterForm, EditForm
 from useraccount.models import SimpleUser
 
 
-
 @login_required
 def add_hyperlinks(request, id):
     profile = SimpleUser.objects.get(id=id)
@@ -42,6 +41,7 @@ def edit_profile(request, id):
             return render(request, 'users/profile_change.html', {'form': form})
 
 
+@login_required
 def sign_out(request):
     logout(request)
     messages.success(request, f'You have been logged out.')
