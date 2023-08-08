@@ -12,7 +12,7 @@
   <div id="sidebarMenu">
     <ul class="sidebarMenuInner">
         <li>Hi {{ user.first_name }}</li>
-      <li><a href="{% url 'edit_profile' user.id%}">Profile</a></li>
+      <li><a href="{% url 'edit_profile' user.slug%}">Profile</a></li>
       <li><a href="{% url 'logout'%}" >Logout</a></li>
       <li><a href="{% url 'cart'%}" >My cart</a></li>
     </ul>
@@ -56,10 +56,10 @@
         {% if request.user.is_authenticated and not user.is_admin%}
 		    <p>
 			<button class="btn btn-warning cart-buy" value="{{ book.id }}">Add to cart</button>
-            <a class="btn btn-success" href="{% url 'add_feedback' book.id%}">Add feedback</a>
-            <a class="btn btn-success" href="{% url 'feedbacks' book.id%}">feedback</a>
+            <a class="btn btn-success" href="{% url 'book_detail' book.id%}">Detail</a>
+            <a class="btn btn-success" href="{% url 'add_feedback' book.id%}">feedback</a>
             <div class="addwishlist">
-            <!--<button class="btn btn-success" value="{{ book.id }}">Add to wishlist</button>-->
+            <button class="btn btn-success" value="{{ book.id }}">Add to wishlist</button>
             </div>
             </p>
 

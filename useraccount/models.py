@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
-
+from django.template.defaultfilters import slugify
+from django.urls import reverse
 class UserAccountManager(BaseUserManager):
     def create_user(self, email, password=None):
         if not email or len(email) <= 0:
@@ -41,6 +42,15 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     is_superuser = models.BooleanField(default=False)
     user_linkedin = models.URLField(default="",max_length=200)
     user_github = models.URLField(default="",max_length=200)
+    slug = models.SlugField(null=True)
+
+    def get_absolute_url(self):
+        return reverse("edit_profile", kwargs={"slug": self.slug})
+
+    def save(self, *args, **kwargs):  # new
+        if not self.slug:
+            self.slug = slugify(self.first_name)
+        return super().save(*args, **kwargs)
     USERNAME_FIELD = "email"
 
     objects = UserAccountManager()
@@ -56,7 +66,9 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
 
 
 class SimpleUser(UserAccount):
+
     created = models.DateTimeField(auto_now=True, null=True)
+
 
     def __str__(self):
         return 'Пользователь {}'.format(self.first_name)

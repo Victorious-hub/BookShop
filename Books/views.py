@@ -128,6 +128,7 @@ def cart(request):
 
 def add_to_cart(request):
     data = json.loads(request.body)
+    print(data)
     product_id = data["id"]
     product = Book.objects.get(id=product_id)
 
@@ -208,6 +209,13 @@ def change_password(request, id):
         'form': form
     })
 
+@login_required
+def book_detail(request,id):
+    book = Book.objects.get(id=id)
+    feedbacks = Feedback.objects.filter(book_id=book)
+    context = {'book': book,'feedbacks': feedbacks}
+    return render(request,'books/book_detail.html',context)
+
 
 @login_required
 def authenticated(request):
@@ -223,17 +231,6 @@ def authenticated(request):
         cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
     context = {'books': books, 'books_page': books_page, "nums": nums, }
     return render(request, 'users/authenticated.html', context)
-
-
-"""class ProfileListView(generics.ListCreateAPIView):
-    queryset = models.SimpleUser.objects.all()
-    serializer_class = serializer.UserSerializer
-
-
-class ProfileChange(generics.RetrieveUpdateDestroyAPIView):
-    queryset = models.SimpleUser.objects.all()
-    serializer_class = serializer.UserSerializer"""
-
 
 @login_required
 def delete_book(request, id):
@@ -391,11 +388,3 @@ def remove_from_wishlist(request):
     return JsonResponse("Working", safe=False)
 
 
-def wishlist(request):
-    cart = None
-    cartitems = []
-    if request.user.is_authenticated and not request.user.is_admin:
-        cart, created = WishList.objects.get_or_create(user=request.user.simpleuser, completed=False)
-        cartitems = cart.wisthlistitems.all()
-    context = {"cart": cart, "items": cartitems}
-    return render(request, 'Feedback/Wishlist.html', context)

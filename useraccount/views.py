@@ -1,7 +1,10 @@
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.core.paginator import Paginator
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+
+from Books.models import WishList, Book, Feedback
 from .forms import LoginForm, HyperLinkkForm
 from useraccount.forms import RegisterForm, EditForm
 from useraccount.models import SimpleUser
@@ -23,13 +26,38 @@ def add_hyperlinks(request, id):
         else:
             return render(request, 'users/profile_change.html', {'form': form})
 
-
 @login_required
-def edit_profile(request, id):
-    profile = SimpleUser.objects.get(id=id)
+def edit_profile(request, slug):
+    profile = get_object_or_404(SimpleUser, slug=slug)
+
+    cart = None
+    cartitems = []
+    books_page = None
+    nums, feedbacks = None, []
+    if request.user.is_authenticated and not request.user.is_admin:
+        cart, created = WishList.objects.get_or_create(user=request.user.simpleuser, completed=False)
+        cartitems = cart.wisthlistitems.all()
+
+        p = Paginator(cart.wisthlistitems.all(), 1)
+
+        page = request.GET.get('page')
+
+        books_page = p.get_page(page)
+
+        nums = "a" * books_page.paginator.num_pages
+
+        feedbacks = Feedback.objects.filter(author_id=request.user.simpleuser)
 
     if request.method == 'GET':
-        context = {'form': EditForm(instance=profile), 'id': id}
+        context = {
+            'form': EditForm(instance=profile),
+            'slug': slug,
+            "cart": cart,
+            "items": cartitems,
+            "nums": nums,
+            "books_page": books_page,
+            "feedbacks": feedbacks
+        }
         return render(request, 'users/profile_change.html', context)
 
     elif request.method == 'POST':
@@ -39,7 +67,6 @@ def edit_profile(request, id):
             return redirect('main')
         else:
             return render(request, 'users/profile_change.html', {'form': form})
-
 
 @login_required
 def sign_out(request):
