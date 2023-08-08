@@ -1,6 +1,12 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+<style>
+    .push{
+        width:250px;
+        margin-left:-60px;
+    }
+</style>
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -69,8 +75,8 @@
 
       <div class="pay-section">
     <h3>Grand-Total:$ </h3>
-      <h2 id="total_price" class="price"> ${{cart.total_price}}</h2>
-    <button onclick = "makePayment()" >Pay</button>
+      <h2 id="total_price"> ${{cart.total_price}}</h2>
+    <button onclick = "makePayment()" class="push btn-success">Pay</button>
   </div>
 
     </div>

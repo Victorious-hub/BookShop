@@ -45,7 +45,6 @@ urlpatterns = [
 
                   path('login/', useraccount.views.sign_in, name='login'),
 
-                  path('edit_profile/<int:id>', useraccount.views.edit_profile, name='edit_profile'),
 
                   path('logout/', useraccount.views.sign_out, name='logout'),
 
@@ -57,13 +56,13 @@ urlpatterns = [
 
                   path('book_delete/<int:id>', views.delete_book, name='book_delete'),
 
-                  path('wishlist', views.wishlist, name='wishlist'),
+
 
                   path('remove_wishlist', views.remove_from_wishlist, name='remove_wishlist'),
 
                   path('search_books', views.search_books, name='book_search'),
 
-                  path('profile_edit/<int:id>', useraccount.views.edit_profile, name='edit_profile'),
+                  path('profile_edit/<slug:slug>', useraccount.views.edit_profile, name='edit_profile'),
 
                   path('cart/', views.cart, name='cart'),
 
@@ -90,5 +89,7 @@ urlpatterns = [
                   path('add_hyperlinks/<int:id>', useraccount.views.add_hyperlinks, name='add_hyperlinks'),
 
                   path('create_pdf/<int:id>', views.create_pdf, name='create_pdf'),
+
+                  path('book_detail/<int:id>', views.book_detail, name='book_detail'),
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

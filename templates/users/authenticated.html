@@ -1,205 +1,27 @@
 {% extends "users/FootHeader.html" %}
 {% block content %}
     {% load static %}
-
-<style>
-.card-title{margin-left:-150px;}
-.card-text{margin-left:-150px;}
-.cart-buy{
-    width:225px;
-    margin-left:-125px;
-}
-@import url('https://fonts.googleapis.com/css?family=Varela+Round');
-html, body {
-    overflow-x: hidden;
-    height: 100%;
-}
-body {
-    background: #fff;
-    padding: 0;
-    margin: 0;
-    font-family: 'Varela Round', sans-serif;
-}
-.header {
-    display: block;
-    margin: 0 auto;
-    width: 100%;
-    max-width: 100%;
-    box-shadow: none;
-    background-color: #FC466B;
-    position: fixed;
-    height: 60px!important;
-    overflow: hidden;
-    z-index: 10;
-}
-.main {
-    margin: 0 auto;
-    display: block;
-    height: 100%;
-    margin-top: 60px;
-}
-.mainInner{
-    display: table;
-    height: 100%;
-    width: 100%;
-    text-align: center;
-}
-.mainInner div{
-    display:table-cell;
-    vertical-align: middle;
-    font-size: 3em;
-    font-weight: bold;
-    letter-spacing: 1.25px;
-}
-#sidebarMenu {
-    height: 100%;
-    position: fixed;
-    left: 0;
-    width: 250px;
-    margin-top: 0;
-    transform: translateX(-250px);
-    transition: transform 250ms ease-in-out;
-    background: black;
-    z-index:1;
-}
-.sidebarMenuInner{
-    margin:0;
-    padding:0;
-    border-top: 1px solid rgba(255, 255, 255, 0.10);
-}
-.sidebarMenuInner li{
-    list-style: none;
-    color: #fff;
-    text-transform: uppercase;
-    font-weight: bold;
-    padding: 20px;
-    cursor: pointer;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
-}
-.sidebarMenuInner li span{
-    display: block;
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.50);
-}
-.sidebarMenuInner li a{
-    color: #fff;
-    text-transform: uppercase;
-    font-weight: bold;
-    cursor: pointer;
-    text-decoration: none;
-}
-input[type="checkbox"]:checked ~ #sidebarMenu {
-    transform: translateX(0);
-}
-
-
-.sidebarIconToggle {
-    transition: all 0.3s;
-    box-sizing: border-box;
-    cursor: pointer;
-    position: absolute;
-    z-index: 99;
-    height: 100%;
-    width: 100%;
-    top: 22px;
-    left: 15px;
-    height: 22px;
-    width: 22px;
-}
-.spinner {
-    transition: all 0.3s;
-    box-sizing: border-box;
-    position: absolute;
-    height: 3px;
-    width: 100%;
-    background-color: #fff;
-}
-.horizontal {
-    transition: all 0.3s;
-    box-sizing: border-box;
-    position: relative;
-    float: left;
-    margin-top: 3px;
-}
-.diagonal.part-1 {
-    position: relative;
-    transition: all 0.3s;
-    box-sizing: border-box;
-    float: left;
-}
-.diagonal.part-2 {
-    transition: all 0.3s;
-    box-sizing: border-box;
-    position: relative;
-    float: left;
-    margin-top: 3px;
-}
-input[type=checkbox]:checked ~ .sidebarIconToggle > .horizontal {
-    transition: all 0.3s;
-    box-sizing: border-box;
-    opacity: 0;
-}
-input[type=checkbox]:checked ~ .sidebarIconToggle > .diagonal.part-1 {
-    transition: all 0.3s;
-    box-sizing: border-box;
-    transform: rotate(135deg);
-    margin-top: 8px;
-}
-input[type=checkbox]:checked ~ .sidebarIconToggle > .diagonal.part-2 {
-    transition: all 0.3s;
-    box-sizing: border-box;
-    transform: rotate(-135deg);
-    margin-top: -9px;
-}
-.form-control{width:100px;}
-.filter{
-position: sticky;
-    width:500px;
-    margin-top:-718px;
-}
-.lox{display:none;}
-.price{
-    margin-left:-400px;
-}
-.shift{
-    margin-left:100px;
-    margin-top:-37px;
-}
-.form-check{
-    position:relative;
-}
-
-.ch_genres{
-    margin-left:-410px;
-    margin-top:-10px;
-}
-.fan_left{
-    margin-left:-15px;
-}
-.love_left{
-    margin-left:-38px;
-}  .hist_left{margin-left:-19px;
-}  .det_left{margin-left:-6px;}
-</style>
-
-
-
-
+<link rel="stylesheet" href="{% static "css/auth/auth.css" %}">
   <input type="checkbox"  class="lox" id="openSidebarMenu">
   <label for="openSidebarMenu" class="sidebarIconToggle">
     <div class="spinner diagonal part-1"></div>
     <div class="spinner horizontal"></div>
     <div class="spinner diagonal part-2"></div>
   </label>
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and not user.is_admin%}
   <div id="sidebarMenu">
     <ul class="sidebarMenuInner">
         <li>Hi {{ user.first_name }}</li>
-      <li><a href="{% url 'edit_profile' user.id%}" target="_blank">Profile</a></li>
-      <li><a href="https://instagram.com/plavookac" target="_blank">Instagram</a></li>
-      <li><a href="https://twitter.com/plavookac" target="_blank">Twitter</a></li>
-      <li><a href="https://www.youtube.com/channel/UCDfZM0IK6RBgud8HYGFXAJg" target="_blank">YouTube</a></li>
-      <li><a href="https://www.linkedin.com/in/plavookac/" target="_blank">Linkedin</a></li>
+      <li><a href="{% url 'edit_profile' user.slug%}">Profile</a></li>
+      <li><a href="{% url 'logout'%}" >Logout</a></li>
+      <li><a href="{% url 'cart'%}" >My cart</a></li>
+    </ul>
+  </div>
+    {% elif user.is_authenticated and  user.is_admin %}
+         <div id="sidebarMenu">
+    <ul class="sidebarMenuInner">
+      <li><a href="{% url 'add_book'%}">Add book</a></li>
+      <li><a href="{% url 'logout'%}" >Logout</a></li>
     </ul>
   </div>
      {%  endif %}
@@ -234,8 +56,8 @@ position: sticky;
         {% if request.user.is_authenticated and not user.is_admin%}
 		    <p>
 			<button class="btn btn-warning cart-buy" value="{{ book.id }}">Add to cart</button>
-            <a class="btn btn-success" href="{% url 'add_feedback' book.id%}">Add feedback</a>
-            <a class="btn btn-success" href="{% url 'feedbacks' book.id%}">feedback</a>
+            <a class="btn btn-success" href="{% url 'book_detail' book.id%}">Detail</a>
+            <a class="btn btn-success" href="{% url 'add_feedback' book.id%}">feedback</a>
             <div class="addwishlist">
             <button class="btn btn-success" value="{{ book.id }}">Add to wishlist</button>
             </div>
@@ -249,34 +71,32 @@ position: sticky;
 </div>
     {% endfor %}
 <br></br>
-<nav aria-label="Page navigation example">
-  <ul class="pagination">
-    {% if  books_page.has_previous%}
-        <li class="page-item"><a class="page-link"  href="?page=1">&laquo First</a></li>
-        <li class="page-item"><a class="page-link" href="?page={{ books_page.previous_page_number }}">Previous</a></li>
-    {% endif %}
-<hr>
-<!--<li class="page-item disabled"><a href="" class="page-link">Page {{ books_page.number }} or {{ books_page.paginator.num_pages }}</a></li>-->
 
-{% for i in  nums  %}
-<li class="page-item">
-    <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
-</li>
 
-{% endfor %}
 
-{% if books_page.has_next %}
-    <li class="page-item"><a class="page-link" href="?page={{ books_page.next_page_number }}">Next</a></li>
-    <li class="page-item"><a class="page-link" href="?page={{ books_page.paginator.num_pages}}">Last &raquo</a></li>
-{% endif %}
+<div class="pagination-wrapper">
+    <ul class="pagination">
+        {% if books_page.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1">&laquo First</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ books_page.previous_page_number }}">Previous</a></li>
+        {% endif %}
+
+        {% for i in nums %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+            </li>
+        {% endfor %}
+
+        {% if books_page.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ books_page.next_page_number }}">Next</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ books_page.paginator.num_pages }}">Last &raquo</a></li>
+        {% endif %}
+    </ul>
+</div>
+
   </ul>
 </nav>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="{% static 'js/list_menu.js' %}"></script>
-    <script src="{% static 'js/script.js' %}"></script>
-    <script src="{% static 'js/PriceScroll.js' %}"></script>
 
 <section>
 <div class="filter">
@@ -363,24 +183,11 @@ position: sticky;
 
 
 </div>
-    <script>
-        function validate(evt) {
-  var theEvent = evt || window.event;
-
-  // Handle paste
-  if (theEvent.type === 'paste') {
-      key = event.clipboardData.getData('text/plain');
-  } else {
-  // Handle key press
-      var key = theEvent.keyCode || theEvent.which;
-      key = String.fromCharCode(key);
-  }
-  var regex = /[0-9]|\./;
-  if( !regex.test(key) ) {
-    theEvent.returnValue = false;
-    if(theEvent.preventDefault) theEvent.preventDefault();
-  }
-}
-    </script>
+    <script src="{% static 'js/auth/auth.js' %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/list_menu.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'js/PriceScroll.js' %}"></script>
 
 {% endblock %}
