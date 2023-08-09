@@ -26,6 +26,7 @@ def add_hyperlinks(request, id):
         else:
             return render(request, 'users/profile_change.html', {'form': form})
 
+
 @login_required
 def edit_profile(request, slug):
     profile = get_object_or_404(SimpleUser, slug=slug)
@@ -36,14 +37,11 @@ def edit_profile(request, slug):
     nums, feedbacks = None, []
     if request.user.is_authenticated and not request.user.is_admin:
         cart, created = WishList.objects.get_or_create(user=request.user.simpleuser, completed=False)
-        cartitems = cart.wisthlistitems.all()
+        cartitems = cart.wisthlistitems.all().order_by('id')  # Упорядочиваем по полю 'id'
 
-        p = Paginator(cart.wisthlistitems.all(), 1)
-
+        p = Paginator(cartitems, 1)  # Измените число на желаемый размер страницы
         page = request.GET.get('page')
-
         books_page = p.get_page(page)
-
         nums = "a" * books_page.paginator.num_pages
 
         feedbacks = Feedback.objects.filter(author_id=request.user.simpleuser)
@@ -67,6 +65,7 @@ def edit_profile(request, slug):
             return redirect('main')
         else:
             return render(request, 'users/profile_change.html', {'form': form})
+
 
 @login_required
 def sign_out(request):

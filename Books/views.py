@@ -1,6 +1,7 @@
 import json
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse, HttpResponse
+from django.core.mail import send_mail, BadHeaderError
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from rest_framework.permissions import IsAdminUser
 from django.db.models import Q
@@ -14,6 +15,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
+from django.conf import settings
 
 
 def create_pdf(request, id):
@@ -188,7 +190,7 @@ def remove_all(request):
 
 
 def main(request):
-    return render(request, 'users/base.html', {})
+    return render(request, 'Payment/Contact.html', {})
 
 
 @login_required
@@ -209,12 +211,13 @@ def change_password(request, id):
         'form': form
     })
 
+
 @login_required
-def book_detail(request,id):
+def book_detail(request, id):
     book = Book.objects.get(id=id)
     feedbacks = Feedback.objects.filter(book_id=book)
-    context = {'book': book,'feedbacks': feedbacks}
-    return render(request,'books/book_detail.html',context)
+    context = {'book': book, 'feedbacks': feedbacks}
+    return render(request, 'books/book_detail.html', context)
 
 
 @login_required
@@ -231,6 +234,7 @@ def authenticated(request):
         cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
     context = {'books': books, 'books_page': books_page, "nums": nums, }
     return render(request, 'users/authenticated.html', context)
+
 
 @login_required
 def delete_book(request, id):
@@ -388,3 +392,16 @@ def remove_from_wishlist(request):
     return JsonResponse("Working", safe=False)
 
 
+@login_required
+def send_email(request):
+    subject = "welcome dude"
+    message = f"Hie and poshel naxui"
+    email_from = settings.EMAIL_HOST_USER
+    if subject and message and email_from:
+        try:
+            send_mail(subject, message, email_from, ['shyskov@inbox.ru'])
+        except BadHeaderError:
+            return HttpResponse("Invalid header found.")
+        return HttpResponseRedirect("/main")
+    else:
+        return HttpResponse("Make sure all fields are entered and valid.")

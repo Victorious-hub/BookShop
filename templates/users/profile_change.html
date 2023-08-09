@@ -361,17 +361,23 @@ font-family: 'EB Garamond', serif;
 </div>
 </div>
                {% endfor %}
- <div class="pagination-wrapper">
+<div class="pagination-wrapper">
     <ul class="pagination">
         {% if books_page.has_previous %}
             <li class="page-item"><a class="page-link" href="?page=1">&laquo First</a></li>
             <li class="page-item"><a class="page-link" href="?page={{ books_page.previous_page_number }}">Previous</a></li>
         {% endif %}
 
-        {% for i in nums %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
-            </li>
+        {% for num in books_page.paginator.page_range %}
+            {% if books_page.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+            {% endif %}
         {% endfor %}
 
         {% if books_page.has_next %}
@@ -387,10 +393,9 @@ font-family: 'EB Garamond', serif;
                 {% for feedback in feedbacks%}
 
 	<div class="feedback-block">
-    <h1>{{ feedback.author }}</h1>
-    <h2>{{ feedback.header }}</h2>
-    <h2>{{ feedback.description }}</h2>
-
+    <h2><strong>Header: </strong>{{ feedback.header }}</h2>
+                    <h2><strong>Description: </strong>{{ feedback.description }}</h2>  <a class="btn btn-success" href="{% url 'book_detail' feedback.book_id%}"><strong>Book View</strong></a>
+<hr>
  {% endfor %}
               </div>
               {% endif %}
