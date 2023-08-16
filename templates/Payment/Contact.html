@@ -433,14 +433,15 @@ form {
 	</svg>
 
 
-	<form>
+	<form method="POST" action="{% url 'accept_contact' %}">
+        {% csrf_token %}
 		<h1 class="title text-center mb-4">Contact Us</h1>
 
 			<div class="form-group position-relative">
 				<label for="formName" class="d-block">
 					<i class="icon" data-feather="user"></i>
 				</label>
-				<input type="text" id="formName" class="form-control form-control-lg thick" placeholder="Name">
+				<input type="text" id="formName" name="first_name" class="form-control form-control-lg thick" placeholder="Name">
 			</div>
 
 
@@ -448,7 +449,7 @@ form {
 				<label for="formEmail" class="d-block">
 					<i class="icon" data-feather="mail"></i>
 				</label>
-				<input type="email" id="formEmail" class="form-control form-control-lg thick" placeholder="E-mail">
+				<input type="email" id="formEmail" name="email" class="form-control form-control-lg thick" placeholder="E-mail">
 			</div>
 
             <div class="form-group position-relative">
@@ -463,10 +464,10 @@ form {
 				<label for="formAdress" class="d-block">
 					<i class="icon" data-feather="adress"></i>
 				</label>
-				<input type="text"  id="formAdress" class="form-control form-control-lg thick" placeholder="Adress">
+				<input type="text"  id="formAdress" name="address" class="form-control form-control-lg thick" placeholder="Adress">
 			</div>
 
-			<!-- Submit btn -->
+
 			<div class="text-center">
 				<button type="submit" class="btn btn-primary" tabIndex="-1">Accept order</button>
 			</div>

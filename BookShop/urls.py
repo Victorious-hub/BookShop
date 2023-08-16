@@ -1,18 +1,18 @@
-from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
-
-import useraccount
 from Books import views
-
 from rest_framework import permissions
 from Books.views import *
-from useraccount.views import (sign_in,
-                               sign_up, sign_out, edit_profile
-                               )
+from useraccount.views import (
+    SignOut,
+    EditProfileView,
+    AddHyperlinksView,
+    SignIn,
+    SignUpView
+)
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -33,63 +33,58 @@ urlpatterns = [
                   path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
                   path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
                   path('admin/', admin.site.urls),
-                  path('register/', useraccount.views.sign_up, name='register'),
+                  path('register/', SignUpView.as_view(), name='register'),
 
-                  # path('api/profilelist/', Books.views.ProfileListView.as_view(),
-                  # name="name"),
+                  path('main/', Main.as_view(), name='main'),
 
-                  # path('api/profilelist/<int:pk>', Books.views.ProfileChange.as_view(),
-                  # name="name"),
+                  path('login/', SignIn.as_view(), name='login'),
 
-                  path('main/', views.main, name='main'),
+                  path('logout/', SignOut.as_view(), name='logout'),
 
-                  path('login/', useraccount.views.sign_in, name='login'),
+                  path('add_book/', CreateBookView.as_view(), name='add_book'),
 
+                  path('add_to_wishlist', AddToWishlistView.as_view(), name='add_to_wishlist'),
 
-                  path('logout/', useraccount.views.sign_out, name='logout'),
+                  path('book_edit/<int:id>', BookUpdateView.as_view(), name='book_edit'),
 
-                  path('add_book/', views.add_book, name='add_book'),
-                  path('add_to_wishlist', views.add_to_wishlist, name='add_to_wishlist'),
+                  path('book_delete/<int:pk>', BookDeleteView.as_view(), name='book_delete'),
 
-                  path('book_edit/<int:id>', views.edit_book, name='book_edit'),
-                  path('book_delete/<int:id>', views.delete_book, name='book_delete'),
+                  path('remove_wishlist', RemoveWishList.as_view(), name='remove_wishlist'),
 
-                  path('book_delete/<int:id>', views.delete_book, name='book_delete'),
+                  path('search_books', SearchBooksView.as_view(), name='book_search'),
 
-                  path('email', views.send_email, name='send_email'),
+                  path('profile_edit/<slug:slug>', EditProfileView.as_view(), name='edit_profile'),
 
-                  path('remove_wishlist', views.remove_from_wishlist, name='remove_wishlist'),
+                  path('cart/', CartView.as_view(), name='cart'),
 
-                  path('search_books', views.search_books, name='book_search'),
+                  path('add_to_cart', AddToCartView.as_view(), name='add'),
 
-                  path('profile_edit/<slug:slug>', useraccount.views.edit_profile, name='edit_profile'),
+                  path('authenticated/', AuthenticatedView.as_view(), name='authenticated'),
 
-                  path('cart/', views.cart, name='cart'),
+                  path('remove_from_cart', RemoveFromCartView.as_view(), name='remove_from_cart'),
 
-                  path('add_to_cart', views.add_to_cart, name='add'),
+                  path('remove_all', RemoveAllCartView.as_view(), name='remove_all_cart'),
 
-                  path('authenticated/', views.authenticated, name='authenticated'),
+                  path('add_feedback/<int:id>', AddFeedBackView.as_view(), name='add_feedback'),
 
-                  path('remove_from_cart', views.remove_from_cart, name='add_wishlist'),
+                  path('feedbacks/<int:id>', FeedBacksView.as_view(), name='feedbacks'),
 
-                  path('remove_all', views.remove_all, name='remove_all_cart'),
+                  path('checkers', CheckersView.as_view(), name='checkers'),
 
-                  path('add_feedback/<int:id>', views.add_feedback, name='add_feedback'),
+                  path('price_checkers', PriceCheckersView.as_view(), name='price_checkers'),
 
-                  path('feedbacks/<int:id>', views.feedbacks, name='feedbacks'),
+                  path('change_password/<int:id>', ChangePasswordView.as_view(), name='change_password'),
 
-                  path('checkers', views.checkers, name='checkers'),
+                  path('add_hyperlinks/<int:id>', AddHyperlinksView.as_view(), name='add_hyperlinks'),
 
-                  path('price_checkers', views.price_checkers, name='price_checkers'),
+                  path('create_pdf/<int:id>', CreatePDFView.as_view(), name='create_pdf'),
 
-                  path('pay_paypal', views.payment, name='pay_paypal'),
+                  path('book_detail/<int:id>', BookDetailView.as_view(), name='book_detail'),
 
-                  path('change_password/<int:id>', views.change_password, name='change_password'),
+                  path('contact_us', AcceptContact.as_view(), name='accept_contact'),
 
-                  path('add_hyperlinks/<int:id>', useraccount.views.add_hyperlinks, name='add_hyperlinks'),
+                  path('delete_feedback/<int:id>', DeleteFeedBackView.as_view(), name='delete_feedback'),
 
-                  path('create_pdf/<int:id>', views.create_pdf, name='create_pdf'),
-
-                  path('book_detail/<int:id>', views.book_detail, name='book_detail'),
+                  path('edit_feedback/<int:id>',EditFeedbackView.as_view(), name='edit_feedback'),
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

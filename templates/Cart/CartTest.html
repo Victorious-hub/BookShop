@@ -26,6 +26,7 @@
 
   <div class="itemContainer">
     {% for item in items %}
+        {% if item.cart.completed == False %}
         {% csrf_token %}
   <div class="container">
     <section id="cart">
@@ -66,7 +67,7 @@
 
     </section>
   </div>
-
+     {% endif %}
     {% endfor %}
 <footer id="site-footer">
     <div class="container clearfix">

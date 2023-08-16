@@ -2,7 +2,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.forms import ModelForm
 
-from Books.models import Book, Feedback
+from Books.models import Book, Feedback, Contact
 
 
 class BookForm(forms.ModelForm):
@@ -35,3 +35,19 @@ class FeedbackForm(forms.ModelForm):
         super(FeedbackForm, self).__init__(*args, **kwargs)
         self.fields['header'].widget.attrs['class'] = 'form-control'
         self.fields['description'].widget.attrs['class'] = 'form-control'
+
+
+class ContactForm(forms.ModelForm):
+    class Meta:
+        model = Contact
+        fields = ('first_name','address','email','phone')
+        widgets = {
+            'desc': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(ContactForm, self).__init__(*args, **kwargs)
+        self.fields['first_name'].widget.attrs['class'] = 'form-control'
+        self.fields['address'].widget.attrs['class'] = 'form-control'
+        self.fields['email'].widget.attrs['class'] = 'form-control'
+        self.fields['phone'].widget.attrs['class'] = 'form-control'
