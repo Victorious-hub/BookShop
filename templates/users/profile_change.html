@@ -182,7 +182,78 @@ font-family: 'EB Garamond', serif;
 .info ul li:hover{transform: translateX(50px) scale(1.3);}
 
 .product-image:hover img {transition: all 0.3s ease-out;}
-.product-image:hover img {transform: scale(1.2, 1.2);}</style>
+.product-image:hover img {transform: scale(1.2, 1.2);}
+
+
+h1 {
+  text-align: center;
+  font-family: Tahoma, Arial, sans-serif;
+  color: #06D85F;
+  margin: 80px 0;
+}
+
+.button:hover btn{
+  z-index:-1;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  visibility: hidden;
+  opacity: 0;
+}
+.overlay:target {
+  visibility: visible;
+  opacity: 1;
+}
+
+.popup {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  width: 30%;
+  position: relative;
+  transition: all 5s ease-in-out;
+}
+
+.popup h2 {
+  margin-top: 0;
+  color: #333;
+  font-family: Tahoma, Arial, sans-serif;
+}
+.popup .close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  transition: all 200ms;
+  font-size: 30px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+}
+.popup .close:hover {
+  color: #06D85F;
+}
+.popup .content {
+  max-height: 30%;
+  overflow: auto;
+}
+
+@media screen and (max-width: 700px){
+  .box{
+    width: 70%;
+  }
+  .popup{
+    width: 70%;
+  }
+}
+</style>
 <body>
 <div class="container">
 
@@ -245,7 +316,7 @@ font-family: 'EB Garamond', serif;
                 <h6>YOUR PROFILE INFORMATION</h6>
                 <hr>
 
-                <form method="POST" action="{% url 'edit_profile' user.id%}">
+                <form method="POST" action="{% url 'edit_profile' user.slug%}">
                         {% csrf_token %}
                   <div class="form-group">
                     <label for="fullName">First Name</label>
@@ -361,17 +432,23 @@ font-family: 'EB Garamond', serif;
 </div>
 </div>
                {% endfor %}
- <div class="pagination-wrapper">
+<div class="pagination-wrapper">
     <ul class="pagination">
         {% if books_page.has_previous %}
             <li class="page-item"><a class="page-link" href="?page=1">&laquo First</a></li>
             <li class="page-item"><a class="page-link" href="?page={{ books_page.previous_page_number }}">Previous</a></li>
         {% endif %}
 
-        {% for i in nums %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a>
-            </li>
+        {% for num in books_page.paginator.page_range %}
+            {% if books_page.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+            {% endif %}
         {% endfor %}
 
         {% if books_page.has_next %}
@@ -387,10 +464,49 @@ font-family: 'EB Garamond', serif;
                 {% for feedback in feedbacks%}
 
 	<div class="feedback-block">
-    <h1>{{ feedback.author }}</h1>
-    <h2>{{ feedback.header }}</h2>
-    <h2>{{ feedback.description }}</h2>
+    <h2><strong>Header: </strong>{{ feedback.header }}</h2>
+                    <h2><strong>Description: </strong>{{ feedback.description }}</h2>
 
+                    <!--<a class="btn btn-success" href="{% url 'book_detail' feedback.book_id%}"><strong>Book View</strong></a>-->
+
+
+
+
+	<a  style="text-decoration:none;" href="#popup1">Delete</a>
+
+
+<div id="popup1" class="overlay">
+	<div class="popup">
+		<h2>Warning</h2>
+		<a class="close" href="#">&times;</a>
+		<div class="content">
+			Are you sure you want to delete this feedback?<br>
+            <a class="btn btn-success" href="{% url 'delete_feedback' feedback.book_id%}"><strong>Yes</strong></a>
+		</div>
+	</div>
+</div>
+                    <a  style="text-decoration:none;" href="#popup2">Change</a>
+
+                    <div id="popup2" class="overlay">
+	<div class="popup">
+		<h2>Change your feedback</h2>
+		<a class="close" href="#">&times;</a>
+		<div class="content">
+			Are you sure you want to delete this feedback?<br>
+
+            <form method="POST" action="{% url 'edit_feedback' feedback.book_id%}">
+
+                {% csrf_token %}
+                <input type="text" id="formName" name="header" class="form-control form-control-lg thick" placeholder="Name"value="{{ feedback.header }}">
+                <input type="text" id="formName" name="description" class="form-control form-control-lg thick" placeholder="Name" value="{{ feedback.description }}">
+
+                <button type="submit" class="btn btn-primary" tabIndex="-1">Accept order</button>
+            </form>
+
+		</div>
+	</div>
+</div>
+                    <hr>
  {% endfor %}
               </div>
               {% endif %}
@@ -403,4 +519,9 @@ font-family: 'EB Garamond', serif;
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+<script>
+
+</script>
 </html>

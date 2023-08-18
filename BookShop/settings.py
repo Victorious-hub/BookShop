@@ -13,6 +13,13 @@ SESSION_COOKIE_SAMESITE = 'Strict'
 CSRF_COOKIE_HTTPONLY = False
 SESSION_COOKIE_HTTPONLY = True
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.mail.ru'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'shyskov@inbox.ru'
+EMAIL_HOST_PASSWORD = 'pCa2JiNGhKhbiQBF9dSq'
+
 INSTALLED_APPS = [
     'jazzmin',
     'django.contrib.admin',

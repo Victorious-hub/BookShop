@@ -35,6 +35,7 @@ class Feedback(models.Model):
     description = models.CharField(max_length=255, default='')
     book_id = models.ForeignKey(Book, on_delete=models.CASCADE)
     date_released = models.DateTimeField(auto_now=True, null=True)
+
     def __str__(self):
         return str(self.author)
 
@@ -91,3 +92,9 @@ class WisthlistItem(models.Model):
         return self.book_product.book_name
 
 
+class Contact(models.Model):
+    first_name = models.CharField(max_length=255, default='')
+    email = models.EmailField(max_length=255, default='')
+    address = models.CharField(max_length=255, default='')
+    phone = models.CharField(max_length=255, default='')
+    ordered_books = models.ManyToManyField(CartItem)

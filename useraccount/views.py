@@ -3,113 +3,115 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-
+from django.utils.decorators import method_decorator
+from django.views import View, generic
 from Books.models import WishList, Book, Feedback
 from .forms import LoginForm, HyperLinkkForm
 from useraccount.forms import RegisterForm, EditForm
 from useraccount.models import SimpleUser
+from django.views.generic import UpdateView, CreateView
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+from django.core.paginator import Paginator
+from .forms import EditForm
 
 
-@login_required
-def add_hyperlinks(request, id):
-    profile = SimpleUser.objects.get(id=id)
+class AddHyperlinksView(LoginRequiredMixin, UpdateView):
+    model = SimpleUser
+    form_class = HyperLinkkForm
+    template_name = 'users/profile_change.html'
+    pk_url_kwarg = 'id'
+    success_url = reverse_lazy('main')
 
-    if request.method == 'GET':
-        context = {'form': HyperLinkkForm(instance=profile), 'id': id}
-        return render(request, 'users/profile_change.html', context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['id'] = self.kwargs['id']
+        return context
 
-    elif request.method == 'POST':
-        form = HyperLinkkForm(request.POST or None, instance=profile)
+
+class EditProfileView(LoginRequiredMixin, UpdateView):
+    model = SimpleUser
+    form_class = EditForm
+    template_name = 'users/profile_change.html'
+    slug_url_kwarg = 'slug'
+    slug_field = 'slug'
+    success_url = reverse_lazy('main')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        profile = self.get_object()
+        cart = None
+        cartitems = []
+        books_page = None
+        nums, feedbacks = None, []
+
+        if not self.request.user.is_admin:
+            cart, created = WishList.objects.get_or_create(user=self.request.user.simpleuser, completed=False)
+            cartitems = cart.wisthlistitems.all().order_by('id')  # Упорядочиваем по полю 'id'
+
+            p = Paginator(cartitems, 1)  # Измените число на желаемый размер страницы
+            page = self.request.GET.get('page')
+            books_page = p.get_page(page)
+            nums = "a" * books_page.paginator.num_pages
+
+            feedbacks = Feedback.objects.filter(author_id=self.request.user.simpleuser)
+
+        context['cart'] = cart
+        context['items'] = cartitems
+        context['nums'] = nums
+        context['books_page'] = books_page
+        context['feedbacks'] = feedbacks
+        return context
+
+
+@method_decorator(login_required, name="dispatch")
+class SignOut(View):
+    def get(self, request):
+        logout(request)
+        messages.success(request, f'You have been logged out.')
+        return redirect('register')
+
+
+class SignIn(View):
+    template_name = 'users/login.html'
+    form_class = LoginForm
+
+    def get(self, request):
+        form = self.form_class()
+        return render(request, self.template_name, context={'form': form})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('main')
-        else:
-            return render(request, 'users/profile_change.html', {'form': form})
-
-@login_required
-def edit_profile(request, slug):
-    profile = get_object_or_404(SimpleUser, slug=slug)
-
-    cart = None
-    cartitems = []
-    books_page = None
-    nums, feedbacks = None, []
-    if request.user.is_authenticated and not request.user.is_admin:
-        cart, created = WishList.objects.get_or_create(user=request.user.simpleuser, completed=False)
-        cartitems = cart.wisthlistitems.all()
-
-        p = Paginator(cart.wisthlistitems.all(), 1)
-
-        page = request.GET.get('page')
-
-        books_page = p.get_page(page)
-
-        nums = "a" * books_page.paginator.num_pages
-
-        feedbacks = Feedback.objects.filter(author_id=request.user.simpleuser)
-
-    if request.method == 'GET':
-        context = {
-            'form': EditForm(instance=profile),
-            'slug': slug,
-            "cart": cart,
-            "items": cartitems,
-            "nums": nums,
-            "books_page": books_page,
-            "feedbacks": feedbacks
-        }
-        return render(request, 'users/profile_change.html', context)
-
-    elif request.method == 'POST':
-        form = EditForm(request.POST or None, instance=profile)
-        if form.is_valid():
-            form.save()
-            return redirect('main')
-        else:
-            return render(request, 'users/profile_change.html', {'form': form})
-
-@login_required
-def sign_out(request):
-    logout(request)
-    messages.success(request, f'You have been logged out.')
-    return redirect('register')
-
-
-def sign_in(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        email = request.POST.get('email')
-        print(email)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
-            user = authenticate(request, email=email, password=password)
+            user = authenticate(
+                request,
+                email=form.cleaned_data['email'],
+                password=form.cleaned_data['password']
+            )
             if user:
                 login(request, user)
-                messages.success(request, f'Hi {email.title()}, welcome back!')
                 return redirect('authenticated')
 
         messages.error(request, f'Invalid username or password')
-        return render(request, 'users/login.html', {'form': form})
+        return render(request, self.template_name, {'form': form})
 
 
-def sign_up(request):
-    if request.user.is_authenticated:
-        return redirect('authenticated')
+class SignUpView(CreateView):
+    form_class = RegisterForm
+    template_name = 'users/register.html'
+    success_url = reverse_lazy('authenticated')
 
-    if request.method == 'GET':
-        form = RegisterForm()
-        return render(request, 'users/register.html', {'form': form})
-
-    elif request.method == 'POST':
-        form = RegisterForm(request.POST)
-
-        if form.is_valid():
-            user = form.save(commit=False)
-            # user.username = user.username.lower()
-            user.save()
-            messages.success(request, 'You have signed up successfully.')
-            login(request, user)
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
             return redirect('authenticated')
-        else:
-            return render(request, 'users/register.html', {'form': form})
+        return super().get(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        user = form.save(commit=False)
+        # user.username = user.username.lower()
+        user.save()
+        messages.success(self.request, 'You have signed up successfully.')
+        login(self.request, user)
+        return response

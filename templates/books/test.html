@@ -1,0 +1,44 @@
+
+{% for item in items %}
+        {% csrf_token %}
+  <div class="container">
+    <section id="cart">
+      <article class="product">
+        <header>
+          <a class="remove">
+             <img src="{{item.book_product.book_image.url}}" alt="" />
+
+            <h3>Remove product</h3>
+          </a>
+        </header>
+
+        <div class="content">
+
+           <p>{{item.book_product.book_name}}</p>
+
+           <p>{{item.book_product.book_name}}</p>
+
+           <p>{{item.book_product.desc}}</p>
+
+        </div>
+
+        <footer class="content">
+            <div class="Remove">
+          <button class="qt-minus" value="{{ item.book_product.id }}">-</button>
+
+          <span class="qt"><div class="name" ><p id="num_of_items">{{item.quantity}}</p></div></span>
+
+          <span class="qt-plus">+</span>
+
+          <h2 class="full-price">
+            <h2 class="price">${{ item.book_product.price}}</h2>
+          </h2>
+                    </div>
+        </footer>
+
+      </article>
+
+    </section>
+  </div>
+
+{% endfor %}

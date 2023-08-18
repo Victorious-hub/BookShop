@@ -1,12 +1,18 @@
 import json
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse, HttpResponse
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.mail import send_mail, BadHeaderError
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views import View
+from django.views.generic import TemplateView, DeleteView, ListView, UpdateView, CreateView, DetailView
 from rest_framework.permissions import IsAdminUser
 from django.db.models import Q
 from useraccount.models import SimpleUser
-from .models import Book, CartItem, Cart, Feedback, WishList, WisthlistItem
-from .forms import BookForm, FeedbackForm
+from .models import Book, CartItem, Cart, Feedback, WishList, WisthlistItem, Contact
+from .forms import BookForm, FeedbackForm, ContactForm
 from django.contrib import messages
 from django.core.paginator import Paginator
 from .tasks import sleeptime
@@ -14,377 +20,451 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
+from django.conf import settings
 
 
-def create_pdf(request, id):
-    # book_id = request.POST.get('book_id')
-    book = Book.objects.get(id=id)
+class CreatePDFView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        book = Book.objects.get(id=id)
 
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="BookReview.pdf"'
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="BookReview.pdf"'
 
-    pdf = canvas.Canvas(response, pagesize=letter)
+        pdf = canvas.Canvas(response, pagesize=letter)
 
-    title_font_size = 16
-    content_font_size = 12
-    page_width, page_height = letter
+        title_font_size = 16
+        content_font_size = 12
+        page_width, page_height = letter
 
-    title = book.book_name
+        title = book.book_name
 
-    # Add page 1
-    pdf.setFont("Helvetica-Bold", title_font_size)
-    pdf.drawCentredString(page_width / 2, page_height - 50, title)
+        pdf.setFont("Helvetica-Bold", title_font_size)
+        pdf.drawCentredString(page_width / 2, page_height - 50, title)
 
-    pdf.setFont("Helvetica", content_font_size)
-    textobject = pdf.beginText(50, page_height - 100)
-    textobject.setFont("Helvetica", content_font_size)
-    textobject.setTextOrigin(50, page_height - 100)
+        pdf.setFont("Helvetica", content_font_size)
+        textobject = pdf.beginText(50, page_height - 100)
+        textobject.setFont("Helvetica", content_font_size)
+        textobject.setTextOrigin(50, page_height - 100)
 
-    text = """
-    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-    Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis
-    dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
-    pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, 
-    fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, 
-    venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
-    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-    Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis
-    dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
-    pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, 
-    fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, 
-    venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
-    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-    Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis
-    dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
-    pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, 
-    fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, 
-    venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
-    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-    Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis
-    dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
-    pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, 
-    fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, 
-    venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
-    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-    Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis
-    dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
-    pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, 
-    fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, 
-    venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
-    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-    Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis
-    dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
-    pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, 
-    fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, 
-    venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
-    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-    Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis
-    dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
-    pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, 
-    fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, 
-    venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
-    """
+        text = """
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+            Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis
+            dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
+            pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, 
+            fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, 
+            venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+            Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis
+            dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
+            pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, 
+            fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, 
+            venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+            Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis
+            dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
+            pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, 
+            fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, 
+            venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+            Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis
+            dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
+            pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, 
+            fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, 
+            venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+            Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis
+            dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
+            pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, 
+            fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, 
+            venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+            Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis
+            dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
+            pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, 
+            fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, 
+            venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+            Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis
+            dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,
+            pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, 
+            fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, 
+            venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+            """
 
-    lines = text.splitlines()
-    for line in lines:
-        textobject.textLine(line)
+        lines = text.splitlines()
+        for line in lines:
+            textobject.textLine(line)
 
-    pdf.drawText(textobject)
+        pdf.drawText(textobject)
 
-    # Add page 2
-    pdf.showPage()
+        # Add page 2
+        pdf.showPage()
 
-    pdf.setFont("Helvetica-Bold", title_font_size)
+        pdf.setFont("Helvetica-Bold", title_font_size)
 
-    pdf.setFont("Helvetica", content_font_size)
-    textobject = pdf.beginText(50, page_height - 100)
-    textobject.setFont("Helvetica", content_font_size)
-    textobject.setTextOrigin(50, page_height - 100)
+        pdf.setFont("Helvetica", content_font_size)
+        textobject = pdf.beginText(50, page_height - 100)
+        textobject.setFont("Helvetica", content_font_size)
+        textobject.setTextOrigin(50, page_height - 100)
 
-    for line in lines:
-        textobject.textLine(line)
+        for line in lines:
+            textobject.textLine(line)
 
-    pdf.drawText(textobject)
+        pdf.drawText(textobject)
 
-    pdf.showPage()
-    pdf.save()
+        pdf.showPage()
+        pdf.save()
 
-    return response
-
-
-def payment(request):
-    return render(request, 'Payment/PayPal.html', {})
+        return response
 
 
-def cart(request):
-    cart = None
-    cartitems = []
-    if request.user.is_authenticated and not request.user.is_admin:
-        cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
-        cartitems = cart.cartitems.all()
-    context = {"cart": cart, "items": cartitems}
-    return render(request, 'Cart/CartTest.html', context)
+class CartView(LoginRequiredMixin, View):
+    def get(self, request):
+        cart = None
+        cartitems = []
+        if request.user.is_authenticated and not request.user.is_admin:
+            cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
+            cartitems = cart.cartitems.all()
+        context = {"cart": cart, "items": cartitems}
+        return render(request, 'Cart/CartTest.html', context)
 
 
-def add_to_cart(request):
-    data = json.loads(request.body)
-    print(data)
-    product_id = data["id"]
-    product = Book.objects.get(id=product_id)
+class AddToCartView(View):
+    def post(self, request):
+        data = json.loads(request.body)
+        print(data)
+        product_id = data["id"]
+        product = Book.objects.get(id=product_id)
 
-    if request.user.is_authenticated:
-        cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
+        if request.user.is_authenticated:
+            cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
 
-        cartitem, created = CartItem.objects.get_or_create(cart=cart, book_product=product)
+            cartitem, created = CartItem.objects.get_or_create(cart=cart, book_product=product)
 
-        cartitem.quantity += 1
+            cartitem.quantity += 1
 
-        cartitem.save()
-
-        num_of_item = cart.num_of_items
-
-        print(cartitem)
-    return JsonResponse("Working", safe=False)
-
-
-def remove_from_cart(request):
-    data = json.loads(request.body)
-    product_id = data["id"]
-    product = Book.objects.get(id=product_id)
-
-    if request.user.is_authenticated:
-        cart = Cart.objects.get(user=request.user.simpleuser, completed=False)
-
-        cartitem = CartItem.objects.get(cart=cart, book_product=product)
-
-        if cartitem.quantity >= 1:
-            cartitem.quantity -= 1
             cartitem.save()
-        else:
+
+            num_of_item = cart.num_of_items
+
+        return JsonResponse("Working", safe=False)
+
+
+class RemoveFromCartView(View):
+    def post(self, request):
+        data = json.loads(request.body)
+        product_id = data["id"]
+        product = Book.objects.get(id=product_id)
+
+        if request.user.is_authenticated:
+            cart = Cart.objects.get(user=request.user.simpleuser, completed=False)
+
+            cartitem = CartItem.objects.get(cart=cart, book_product=product)
+
+            if cartitem.quantity >= 1:
+                cartitem.quantity -= 1
+                cartitem.save()
+            else:
+                cartitem.delete()
+
+            num_of_item = cart.num_of_items
+
+            print(cartitem)
+        return JsonResponse({'price': cartitem.price, 'num_of_items': num_of_item}, safe=False)
+
+
+class RemoveAllCartView(LoginRequiredMixin, View):
+    def post(self, request, id):
+        data = json.loads(request.body)
+        product_id = data["id"]
+        product = Book.objects.get(id=product_id)
+
+        if request.user.is_authenticated:
+            cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
+
+            cartitem, created = CartItem.objects.get_or_create(cart=cart, book_product=product)
+
             cartitem.delete()
 
-        num_of_item = cart.num_of_items
+            num_of_item = cart.num_of_items
 
-        print(cartitem)
-    return JsonResponse({'price': cartitem.price, 'num_of_items': num_of_item}, safe=False)
-
-
-def remove_all(request):
-    data = json.loads(request.body)
-    product_id = data["id"]
-    product = Book.objects.get(id=product_id)
-
-    if request.user.is_authenticated:
-        cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
-
-        cartitem, created = CartItem.objects.get_or_create(cart=cart, book_product=product)
-
-        cartitem.delete()
-
-        num_of_item = cart.num_of_items
-
-        print("Deleted")
-    return JsonResponse({'price': cartitem.price, 'num_of_items': num_of_item}, safe=False)
+        return JsonResponse({'price': cartitem.price, 'num_of_items': num_of_item}, safe=False)
 
 
-def main(request):
-    return render(request, 'users/base.html', {})
+class Main(TemplateView):
+    template_name = 'users/base.html'
 
 
-@login_required
-def change_password(request, id):
-    profile = SimpleUser.objects.get(id=id)
-    if request.method == 'POST':
+class ChangePasswordView(LoginRequiredMixin, View):
+    def post(self, request, id):
+        profile = SimpleUser.objects.get(id=id)
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
-            update_session_auth_hash(request, user)  # Important!
+            update_session_auth_hash(request, user)
             messages.success(request, 'Your password was successfully updated!')
             return redirect('register')
         else:
             messages.error(request, 'Please correct the error below.')
-    else:
-        form = PasswordChangeForm(request.user)
-    return render(request, 'users/profile_change.html', {
-        'form': form
-    })
-
-@login_required
-def book_detail(request,id):
-    book = Book.objects.get(id=id)
-    feedbacks = Feedback.objects.filter(book_id=book)
-    context = {'book': book,'feedbacks': feedbacks}
-    return render(request,'books/book_detail.html',context)
+        return render(request, 'users/profile_change.html', {'form': form})
 
 
-@login_required
-def authenticated(request):
-    books = Book.objects.all()
+class BookDetailView(LoginRequiredMixin, DetailView):
+    model = [Book, Feedback]
+    template_name = 'books/book_detail.html'
+    context_object_name = 'book'
 
-    p = Paginator(Book.objects.all(), 2)
-    page = request.GET.get('page')
-    books_page = p.get_page(page)
-
-    nums = "a" * books_page.paginator.num_pages
-
-    if request.user.is_authenticated and not request.user.is_admin:
-        cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
-    context = {'books': books, 'books_page': books_page, "nums": nums, }
-    return render(request, 'users/authenticated.html', context)
-
-@login_required
-def delete_book(request, id):
-    permission_classes = [IsAdminUser]
-    book = Book.objects.get(id=id)
-    context = {'post': book}
-
-    if request.method == 'GET':
-        return render(request, 'books/delete_book.html', context)
-    elif request.method == 'POST':
-        book.delete()
-        messages.success(request, 'The post has been deleted successfully.')
-        return redirect('main')
+    def get(self, request, id):
+        book = self.model[0].objects.get(id=id)
+        feedbacks = self.model[1].objects.filter(book_id=book)
+        context = {'book': book, 'feedbacks': feedbacks}
+        return render(request, self.template_name, context)
 
 
-def search_books(request):
-    if request.method == 'POST':
+class AuthenticatedView(LoginRequiredMixin, TemplateView):
+    template_name = 'users/authenticated.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['books'] = Book.objects.all()
+
+        p = Paginator(Book.objects.all(), 2)
+        page = self.request.GET.get('page')
+
+        books_page = p.get_page(page)
+
+        context['books_page'] = books_page
+        context['nums'] = "a" * books_page.paginator.num_pages
+        if self.request.user.is_authenticated and not self.request.user.is_admin:
+            cart, created = Cart.objects.get_or_create(user=self.request.user.simpleuser, completed=False)
+        return context
+
+
+@method_decorator(login_required, name="dispatch")
+class BookDeleteView(DeleteView):
+    model = Book
+    success_url = reverse_lazy('main')
+    template_name = 'books/delete_book.html'
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.user == request.user:
+            self.object.delete()
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            raise Http404
+
+
+class SearchBooksView(LoginRequiredMixin, View):
+    def post(self, request):
         searched = request.POST['searched']
-        book_names = Book.objects.filter(Q(book_name__contains=searched) | Q(book_author__contains=searched))
-        return render(request, 'books/search_book.html', {'searched': searched, 'book_names': book_names, })
-    else:
-        return render(request, 'books/search_book.html', {})
-
-
-@login_required
-def edit_book(request, id):
-    permission_classes = [IsAdminUser]
-    book = Book.objects.get(id=id)
-
-    if request.method == 'GET':
-        context = {'form': BookForm(instance=book), 'id': id}
-        return render(request, 'books/edit-book.html', context)
-
-    elif request.method == 'POST':
-        form = BookForm(request.POST or None, request.FILES or None, instance=book)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'The post has been updated successfully.')
-            return redirect('main')
+        if (len(searched) != 0):
+            book_names = Book.objects.filter(Q(book_name__contains=searched) | Q(book_author__contains=searched))
+            return render(request, 'books/search_book.html', {'searched': searched, 'book_names': book_names, })
         else:
-            messages.error(request, 'Please correct the following errors:')
-            return render(request, 'books/edit-book.html', {'form': form})
+            return render(request, 'books/search_book.html', {})
 
 
-@login_required
-def add_book(request):
-    permission_classes = [IsAdminUser]
-    if request.method == 'GET':
-        context = {'form': BookForm()}
-        return render(request, 'books/add_book.html', context)
-    elif request.method == 'POST':
-        form = BookForm(request.POST, request.FILES)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.author = request.user
-            user.save()
-            return redirect('authenticated')
-        else:
-            messages.error(request, 'Please correct the following errors:')
-            return render(request, 'books/add_book.html', {'form': form})
+class BookUpdateView(LoginRequiredMixin, UpdateView):
+    model = Book
+    form_class = BookForm
+    template_name = 'books/edit-book.html'
+    pk_url_kwarg = 'id'
+    success_url = reverse_lazy('main')
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
 
 
-@login_required
-def add_feedback(request, id):
-    books = Book.objects.get(id=id)
+class CreateBookView(LoginRequiredMixin, CreateView):
+    form_class = BookForm
+    template_name = 'books/add_book.html'
+    success_url = reverse_lazy('authenticated')
 
-    if request.method == 'GET':
-        context = {'form': FeedbackForm(instance=books), 'id': id}
-        return render(request, 'Feedback/add_feedback.html', context)
-
-
-    elif request.method == 'POST':
-
-        form = FeedbackForm(request.POST, request.FILES)
-
-        if form.is_valid():
-
-            feedback = form.save(commit=False)
-
-            feedback.author = request.user.simpleuser
-
-            feedback.book_id = books  # Установите значение book_id
-
-            feedback.save()
-
-            return redirect('authenticated')
-
-        else:
-
-            messages.error(request, 'Please correct the following errors:')
-
-            return render(request, 'Feedback/add_feedback.html', {'form': form})
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
 
 
-@login_required
-def feedbacks(request, id):
-    books = Book.objects.get(id=id)
-    feedbacks = Feedback.objects.filter(book_id=books)
-    context = {'feedbacks': feedbacks}
-    return render(request, 'Feedback/feedbacks.html', context)
+class AddFeedBackView(LoginRequiredMixin, View):
+    model = [Book, Feedback]
+    template_name = 'Feedback/add_feedback.html'
+    form_class = FeedbackForm
+
+    def get(self, request, id):
+        books = self.model[0].objects.get(id=id)
+        feedbacks = self.model[1].objects.filter(book_id=books)
+        context = {'form': self.form_class(instance=books), 'id': id}
+        return render(request, self.template_name, context)
+
+    def post(self, request, id):
+        books = self.model[0].objects.get(id=id)
+        feedbacks = self.model[1].objects.filter(book_id=books)
+        if len(feedbacks) == 0:
+            form = self.form_class(request.POST)
+            if form.is_valid():
+                feedback = form.save(commit=False)
+                feedback.author = request.user.simpleuser
+                feedback.book_id = books
+                feedback.save()
+                return redirect('authenticated')
+
+            else:
+                messages.error(request, 'Please correct the following errors:')
+                return render(request, self.template_name, {'form': form})
+        return render(request, 'users/authenticated.html', )
 
 
-@login_required
-def checkers(request):
-    if request.method == 'POST':
+class FeedBacksView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        books = Book.objects.get(id=id)
+        feedbacks = Feedback.objects.filter(book_id=books)
+        context = {'feedbacks': feedbacks}
+        return render(request, 'Feedback/feedbacks.html', context)
+
+
+class CheckersView(LoginRequiredMixin, View):
+    def post(self, request):
         searched = request.POST.getlist('searched')
         books = Book.objects.filter(genre__in=searched)
         context = {'books': books}
         return render(request, 'books/checker.html', context)
 
-    return render(request, 'books/checker.html', )
+
+# return render(request, 'books/checker.html', )
 
 
-@login_required
-def price_checkers(request):
-    if request.method == 'POST':
+class PriceCheckersView(LoginRequiredMixin, View):
+    def post(self, request):
         price_min = request.POST.get('priceMin')
         price_max = request.POST.get('priceMax')
         books = Book.objects.filter(price__gte=price_min, price__lte=price_max)
         context = {'books': books}
         return render(request, 'books/price_checker.html', context)
 
-    return render(request, 'books/price_checker.html')
+    # return render(request, 'books/price_checker.html')
 
 
-def add_to_wishlist(request):
-    data = json.loads(request.body)
-    product_id = data["id"]
-    product = Book.objects.get(id=product_id)
+class AddToWishlistView(View):
+    def post(self, request):
+        data = json.loads(request.body)
+        product_id = data["id"]
+        product = Book.objects.get(id=product_id)
 
-    if request.user.is_authenticated:
-        cart, created = WishList.objects.get_or_create(user=request.user.simpleuser, completed=False)
-        cart.save()  # Сохраняем объект cart
+        if request.user.is_authenticated:
+            cart, created = WishList.objects.get_or_create(user=request.user.simpleuser, completed=False)
+            cart.save()
+            cartitem, created = WisthlistItem.objects.get_or_create(wisthlist_item=cart, book_product=product)
 
-        cartitem, created = WisthlistItem.objects.get_or_create(wisthlist_item=cart, book_product=product)
-
-        cartitem.quantity += 1
-        cartitem.save()
-    return JsonResponse("Working", safe=False)
-
-
-def remove_from_wishlist(request):
-    data = json.loads(request.body)
-    product_id = data["id"]
-    product = Book.objects.get(id=product_id)
-
-    if request.user.is_authenticated:
-        cart, created = WishList.objects.get_or_create(user=request.user.simpleuser, completed=False)
-        cart.save()  # Сохраняем объект cart
-
-        cartitem, created = WisthlistItem.objects.get_or_create(wisthlist_item=cart, book_product=product)
-
-        cartitem.quantity -= 1
-        cartitem.remove()
-    return JsonResponse("Working", safe=False)
+            cartitem.quantity += 1
+            cartitem.save()
+        return JsonResponse("Working", safe=False)
 
 
+class RemoveWishList(LoginRequiredMixin, View):
+    def post(self, request):
+        data = json.loads(request.body)
+        product_id = data["id"]
+        product = Book.objects.get(id=product_id)
+
+        if request.user.is_authenticated:
+            cart, created = WishList.objects.get_or_create(user=request.user.simpleuser, completed=False)
+            cart.save()
+
+            cartitem, created = WisthlistItem.objects.get_or_create(wisthlist_item=cart, book_product=product)
+
+            cartitem.quantity -= 1
+            cartitem.remove()
+        return JsonResponse("Working", safe=False)
+
+
+class AcceptContact(LoginRequiredMixin, View):
+    model = Cart
+    template_name = 'Payment/Contact.html'
+    form_class = ContactForm
+    success_url = reverse_lazy('main')
+
+    def get(self, request):
+        form = ContactForm(request.GET)
+        return render(request, self.template_name, {"form": form})
+
+    def post(self, request):
+        email = request.POST.get('email')
+        first_name = request.POST.get('first_name')
+
+        subject = "Hey, dude"
+        message = f"Hi {first_name}, you have accepted your purchase"
+        email_from = settings.EMAIL_HOST_USER
+
+        form = self.form_class(request.POST)
+        try:
+            cart = self.model.objects.get(user=request.user.simpleuser, completed=False)
+        except self.model.DoesNotExist:
+            return HttpResponseRedirect('cart')
+
+        ordered_books = []
+        cart_items = cart.cartitems.all()
+        for cart_item in cart_items:
+            ordered_books.append(cart_item)
+
+        if form.is_valid():
+            contact = form.save(commit=False)
+            contact.save()
+            cart.completed = True
+
+            contact.ordered_books.set(ordered_books)
+
+            cart.save()
+
+            send_mail(subject, message, email_from, [email])
+            return HttpResponseRedirect(self.success_url)
+        else:
+            return render(request, self.template_name, {'form': form})
+
+
+class AcceptedOrders(LoginRequiredMixin, View):
+    def get(self, request):
+        if request.user.is_authenticated:
+            cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=True)
+            cartitems = cart.cartitems.all()
+            context = {"cart": cart, "items": cartitems}
+            return render(request, 'books/test.html', context)
+
+
+class DeleteFeedBackView(LoginRequiredMixin, DetailView):
+    model = [Book, Feedback]
+    success_url = reverse_lazy('main')
+    template_name = 'users/profile_change.html'
+
+    def get(self, request, id):
+        books = self.model[0].objects.get(id=id)
+        feedbacks = self.model[1].objects.filter(book_id=books).delete()
+
+        messages.success(request, 'The post has been deleted successfully.')
+        return redirect(self.success_url)
+
+
+class EditFeedbackView(LoginRequiredMixin, View):
+    model = [Book, Feedback]
+    template_name = 'users/profile_change.html'
+    form_class = FeedbackForm
+    success_url = reverse_lazy('main')
+
+    def get(self, request, id):
+        books = self.model[0].objects.get(id=id)
+        feedbacks = self.model[1].objects.filter(book_id=books)
+        context = {'feedbacks': feedbacks, 'id': id}
+        return render(request, self.template_name, context)
+
+    def post(self, request, id):
+        books = self.model[0].objects.get(id=id)
+        feedbacks = self.model[1].objects.filter(book_id=books)
+        form = FeedbackForm(request.POST or None, instance=feedbacks.first())
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'The post has been updated successfully.')
+            return redirect(self.success_url)
+        else:
+            messages.error(request, 'Please correct the following errors:')
+            return render(request, self.template_name, {'form': form})
