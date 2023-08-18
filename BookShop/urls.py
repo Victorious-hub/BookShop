@@ -87,4 +87,6 @@ urlpatterns = [
 
                   path('edit_feedback/<int:id>',EditFeedbackView.as_view(), name='edit_feedback'),
 
+                  path('test',AcceptedOrders.as_view(),name='lox'),
+
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

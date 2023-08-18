@@ -23,8 +23,8 @@ from reportlab.pdfgen import canvas
 from django.conf import settings
 
 
-class CreatePDFView(LoginRequiredMixin,View):
-    def get(self,request,id):
+class CreatePDFView(LoginRequiredMixin, View):
+    def get(self, request, id):
         book = Book.objects.get(id=id)
 
         response = HttpResponse(content_type='application/pdf')
@@ -147,8 +147,6 @@ class AddToCartView(View):
 
             num_of_item = cart.num_of_items
 
-            print(cartitem)
-
         return JsonResponse("Working", safe=False)
 
 
@@ -175,8 +173,8 @@ class RemoveFromCartView(View):
         return JsonResponse({'price': cartitem.price, 'num_of_items': num_of_item}, safe=False)
 
 
-class RemoveAllCartView(LoginRequiredMixin,View):
-    def post(self,request,id):
+class RemoveAllCartView(LoginRequiredMixin, View):
+    def post(self, request, id):
         data = json.loads(request.body)
         product_id = data["id"]
         product = Book.objects.get(id=product_id)
@@ -197,18 +195,18 @@ class Main(TemplateView):
     template_name = 'users/base.html'
 
 
-class ChangePasswordView(LoginRequiredMixin,View):
-        def post(self, request, id):
-            profile = SimpleUser.objects.get(id=id)
-            form = PasswordChangeForm(request.user, request.POST)
-            if form.is_valid():
-                user = form.save()
-                update_session_auth_hash(request, user)
-                messages.success(request, 'Your password was successfully updated!')
-                return redirect('register')
-            else:
-                messages.error(request, 'Please correct the error below.')
-            return render(request, 'users/profile_change.html', {'form': form})
+class ChangePasswordView(LoginRequiredMixin, View):
+    def post(self, request, id):
+        profile = SimpleUser.objects.get(id=id)
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('register')
+        else:
+            messages.error(request, 'Please correct the error below.')
+        return render(request, 'users/profile_change.html', {'form': form})
 
 
 class BookDetailView(LoginRequiredMixin, DetailView):
@@ -257,10 +255,10 @@ class BookDeleteView(DeleteView):
             raise Http404
 
 
-class SearchBooksView(LoginRequiredMixin,View):
-    def post(self,request):
+class SearchBooksView(LoginRequiredMixin, View):
+    def post(self, request):
         searched = request.POST['searched']
-        if(len(searched) != 0):
+        if (len(searched) != 0):
             book_names = Book.objects.filter(Q(book_name__contains=searched) | Q(book_author__contains=searched))
             return render(request, 'books/search_book.html', {'searched': searched, 'book_names': book_names, })
         else:
@@ -318,33 +316,34 @@ class AddFeedBackView(LoginRequiredMixin, View):
         return render(request, 'users/authenticated.html', )
 
 
-class FeedBacksView(LoginRequiredMixin,View):
-    def get(self,request,id):
+class FeedBacksView(LoginRequiredMixin, View):
+    def get(self, request, id):
         books = Book.objects.get(id=id)
         feedbacks = Feedback.objects.filter(book_id=books)
         context = {'feedbacks': feedbacks}
         return render(request, 'Feedback/feedbacks.html', context)
 
 
-class CheckersView(LoginRequiredMixin,View):
-    def post(self,request):
+class CheckersView(LoginRequiredMixin, View):
+    def post(self, request):
         searched = request.POST.getlist('searched')
         books = Book.objects.filter(genre__in=searched)
         context = {'books': books}
         return render(request, 'books/checker.html', context)
 
-   # return render(request, 'books/checker.html', )
+
+# return render(request, 'books/checker.html', )
 
 
-class PriceCheckersView(LoginRequiredMixin,View):
-    def post(self,request):
+class PriceCheckersView(LoginRequiredMixin, View):
+    def post(self, request):
         price_min = request.POST.get('priceMin')
         price_max = request.POST.get('priceMax')
         books = Book.objects.filter(price__gte=price_min, price__lte=price_max)
         context = {'books': books}
         return render(request, 'books/price_checker.html', context)
 
-    #return render(request, 'books/price_checker.html')
+    # return render(request, 'books/price_checker.html')
 
 
 class AddToWishlistView(View):
@@ -422,6 +421,15 @@ class AcceptContact(LoginRequiredMixin, View):
             return HttpResponseRedirect(self.success_url)
         else:
             return render(request, self.template_name, {'form': form})
+
+
+class AcceptedOrders(LoginRequiredMixin, View):
+    def get(self, request):
+        if request.user.is_authenticated:
+            cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=True)
+            cartitems = cart.cartitems.all()
+            context = {"cart": cart, "items": cartitems}
+            return render(request, 'books/test.html', context)
 
 
 class DeleteFeedBackView(LoginRequiredMixin, DetailView):
