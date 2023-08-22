@@ -85,8 +85,8 @@ urlpatterns = [
 
                   path('delete_feedback/<int:id>', DeleteFeedBackView.as_view(), name='delete_feedback'),
 
-                  path('edit_feedback/<int:id>',EditFeedbackView.as_view(), name='edit_feedback'),
+                  path('edit_feedback/<int:id>', EditFeedbackView.as_view(), name='edit_feedback'),
 
-                  path('test',AcceptedOrders.as_view(),name='lox'),
+                  path('test', views.test, name='test'),
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -32,10 +32,14 @@ INSTALLED_APPS = [
     'corsheaders',
     'Books',
     'drf_yasg',
-
+    'sass_processor',
     'useraccount',
 ]
-
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'sass_processor.finders.CssFinder',
+]
 PAYPAL_TEST = True
 PAYPAL_RECEIVER_EMAIL = 'sandbox@gmail.com'
 
@@ -117,6 +121,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR,'static'),
 )
+
+SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR,'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #Redis configuration

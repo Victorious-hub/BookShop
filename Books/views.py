@@ -192,7 +192,7 @@ class RemoveAllCartView(LoginRequiredMixin, View):
 
 
 class Main(TemplateView):
-    template_name = 'users/base.html'
+    template_name = 'users/main.html'
 
 
 class ChangePasswordView(LoginRequiredMixin, View):
@@ -238,6 +238,12 @@ class AuthenticatedView(LoginRequiredMixin, TemplateView):
         if self.request.user.is_authenticated and not self.request.user.is_admin:
             cart, created = Cart.objects.get_or_create(user=self.request.user.simpleuser, completed=False)
         return context
+
+
+def test(request):
+    contact = Contact.objects.all()
+    print(contact)
+    return render(request, 'books/test.html', {"contact": contact})
 
 
 @method_decorator(login_required, name="dispatch")
@@ -410,6 +416,7 @@ class AcceptContact(LoginRequiredMixin, View):
 
         if form.is_valid():
             contact = form.save(commit=False)
+            contact.user = request.user.simpleuser
             contact.save()
             cart.completed = True
 
@@ -421,15 +428,6 @@ class AcceptContact(LoginRequiredMixin, View):
             return HttpResponseRedirect(self.success_url)
         else:
             return render(request, self.template_name, {'form': form})
-
-
-class AcceptedOrders(LoginRequiredMixin, View):
-    def get(self, request):
-        if request.user.is_authenticated:
-            cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=True)
-            cartitems = cart.cartitems.all()
-            context = {"cart": cart, "items": cartitems}
-            return render(request, 'books/test.html', context)
 
 
 class DeleteFeedBackView(LoginRequiredMixin, DetailView):

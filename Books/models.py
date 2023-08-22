@@ -93,8 +93,10 @@ class WisthlistItem(models.Model):
 
 
 class Contact(models.Model):
+    user = models.ForeignKey(SimpleUser, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=255, default='')
     email = models.EmailField(max_length=255, default='')
     address = models.CharField(max_length=255, default='')
     phone = models.CharField(max_length=255, default='')
     ordered_books = models.ManyToManyField(CartItem)
+    time_accepted = models.DateTimeField(auto_now_add=True)

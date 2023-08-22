@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.views import View, generic
-from Books.models import WishList, Book, Feedback
+from Books.models import WishList, Book, Feedback, Cart, Contact
 from .forms import LoginForm, HyperLinkkForm
 from useraccount.forms import RegisterForm, EditForm
 from useraccount.models import SimpleUser
@@ -30,6 +30,15 @@ class AddHyperlinksView(LoginRequiredMixin, UpdateView):
         return context
 
 
+class AcceptedOrders(LoginRequiredMixin, View):
+    def get(self, request):
+        if request.user.is_authenticated:
+            cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=True)
+            cartitems = cart.cartitems.all()
+            context = {"cart": cart, "items": cartitems}
+            return render(request, 'books/test.html', context)
+
+
 class EditProfileView(LoginRequiredMixin, UpdateView):
     model = SimpleUser
     form_class = EditForm
@@ -41,14 +50,22 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         profile = self.get_object()
-        cart = None
-        cartitems = []
+        cart, accepted_order = None, []
+        cartitems, orderitems = [], []
         books_page = None
         nums, feedbacks = None, []
-
+        contact = None
         if not self.request.user.is_admin:
             cart, created = WishList.objects.get_or_create(user=self.request.user.simpleuser, completed=False)
+
             cartitems = cart.wisthlistitems.all().order_by('id')  # Упорядочиваем по полю 'id'
+
+            contact = Contact.objects.filter(user=self.request.user.simpleuser)
+
+            accepted_order = Cart.objects.filter(user=self.request.user.simpleuser, completed=True).first()
+            print(accepted_order)
+            orderitems = accepted_order.cartitems.all()
+
 
             p = Paginator(cartitems, 1)  # Измените число на желаемый размер страницы
             page = self.request.GET.get('page')
@@ -57,6 +74,9 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
 
             feedbacks = Feedback.objects.filter(author_id=self.request.user.simpleuser)
 
+        context['contact'] = contact
+        context['orderitems'] = orderitems
+        context['accepted_order'] = accepted_order
         context['cart'] = cart
         context['items'] = cartitems
         context['nums'] = nums
