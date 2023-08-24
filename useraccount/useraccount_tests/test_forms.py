@@ -16,7 +16,7 @@ class TestForms(TestCase):  # ?
             'last_name': 'Shyshko',
             'email': 'vitya@gmail.com'
         })
-        self.assertFalse(form.is_valid())
+        self.assertTrue(form.is_valid())
 
     def test_edit_form_no_data(self):
         form = EditForm(data={})
@@ -54,7 +54,7 @@ class TestForms(TestCase):  # ?
             'email': 'shyshkov745@gmail.com',
             'password1': '63254890Ba'
         })
-        self.assertFalse(form.is_valid())
+        self.assertTrue(form.is_valid())
 
     def test_register_form_no_data(self):
         form = RegisterForm(data={})

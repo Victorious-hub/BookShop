@@ -3,7 +3,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Play&display=swap" rel="stylesheet">
     <title>Title</title>
+    <link rel="stylesheet" href="awesome/font-awesome.min.css">
     <link href="{% static 'css/test.scss' %}" rel="stylesheet" type="text/css"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
@@ -158,7 +162,7 @@ body {
 
 .featured_container{
    width:100%;
-   height: 350px;
+   height: 370px;
    background: white;
    margin-right:1210px;
 }
@@ -170,12 +174,93 @@ body {
     padding: 0 900px 0;
     margin-top: -275px;
 }
+
+.lib{width:1465px;height:350px;opacity:0.7;}
+.book_icon{
+    width:10%;
+}
+.i_container{
+    background:white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+figcaption{width:175px; margin-left:150px;}
+.i_container figure {
+    flex: 1 1 300px;
+    margin: 10px;
+    text-align: center;
+}
+
+.book_icon {
+    width: 100%;
+    max-width: 200px;
+}
+body{
+margin:0;
+overflow-x:hidden;
+}
+
+.footer{
+background:#000;
+padding:30px 0px;
+font-family: 'Play', sans-serif;
+text-align:center;
+}
+
+.footer .row{
+width:100%;
+margin:1% 0%;
+padding:0.6% 0%;
+color:gray;
+font-size:0.8em;
+}
+
+.footer .row a{
+text-decoration:none;
+color:gray;
+transition:0.5s;
+}
+
+.footer .row a:hover{
+color:#fff;
+}
+
+.footer .row ul{
+width:100%;
+}
+
+.footer .row ul li{
+display:inline-block;
+margin:0px 30px;
+}
+
+.footer .row a i{
+font-size:2em;
+margin:0% 1%;
+}
+
+@media (max-width:720px){
+.footer{
+text-align:left;
+padding:5%;
+}
+.footer .row ul li{
+display:block;
+margin:10px 0px;
+text-align:left;
+}
+.footer .row a i{
+margin:0% 3%;
+}
+}
 </style>
 <body>
 <header>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">Navbar</a>
+  <a class="navbar-brand" href="#">It Camasutra</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -183,10 +268,10 @@ body {
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="{% url 'register' %}">Register<span class="sr-only">(current)</span></a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Link</a>
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'login' %}">Login<span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -219,7 +304,7 @@ body {
   <article>
     <div class="article-wrapper">
       <figure>
-        <img src = "{% static "images/unix.jpg" %}" class="icon" alt="">
+        <img src = "{% static "images/grokaem.webp" %}" class="icon" alt="">
       </figure>
       <div class="article-body">
         <h2>Грокаем Алгоритмы</h2>
@@ -237,7 +322,7 @@ body {
 
     <div class="article-wrapper">
       <figure>
-        <img src = "{% static "images/ideal.jpg" %}" class="icon" alt="">
+        <img src = "{% static "images/unix.webp" %}" class="icon" alt="">
       </figure>
       <div class="article-body">
        <h2>Грокаем Алгоритмы</h2>
@@ -255,7 +340,7 @@ body {
 
     <div class="article-wrapper">
       <figure>
-        <img src = "{% static "images/grokaem.jpg" %}" class="icon" alt="">
+        <img src = "{% static "images/clean.webp" %}" class="icon" alt="">
       </figure>
       <div class="article-body">
         <h2>Грокаем Алгоритмы</h2>
@@ -277,18 +362,66 @@ body {
 <section>
       <div class="featured_container">
           <div class="inline_featured">
-              <p><img src="{% static "images/python.jpg" %}" alt="" style="float:left; margin-right:25px;">Featured Book</p>
+              <p><img src="{% static "images/python.webp" %}" alt="" style="float:left; margin-right:25px;">Featured Book</p>
               <p align="left">The Complete Idiots Guide to Graphic Design
                  Anggi Krisna
                  From advanced selectors to generated content to web fonts, and from gradients, shadows, and rounded corners to elegant animations, CSS3 hold a universe of creative possibilities. No one can better guide you through these galaxies than Dan Cederholm.</p>
           </div>
           <div class="aside_part">
-              <img src="{% static "images/python.jpg" %}" alt="" style="float:left; margin-right:25px;">
+              <img src="{% static "images/python.webp" %}" alt="" style="float:left; margin-right:25px;">
           </div>
     </div>
+    <div style="position:relative;" class="library_container">
+        <img src = "{% static "images/ch.jpg" %}" class="lib" alt="">
+        <div id="loadingtext" style="position:absolute; top:50%; left:50%; color: black; font-family: Arial; font-size: 45px; margin-top:-6px; width:900px; margin-left:-414px; font-weight: bold;">Browse Through Our Complete Library</div>
+    </div>
+
+    <div class="i_container">
+    <figure>
+        <img src="{% static "images/book.png" %}" class="book_icon" alt="missing">
+        <figcaption>From advanced selectors to generated content to web fonts, and from gradients, shadows, and rounded corners. to elegant animations.</figcaption>
+    </figure>
+
+    <figure>
+        <img src="{% static "images/pen.png" %}" class="book_icon" alt="missing">
+        <figcaption>To elegant animations. , CSS3 holds a universe of creative possibilities. No one can better guide you through.</figcaption>
+    </figure>
+
+    <figure>
+        <img src="{% static "images/bookmark.png" %}" class="book_icon" alt="missing">
+        <figcaption>Shadows, and rounded corners. to elegant animations. , CSS3 holds a universe of creative possibilities. No one can better guide you through.</figcaption>
+    </figure>
+</div>
+</section>
+<section>
+
 </section>
 <footer>
+<div class="footer">
+<div class="row">
+<a href="#"><i class="fa fa-facebook"></i></a>
 
+<a href="#"><i class="fa fa-instagram"></i></a>
+
+<a href="#"><i class="fa fa-youtube"></i></a>
+
+<a href="#"><i class="fa fa-twitter"></i></a>
+</div>
+
+<div class="row">
+<ul>
+<li><a href="#">Contact us</a></li>
+<li><a href="#">Our Services</a></li>
+<li><a href="#">Privacy Policy</a></li>
+<li><a href="#">Terms & Conditions</a></li>
+<li><a href="#">Career</a></li>
+</ul>
+</div>
+
+<div class="row">
+Victor Copyright © 2023 Books - All rights reserved || Designed By: Vitek
+</div>
+</div>
 </footer>
 </body>
 <script>

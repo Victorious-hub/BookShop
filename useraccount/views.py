@@ -30,15 +30,6 @@ class AddHyperlinksView(LoginRequiredMixin, UpdateView):
         return context
 
 
-class AcceptedOrders(LoginRequiredMixin, View):
-    def get(self, request):
-        if request.user.is_authenticated:
-            cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=True)
-            cartitems = cart.cartitems.all()
-            context = {"cart": cart, "items": cartitems}
-            return render(request, 'books/test.html', context)
-
-
 class EditProfileView(LoginRequiredMixin, UpdateView):
     model = SimpleUser
     form_class = EditForm
@@ -64,8 +55,9 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
 
             accepted_order = Cart.objects.filter(user=self.request.user.simpleuser, completed=True).first()
             print(accepted_order)
-            orderitems = accepted_order.cartitems.all()
 
+            if accepted_order != None:
+                orderitems = accepted_order.cartitems.all()
 
             p = Paginator(cartitems, 1)  # Измените число на желаемый размер страницы
             page = self.request.GET.get('page')
