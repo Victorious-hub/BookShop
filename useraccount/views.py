@@ -40,7 +40,6 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        profile = self.get_object()
         cart, accepted_order = None, []
         cartitems, orderitems = [], []
         books_page = None
@@ -50,8 +49,6 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
             cart, created = WishList.objects.get_or_create(user=self.request.user.simpleuser, completed=False)
 
             cartitems = cart.wisthlistitems.all().order_by('id')  # Упорядочиваем по полю 'id'
-
-            contact = Contact.objects.filter(user=self.request.user.simpleuser)
 
             accepted_order = Cart.objects.filter(user=self.request.user.simpleuser, completed=True).first()
             print(accepted_order)

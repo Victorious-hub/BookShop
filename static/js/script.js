@@ -18,7 +18,7 @@ const csrftoken = getCookie('csrftoken');
 
 
 
-let btns = document.querySelectorAll(".container1 button")
+let btns = document.querySelectorAll(".container button")
 btns.forEach(btn=>{
     btn.addEventListener("click", addToCart)
 })

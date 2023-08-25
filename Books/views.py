@@ -222,13 +222,13 @@ class BookDetailView(LoginRequiredMixin, DetailView):
 
 
 class AuthenticatedView(LoginRequiredMixin, TemplateView):
-    template_name = 'users/authenticated.html'
+    template_name = 'users/tovar_page.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['books'] = Book.objects.all()
 
-        p = Paginator(Book.objects.all(), 2)
+        p = Paginator(Book.objects.all(), 6)
         page = self.request.GET.get('page')
 
         books_page = p.get_page(page)
@@ -264,6 +264,7 @@ class BookDeleteView(DeleteView):
 class SearchBooksView(LoginRequiredMixin, View):
     def post(self, request):
         searched = request.POST['searched']
+
         if (len(searched) != 0):
             book_names = Book.objects.filter(Q(book_name__contains=searched) | Q(book_author__contains=searched))
             return render(request, 'books/search_book.html', {'searched': searched, 'book_names': book_names, })

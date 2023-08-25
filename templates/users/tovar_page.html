@@ -107,10 +107,13 @@ bottom: 0;width:100%;}
 </nav>
 </header>
 
+
+
 <div class="grid-container">
+    <aside class="grid-item grid-item-sidebar">
     <form method="POST" action="{% url 'checkers' %}">
     {% csrf_token %}
-    <aside class="grid-item grid-item-sidebar">
+
         <h2>Category</h2>
         <div class="form-check">
             <input name="searched" type="checkbox" value="Adventure" id="flexCheckChecked">
@@ -143,14 +146,39 @@ bottom: 0;width:100%;}
              </label>
             </div>
         <button class="btn btn-outline-secondary size1" type="submit">Search</button>;
-    </aside>
+
     </form>
+<form id="priceForm" method="POST" action="{% url 'price_checkers' %}">
+  {% csrf_token %}
+<div class="filter__block filter__block--slider">
+
+    <div class="filter__slider">
+        <div id="filter__range"></div>
+    </div>
+    <div class="filter__cost table">
+        <h4>Цена</h4>
+        <div class="table-cell down">
+            <label>
+                <input name="priceMin" type="text" onkeypress='validate(event)' value="0" class="form-control">
+            </label>
+        </div>
+
+        <div class="table-cell">
+            <label>
+                <input name="priceMax" type="text" onkeypress='validate(event)' value="0" class="form-control">
+            </label>
+        </div>
+    </div>
+<button class="btn btn-outline-secondary size1" onclick="submitForm()">Подтвердить</button>
+</div>
+</form>
+        </aside>
 </div>
 
 <main>
 <div class="container">
 <div class="row">
-  {% for book in book_names %}
+  {% for book in books_page %}
     <div class="col-md-6">
       <div class="card mb-3" style="max-width: 540px;">
         <div class="row g-0">

@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-)+w7_$85v+==d@@1kr#(kt)l&j33r!yz2f1=3!d_*gu^s5k(^m'
@@ -20,6 +21,11 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'shyskov@inbox.ru'
 EMAIL_HOST_PASSWORD = 'pCa2JiNGhKhbiQBF9dSq'
 
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'localhost:9200'
+    },
+}
 INSTALLED_APPS = [
     'jazzmin',
     'django.contrib.admin',
@@ -46,7 +52,7 @@ PAYPAL_RECEIVER_EMAIL = 'sandbox@gmail.com'
 CORS_ORIGIN_ALLOW_ALL = False
 
 CORS_ORIGIN_WHITELIST = (
-       'https://localhost:3000',
+    'https://localhost:3000',
 )
 
 AUTH_USER_MODEL = 'useraccount.UserAccount'
@@ -116,16 +122,16 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR,'static'),
+    os.path.join(BASE_DIR, 'static'),
 )
 
-SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR,'static')
+SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-#Redis configuration
+# Redis configuration
 
 CELERY_BROKER_URL = 'redis://default:xWy6FlSoEfNEnofjP3lD@containers-us-west-129.railway.app:5479'
 
@@ -134,5 +140,5 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
 JAZZMIN_SETTINGS = {
-"site_header": "BookShop administration",
+    "site_header": "BookShop administration",
 }
