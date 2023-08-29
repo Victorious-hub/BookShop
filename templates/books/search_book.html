@@ -1,16 +1,12 @@
+{% extends 'users/FootHeader.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
+{% load static %}
+{% block content %}
   <link rel="stylesheet" href="{% static "css/auth/auth.css" %}">
   <link rel="stylesheet" href="{% static 'css/tovar/footer.css' %}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
 <style>
-    .footer{position: relative;
-bottom: 0;width:100%;}
+
 #sidebarMenu{
     margin-top:55px;
 }
@@ -67,50 +63,11 @@ bottom: 0;width:100%;}
   </div>
      {%  endif %}
 </section>
-
-<header>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">It Camasutra</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="{% url 'register' %}">Register<span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item active">
-        <a class="nav-link" href="{% url 'login' %}">Login<span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Dropdown
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">Action</a>
-          <a class="dropdown-item" href="#">Another action</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Something else here</a>
-        </div>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" href="#">Disabled</a>
-      </li>
-    </ul>
-   <form class="d-flex" method="POST" action="{% url 'book_search' %}">
-      {% csrf_token %}
-        <input class="form-control me-2 size" type="search" placeholder="Book Search" aria-label="Search" name="searched">
-        <button class="btn btn-outline-secondary size1" type="submit">Search</button>
-    </form>
-  </div>
-</nav>
-</header>
-
 <div class="grid-container">
+    <aside class="grid-item grid-item-sidebar">
     <form method="POST" action="{% url 'checkers' %}">
     {% csrf_token %}
-    <aside class="grid-item grid-item-sidebar">
+
         <h2>Category</h2>
         <div class="form-check">
             <input name="searched" type="checkbox" value="Adventure" id="flexCheckChecked">
@@ -142,9 +99,71 @@ bottom: 0;width:100%;}
                  Detective
              </label>
             </div>
-        <button class="btn btn-outline-secondary size1" type="submit">Search</button>;
-    </aside>
-    </form>
+
+        <h2>Year released</h2>
+        <div class="form-check">
+            <input name="year_searched" type="checkbox" value="2023" id="flexCheckChecked">
+            <label class="form-check-label" for="flexCheckChecked">
+                2023
+            </label>
+        </div>
+        <div class="form-check">
+            <input name="year_searched" type="checkbox" value="2022" id="flexCheckChecked">
+            <label class="form-check-label" for="flexCheckChecked">
+                2022
+            </label>
+        </div>
+        <div class="form-check">
+            <input name="year_searched" type="checkbox" value="2021" id="flexCheckChecked">
+            <label class="form-check-label" for="flexCheckChecked">
+                 2021
+             </label>
+        </div>
+        <div class="form-check">
+            <input name="year_searched" type="checkbox" value="2020" id="flexCheckChecked">
+            <label class="form-check-label" for="flexCheckChecked">
+                 2020
+            </label>
+        </div>
+        <div class="form-check">
+            <input name="year_searched" type="checkbox" value="2019" id="flexCheckChecked">
+            <label class="form-check-label" for="flexCheckChecked">
+                 2019
+             </label>
+        </div>
+        <div class="form-check">
+             <input name="year_searched" type="checkbox" value="2018" id="flexCheckChecked">
+             <label class="form-check-label" for="flexCheckChecked">
+                 2018
+             </label>
+            </div>
+
+
+
+
+<div class="filter__block filter__block--slider">
+
+    <div class="filter__slider">
+        <div id="filter__range"></div>
+    </div>
+    <div class="filter__cost table">
+        <h4>Цена</h4>
+        <div class="table-cell down">
+            <label>
+                <input name="priceMin" type="text" onkeypress='validate(event)' value="0" class="form-control">
+            </label>
+        </div>
+
+        <div class="table-cell">
+            <label>
+                <input name="priceMax" type="text" onkeypress='validate(event)' value="0" class="form-control">
+            </label>
+        </div>
+    </div>
+<button class="btn btn-outline-secondary size1" onclick="submitForm()">Подтвердить</button>
+</div>
+</form>
+        </aside>
 </div>
 
 <main>
@@ -163,6 +182,7 @@ bottom: 0;width:100%;}
             <div class="card-body">
               <h3 class="card-title">{{ book.book_name }}</h3>
               <h3 class="card-text">{{ book.book_author }}</h3>
+              <h3 class="card-text">{{ book.book_year }}</h3>
               <h3 class="card-text">{{ book.genre }}</h3>
               <h3 class="card-text">${{ book.price}}</h3>
               <p class="card-text">{{ book.desc }}</p>
@@ -221,35 +241,6 @@ bottom: 0;width:100%;}
 <br/>
 <br/>
 
-
-<footer>
-<div class="footer">
-<div class="row">
-<a href="#"><i class="fa fa-facebook"></i></a>
-
-<a href="#"><i class="fa fa-instagram"></i></a>
-
-<a href="#"><i class="fa fa-youtube"></i></a>
-
-<a href="#"><i class="fa fa-twitter"></i></a>
-</div>
-
-<div class="row">
-<ul>
-<li><a href="#">Contact us</a></li>
-<li><a href="#">Our Services</a></li>
-<li><a href="#">Privacy Policy</a></li>
-<li><a href="#">Terms & Conditions</a></li>
-<li><a href="#">Career</a></li>
-</ul>
-</div>
-
-<div class="row">
-Victor Copyright © 2023 Books - All rights reserved || Designed By: Vitek
-</div>
-</div>
-</footer>
-</body>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -259,4 +250,4 @@ Victor Copyright © 2023 Books - All rights reserved || Designed By: Vitek
 <script src="{% static 'js/list_menu.js' %}"></script>
 <script src="{% static 'js/script.js' %}"></script>
 <script src="{% static 'js/PriceScroll.js' %}"></script>
-</html>
+{% endblock %}

@@ -16,6 +16,7 @@ class BookForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(BookForm, self).__init__(*args, **kwargs)
         self.fields['book_name'].widget.attrs['class'] = 'form-control'
+        self.fields['book_year'].widget.attrs['class'] = 'form-control'
         self.fields['book_author'].widget.attrs['class'] = 'form-control'
         self.fields['desc'].widget.attrs['class'] = 'form-control'
         self.fields['price'].widget.attrs['class'] = 'form-control'

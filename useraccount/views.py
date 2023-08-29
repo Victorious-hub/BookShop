@@ -83,7 +83,7 @@ class SignOut(View):
 
 
 class SignIn(View):
-    template_name = 'users/login.html'
+    template_name = 'users/register.html'
     form_class = LoginForm
 
     def get(self, request):
@@ -100,7 +100,7 @@ class SignIn(View):
             )
             if user:
                 login(request, user)
-                return redirect('authenticated')
+                return redirect('tovar_page')
 
         messages.error(request, f'Invalid username or password')
         return render(request, self.template_name, {'form': form})
@@ -109,11 +109,11 @@ class SignIn(View):
 class SignUpView(CreateView):
     form_class = RegisterForm
     template_name = 'users/register.html'
-    success_url = reverse_lazy('authenticated')
+    success_url = reverse_lazy('tovar_page')
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect('authenticated')
+            return redirect('tovar_page')
         return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -124,3 +124,7 @@ class SignUpView(CreateView):
         messages.success(self.request, 'You have signed up successfully.')
         login(self.request, user)
         return response
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Invalid form submission. Please check the entered values.')
+        return super().form_invalid(form)

@@ -4,256 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-
-    <link rel="stylesheet" href="{% static 'css/profchange.css' %}">
+    <link rel="stylesheet" href="{% static 'css/users/change_profiel.css' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
-<style>@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bree+Serif&family=EB+Garamond:ital,wght@0,500;1,800&display=swap');
 
-
-body {
-background: #DFC2F2;
-	background-image: linear-gradient( to right, #ffffb3,#ffe6e6);
-	background-attachment: fixed;
-	background-size: cover;
-
-	}
-
-#container{
-	box-shadow: 0 15px 30px 1px grey;
-	background: rgba(255, 255, 255, 0.90);
-	text-align: center;
-	border-radius: 5px;
-	overflow: hidden;
-	margin: 5em auto;
-	height: 350px;
-	width: 700px;
-
-
-}
-
-
-
-.product-details {
-	position: relative;
-	text-align: left;
-	overflow: hidden;
-	padding: 30px;
-	height: 100%;
-	float: left;
-	width: 40%;
-
-}
-
-#container .product-details h1{
-	font-family: 'Bebas Neue', cursive;
-	display: inline-block;
-	position: relative;
-	font-size: 30px;
-	color: #344055;
-	margin: 0;
-
-}
-.information{margin-left:-90px;}
-.information1{margin-left:-68px;}
-#container .product-details h1:before{
-	position: absolute;
-	content: '';
-	right: 0%;
-	top: 0%;
-	transform: translate(25px, -15px);
-	font-family: 'Bree Serif', serif;
-	display: inline-block;
-	background: #ffe6e6;
-	border-radius: 5px;
-	font-size: 14px;
-	padding: 5px;
-	color: white;
-	margin: 0;
-	animation: chan-sh 6s ease infinite;
-
-}
-
-
-
-#container .product-details > p {
-font-family: 'EB Garamond', serif;
-	text-align: center;
-	font-size: 18px;
-	color: #7d7d7d;
-
-}
-.control{
-	position: absolute;
-	bottom: 20%;
-	left: 22.8%;
-
-}
-.btn {
-
-	transform: translateY(0px);
-	transition: 0.3s linear;
-	background:  #809fff;
-	border-radius: 5px;
-  position: relative;
-  overflow: hidden;
-	cursor: pointer;
-	outline: none;
-	border: none;
-	color: #eee;
-	padding: 0;
-	margin: 0;
-
-}
-
-.btn:hover{transform: translateY(-6px);
-	background: #1a66ff;}
-
-.btn span {
-	font-family: 'Farsan', cursive;
-	transition: transform 0.3s;
-	display: inline-block;
-  padding: 10px 20px;
-	font-size: 1.2em;
-	margin:0;
-
-}
-.btn .price, .shopping-cart{
-	background: #333;
-	border: 0;
-	margin: 0;
-}
-
-.btn .price {
-	transform: translateX(-10%); padding-right: 15px;
-}
-
-.btn .shopping-cart {
-	transform: translateX(-100%);
-  position: absolute;
-	background: #333;
-	z-index: 1;
-  left: 0;
-  top: 0;
-}
-
-.btn .buy {z-index: 3; font-weight: bolder;}
-
-.btn:hover .price {transform: translateX(-110%);}
-
-.btn:hover .shopping-cart {transform: translateX(0%);}
-
-
-
-.product-image {
-	transition: all 0.3s ease-out;
-	display: inline-block;
-	position: relative;
-	overflow: hidden;
-	height: 100%;
-	float: right;
-	width: 45%;
-	display: inline-block;
-}
-
-#container img {width: 100%;height: 100%;}
-
-.info {
-    background: rgba(27, 26, 26, 0.9);
-    font-family: 'Bree Serif', serif;
-    transition: all 0.3s ease-out;
-    transform: translateX(-100%);
-    position: absolute;
-    line-height: 1.8;
-    text-align: left;
-    font-size: 105%;
-    cursor: no-drop;
-    color: #FFF;
-    height: 100%;
-    width: 100%;
-    left: 0;
-    top: 0;
-}
-
-.info h2 {text-align: center}
-.product-image:hover .info{transform: translateX(0);}
-
-.info ul li{transition: 0.3s ease;}
-.info ul li:hover{transform: translateX(50px) scale(1.3);}
-
-.product-image:hover img {transition: all 0.3s ease-out;}
-.product-image:hover img {transform: scale(1.2, 1.2);}
-
-
-h1 {
-  text-align: center;
-  font-family: Tahoma, Arial, sans-serif;
-  color: #06D85F;
-  margin: 80px 0;
-}
-
-.button:hover btn{
-  z-index:-1;
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.7);
-  transition: opacity 500ms;
-  visibility: hidden;
-  opacity: 0;
-}
-.overlay:target {
-  visibility: visible;
-  opacity: 1;
-}
-
-.popup {
-  margin: 70px auto;
-  padding: 20px;
-  background: #fff;
-  border-radius: 5px;
-  width: 30%;
-  position: relative;
-  transition: all 5s ease-in-out;
-}
-
-.popup h2 {
-  margin-top: 0;
-  color: #333;
-  font-family: Tahoma, Arial, sans-serif;
-}
-.popup .close {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  transition: all 200ms;
-  font-size: 30px;
-  font-weight: bold;
-  text-decoration: none;
-  color: #333;
-}
-.popup .close:hover {
-  color: #06D85F;
-}
-.popup .content {
-  max-height: 30%;
-  overflow: auto;
-}
-
-@media screen and (max-width: 700px){
-  .box{
-    width: 70%;
-  }
-  .popup{
-    width: 70%;
-  }
-}
-</style>
 <body>
 <div class="container">
 
@@ -351,9 +105,9 @@ h1 {
                <form method="POST" action="{% url 'add_hyperlinks' user.id%}">
                         {% csrf_token %}
                   <div class="form-group">
-                    <label class="d-block">Add social</label>
-                    <input type="url" class="form-control" name="user_linkedin" value="{{ user.user_linkedin }}" placeholder="LinkedIn">
-                    <input type="url"class="form-control mt-1" name="user_github" value="{{ user.user_github }}" placeholder="GitHub">
+                     <label class="d-block">Add social</label>
+                     <input type="url" class="form-control" name="user_linkedin" value="{{ user.user_linkedin }}" placeholder="LinkedIn">
+                     <input type="url"class="form-control mt-1" name="user_github" value="{{ user.user_github }}" placeholder="GitHub">
                      <input  class="btn btn-success btn-block btn-lg gradient-custom-4 text-body" type="submit" value="Submit" />
                   </div>
                 </form>
@@ -371,18 +125,13 @@ h1 {
 	<div class="product-details">
 
 	<h1 class="information" ><strong>Book Name : </strong>{{order_item.book_product.book_name}}</h1>
-         <br></br>
+         <br/>
 			<p class="information1"><strong>Book Author : </strong>{{order_item.book_product.book_author}}</p>
 
         <p class="information"><strong>Book Genre: </strong>{{order_item.book_product.genre}}</p>
 
 <div class="control">
 <div class = "container1">
-	<button class="btn" value="{{order_item.book_product.id }}">
-	 <span class="price">${{order_item.book_product.price}}</span>
-   <span class="shopping-cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i></span>
-   <span class="buy">To Cart</span>
- </button>
 </div>
 </div>
 </div>
@@ -413,8 +162,8 @@ h1 {
                   </div>
                 </form>
                 <hr>
-                <form>
-                  <div class="form-group">
+                <!-- <form>
+                 <div class="form-group">
                     <label class="d-block">Two Factor Authentication</label>
                     <button class="btn btn-info" type="button">Enable two-factor authentication</button>
                     <p class="small text-muted mt-2">Two-factor authentication adds an additional layer of security to your account by requiring more than just a password to log in.</p>
@@ -435,7 +184,7 @@ h1 {
                       </li>
                     </ul>
                   </div>
-                </form>
+                </form>-->
               </div>
 
                <div class="tab-pane" id="wishlist">
@@ -474,50 +223,16 @@ h1 {
 </div>
 </div>
 </div>
-               {% endfor %}
-<div class="pagination-wrapper">
-    <ul class="pagination">
-        {% if books_page.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page=1">&laquo First</a></li>
-            <li class="page-item"><a class="page-link" href="?page={{ books_page.previous_page_number }}">Previous</a></li>
-        {% endif %}
-
-        {% for num in books_page.paginator.page_range %}
-            {% if books_page.number == num %}
-                <li class="page-item active">
-                    <span class="page-link">{{ num }}</span>
-                </li>
-            {% else %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                </li>
-            {% endif %}
-        {% endfor %}
-
-        {% if books_page.has_next %}
-            <li class="page-item"><a class="page-link" href="?page={{ books_page.next_page_number }}">Next</a></li>
-            <li class="page-item"><a class="page-link" href="?page={{ books_page.paginator.num_pages }}">Last &raquo</a></li>
-        {% endif %}
-    </ul>
+{% endfor %}
 </div>
-               </div>
-
-             <div class="tab-pane" id="feedbacks">
-                <h6>YOUR FEEDBACKS</h6>
-                {% for feedback in feedbacks%}
-
+        <div class="tab-pane" id="feedbacks">
+            <h6>YOUR FEEDBACKS</h6>
+            {% for feedback in feedbacks%}
 	<div class="feedback-block">
     <h2><strong>Header: </strong>{{ feedback.header }}</h2>
                     <h2><strong>Description: </strong>{{ feedback.description }}</h2>
-
                     <!--<a class="btn btn-success" href="{% url 'book_detail' feedback.book_id%}"><strong>Book View</strong></a>-->
-
-
-
-
 	<a  style="text-decoration:none;" href="#popup1">Delete</a>
-
-
 <div id="popup1" class="overlay">
 	<div class="popup">
 		<h2>Warning</h2>
@@ -528,22 +243,21 @@ h1 {
 		</div>
 	</div>
 </div>
-                    <a  style="text-decoration:none;" href="#popup2">Change</a>
-
-                    <div id="popup2" class="overlay">
+<a  style="text-decoration:none;" href="#popup2">Change</a>
+<div id="popup2" class="overlay">
 	<div class="popup">
 		<h2>Change your feedback</h2>
 		<a class="close" href="#">&times;</a>
 		<div class="content">
-			Are you sure you want to delete this feedback?<br>
+			Change your feedback<br>
 
-            <form method="POST" action="{% url 'edit_feedback' feedback.book_id%}">
+            <form method="POST" action="{% url 'edit_feedback' feedback.book_id%}" >
 
                 {% csrf_token %}
-                <input type="text" id="formName" name="header" class="form-control form-control-lg thick" placeholder="Name"value="{{ feedback.header }}">
+                <label for="formName"></label><input type="text" id="formName" name="header" class="form-control form-control-lg thick" placeholder="Name" value="{{ feedback.header }}">
                 <input type="text" id="formName" name="description" class="form-control form-control-lg thick" placeholder="Name" value="{{ feedback.description }}">
 
-                <button type="submit" class="btn btn-primary" tabIndex="-1">Accept order</button>
+                <button type="submit" class="btn btn-success" tabIndex="-1">Accept</button>
             </form>
 
 		</div>

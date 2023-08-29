@@ -29,7 +29,6 @@ class CreatePDFView(LoginRequiredMixin, View):
 
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="BookReview.pdf"'
-
         pdf = canvas.Canvas(response, pagesize=letter)
 
         title_font_size = 16
@@ -129,47 +128,41 @@ class CartView(LoginRequiredMixin, View):
         return render(request, 'Cart/CartTest.html', context)
 
 
-class AddToCartView(View):
+class AddToCartView(LoginRequiredMixin, View):
     def post(self, request):
         data = json.loads(request.body)
         print(data)
         product_id = data["id"]
         product = Book.objects.get(id=product_id)
+        cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
 
-        if request.user.is_authenticated:
-            cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
+        cartitem, created = CartItem.objects.get_or_create(cart=cart, book_product=product)
 
-            cartitem, created = CartItem.objects.get_or_create(cart=cart, book_product=product)
+        cartitem.quantity += 1
 
-            cartitem.quantity += 1
+        cartitem.save()
 
-            cartitem.save()
+        num_of_item = cart.num_of_items
 
-            num_of_item = cart.num_of_items
-
-        return JsonResponse("Working", safe=False)
+        return JsonResponse({'price': cartitem.price, 'num_of_items': num_of_item}, safe=False)
 
 
-class RemoveFromCartView(View):
+class RemoveFromCart(LoginRequiredMixin, View):
     def post(self, request):
         data = json.loads(request.body)
         product_id = data["id"]
         product = Book.objects.get(id=product_id)
+        cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
+        cartitem, created = CartItem.objects.get_or_create(cart=cart, book_product=product)
 
-        if request.user.is_authenticated:
-            cart = Cart.objects.get(user=request.user.simpleuser, completed=False)
+        cartitem.quantity -= 1
+        if cartitem.quantity <= 0:
+            cartitem.delete()
+        else:
+            cartitem.save()
 
-            cartitem = CartItem.objects.get(cart=cart, book_product=product)
+        num_of_item = cart.num_of_items
 
-            if cartitem.quantity >= 1:
-                cartitem.quantity -= 1
-                cartitem.save()
-            else:
-                cartitem.delete()
-
-            num_of_item = cart.num_of_items
-
-            print(cartitem)
         return JsonResponse({'price': cartitem.price, 'num_of_items': num_of_item}, safe=False)
 
 
@@ -240,12 +233,6 @@ class AuthenticatedView(LoginRequiredMixin, TemplateView):
         return context
 
 
-def test(request):
-    contact = Contact.objects.all()
-    print(contact)
-    return render(request, 'books/test.html', {"contact": contact})
-
-
 @method_decorator(login_required, name="dispatch")
 class BookDeleteView(DeleteView):
     model = Book
@@ -264,12 +251,12 @@ class BookDeleteView(DeleteView):
 class SearchBooksView(LoginRequiredMixin, View):
     def post(self, request):
         searched = request.POST['searched']
-
+        print("qwrqwrwrqwrqwr")
         if (len(searched) != 0):
             book_names = Book.objects.filter(Q(book_name__contains=searched) | Q(book_author__contains=searched))
             return render(request, 'books/search_book.html', {'searched': searched, 'book_names': book_names, })
         else:
-            return render(request, 'books/search_book.html', {})
+            return render(request, 'users/main.html', {})
 
 
 class BookUpdateView(LoginRequiredMixin, UpdateView):
@@ -287,7 +274,7 @@ class BookUpdateView(LoginRequiredMixin, UpdateView):
 class CreateBookView(LoginRequiredMixin, CreateView):
     form_class = BookForm
     template_name = 'books/add_book.html'
-    success_url = reverse_lazy('authenticated')
+    success_url = reverse_lazy('tovar_page')
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -315,42 +302,60 @@ class AddFeedBackView(LoginRequiredMixin, View):
                 feedback.author = request.user.simpleuser
                 feedback.book_id = books
                 feedback.save()
-                return redirect('authenticated')
+                return redirect('tovar_page')
 
             else:
                 messages.error(request, 'Please correct the following errors:')
                 return render(request, self.template_name, {'form': form})
-        return render(request, 'users/authenticated.html', )
+        return render(request, 'users/tovar_page.html', )
 
 
-class FeedBacksView(LoginRequiredMixin, View):
+"""class FeedBacksView(LoginRequiredMixin, View):
     def get(self, request, id):
         books = Book.objects.get(id=id)
         feedbacks = Feedback.objects.filter(book_id=books)
         context = {'feedbacks': feedbacks}
-        return render(request, 'Feedback/feedbacks.html', context)
+        return render(request, 'Feedback/feedbacks.html', context)"""
 
 
 class CheckersView(LoginRequiredMixin, View):
     def post(self, request):
         searched = request.POST.getlist('searched')
-        books = Book.objects.filter(genre__in=searched)
-        context = {'books': books}
-        return render(request, 'books/checker.html', context)
-
-
-# return render(request, 'books/checker.html', )
-
-
-class PriceCheckersView(LoginRequiredMixin, View):
-    def post(self, request):
+        year_searched = request.POST.getlist('year_searched')
         price_min = request.POST.get('priceMin')
         price_max = request.POST.get('priceMax')
-        books = Book.objects.filter(price__gte=price_min, price__lte=price_max)
-        context = {'books': books}
-        return render(request, 'books/price_checker.html', context)
-
-    # return render(request, 'books/price_checker.html')
+        if price_min == '0' and price_max == '0' and len(year_searched) == 0 and searched == 0:
+            return render(request, 'users/main.html')
+        elif price_min == '0' and price_max == '0' and len(year_searched) == 0:
+            books = Book.objects.filter(genre__in=searched).exclude(price__gte=price_min, price__lte=price_max,
+                                                                    book_year__in=year_searched)
+            context = {'books': books}
+            return render(request, 'books/checker.html', context)
+        elif price_min == '0' and price_max == '0' and len(searched) == 0:
+            books = Book.objects.filter(book_year__in=year_searched).exclude(price__gte=price_min, price__lte=price_max,
+                                                                             genre__in=searched)
+            context = {'books': books}
+            return render(request, 'books/checker.html', context)
+        elif price_min == '0' and price_max == '0':
+            books = Book.objects.filter(book_year__in=year_searched, genre__in=searched).exclude(price__gte=price_min,
+                                                                                                 price__lte=price_max)
+            context = {'books': books}
+            return render(request, 'books/checker.html', context)
+        elif len(searched) == 0:
+            books = Book.objects.filter(book_year__in=year_searched, price__gte=price_min,
+                                        price__lte=price_max).exclude(genre__in=searched)
+            context = {'books': books}
+            return render(request, 'books/checker.html', context)
+        elif len(year_searched) == 0:
+            books = Book.objects.filter(genre__in=searched, price__gte=price_min,
+                                        price__lte=price_max).exclude(book_year__in=year_searched)
+            context = {'books': books}
+            return render(request, 'books/checker.html', context)
+        else:
+            books = Book.objects.filter(genre__in=searched, price__gte=price_min, price__lte=price_max,
+                                        book_year__in=year_searched)
+            context = {'books': books}
+            return render(request, 'books/checker.html', context)
 
 
 class AddToWishlistView(View):

@@ -1,5 +1,6 @@
 import uuid
 
+from django.core.validators import MinLengthValidator
 from django.db import models
 from django.utils import timezone
 
@@ -18,11 +19,21 @@ class Book(models.Model):
         ('Detective', 'Detective'),
     )
 
-    book_name = models.CharField(max_length=255, null=False)
-    book_author = models.CharField(max_length=255, null=False)
-    desc = models.TextField()
-    genre = models.CharField(max_length=255, null=True, choices=GENRE)
-    price = models.IntegerField(max_length=100, default=0)
+    YEAR = (
+        ('2023', '2023'),
+        ('2022', '2022'),
+        ('2021', '2021'),
+        ('2020', '2020'),
+        ('2019', '2019'),
+        ('2018', '2018'),
+    )
+
+    book_name = models.CharField(max_length=255, null=False, blank=True)
+    book_author = models.CharField(max_length=255, null=False, blank=True)
+    book_year = models.CharField(max_length=4, null=False, blank=True, choices=YEAR)
+    desc = models.TextField(blank=True)
+    genre = models.CharField(max_length=255, null=True, choices=GENRE, blank=True)
+    price = models.IntegerField(max_length=100, default=0, blank=True)
     book_image = models.ImageField(null=True, blank=True, upload_to='images/')
 
     """def genre_to_string(self):

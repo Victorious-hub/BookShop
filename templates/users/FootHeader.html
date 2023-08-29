@@ -1,127 +1,81 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+<style>
+    .navbar-brand{margin-left:30px;}
+</style>
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
     <meta name="viewport" content="device-width">
-<link rel="stylesheet" href="{% static "css/footer_header/foot_head.css" %}">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static "css/tovar/footer.css" %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Play&display=swap" rel="stylesheet">
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">VShop</a>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">It Camasutra</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
 
-
-
-
-
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-        <a class="nav-link" href="{% url 'register' %}">Register<span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item active">
-        <a class="nav-link" href="{% url 'register' %}">Login<span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="{% url 'register' %}">Register/Login<span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          More
+          Dropdown
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">About us</a>
-          <a class="dropdown-item" href="#">Contacts</a>
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Donation</a>
+          <a class="dropdown-item" href="#">Something else here</a>
         </div>
       </li>
-
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#">Disabled</a>
+      </li>
     </ul>
-     <form class="d-flex" method="POST" action="{% url 'book_search' %}">
+   <form class="d-flex" method="POST" action="{% url 'book_search' %}">
       {% csrf_token %}
         <input class="form-control me-2 size" type="search" placeholder="Book Search" aria-label="Search" name="searched">
         <button class="btn btn-outline-secondary size1" type="submit">Search</button>
     </form>
   </div>
 </nav>
-
-
-{% block content %}
-{% endblock %}
-
-
+</header>
+{% block content %}{% endblock %}
+<footer>
 <div class="footer">
-  <div class="contain">
-  <div class="col">
-    <h1>Company</h1>
-    <ul>
-      <li>About</li>
-      <li>Mission</li>
-      <li>Services</li>
-      <li>Social</li>
-      <li>Get in touch</li>
-    </ul>
-  </div>
-  <div class="col">
-    <h1>Products</h1>
-    <ul>
-      <li>About</li>
-      <li>Mission</li>
-      <li>Services</li>
-      <li>Social</li>
-      <li>Get in touch</li>
-    </ul>
-  </div>
-  <div class="col">
-    <h1>Accounts</h1>
-    <ul>
-      <li>About</li>
-      <li>Mission</li>
-      <li>Services</li>
-      <li>Social</li>
-      <li>Get in touch</li>
-    </ul>
-  </div>
-  <div class="col">
-    <h1>Resources</h1>
-    <ul>
-      <li>Webmail</li>
-      <li>Redeem code</li>
-      <li>WHOIS lookup</li>
-      <li>Site map</li>
-      <li>Web templates</li>
-      <li>Email templates</li>
-    </ul>
-  </div>
-  <div class="col">
-    <h1>Support</h1>
-    <ul>
-      <li>Contact us</li>
-      <li>Web chat</li>
-      <li>Open ticket</li>
-    </ul>
-  </div>
-  <div class="col social">
-    <h1>Social</h1>
-    <ul>
-      <li><img src="https://svgshare.com/i/5fq.svg" width="32" style="width: 32px;"></li>
-      <li><img src="https://svgshare.com/i/5eA.svg" width="32" style="width: 32px;"></li>
-      <li><img src="https://svgshare.com/i/5f_.svg" width="32" style="width: 32px;"></li>
-    </ul>
-  </div>
-<div class="clearfix"></div>
-</div>
+<div class="row">
+<a href="#"><i class="fa fa-facebook"></i></a>
+
+<a href="#"><i class="fa fa-instagram"></i></a>
+
+<a href="#"><i class="fa fa-youtube"></i></a>
+
+<a href="#"><i class="fa fa-twitter"></i></a>
 </div>
 
-
-<script src="{% static 'js/script.js' %}"></script>
-<script src="{% static 'js/base.js' %}"></script>
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<div class="row">
+<ul>
+<li><a href="#">Contact us</a></li>
+<li><a href="#">Our Services</a></li>
+<li><a href="#">Privacy Policy</a></li>
+<li><a href="#">Terms & Conditions</a></li>
+<li><a href="#">Career</a></li>
+</ul>
 </div>
+
+<div class="row">
+Victor Copyright © 2023 Books - All rights reserved || Designed By: Vitek
+</div>
+</div>
+</footer>
 </body>
 </html>

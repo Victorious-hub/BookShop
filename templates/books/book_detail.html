@@ -423,6 +423,33 @@
 .card p{
     padding: 10px 0;
 }
+#profile-link {
+    margin-left:400px;
+    margin-top:-230px;
+    position:absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration:none;
+    background-color: var(--accent-color);
+    color: #fff;
+    border: 1px solid var(--accent-color);
+    border-radius: 4px;
+    cursor: pointer;
+}
+.feedback{
+    margin-top:230px;
+    margin-left:-400px;
+}
+.test-version{
+    margin-top:230px;
+    margin-left:135px;
+    width:300px;
+}
 </style>
 <head>
     <meta charset="UTF-8">
@@ -505,6 +532,12 @@
                             <div class="addwishlist">
                                  <button class="button heart" value="{{ book.id }}">Add to wishlist</button>
                                 </div>
+                            <div class="feedback">
+                                 <a href="#"  id="profile-link">Feedbacks</a>
+                            </div>
+                             <div class="test-version">
+                                 <a href="{% url 'create_pdf' book.id%}"  id="profile-link">Trial</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -544,28 +577,11 @@ sliderImageList[3].onclick = function(){
 </script>
 
 <style>
-#profile-link {
-    margin-left:1050px;
-    margin-top:-281px;
-    position:absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    padding: 10px 24px;
-    font-size: 16px;
-    font-weight: 500;
-    text-decoration:none;
-    background-color: var(--accent-color);
-    color: #fff;
-    border: 1px solid var(--accent-color);
-    border-radius: 4px;
-    cursor: pointer;
-}
-#profile-info{margin-left:720px;
-    margin-top:-220px;}
+
+#profile-info{margin-left:740px;
+    margin-top:-175px;}
 </style>
-<a href="#"  id="profile-link">Feedbacks</a>
+
 
 <div  id="profile-info" style="display: none;">
 
