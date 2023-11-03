@@ -21,11 +21,15 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'shyskov@inbox.ru'
 EMAIL_HOST_PASSWORD = 'pCa2JiNGhKhbiQBF9dSq'
 
+from elasticsearch import RequestsHttpConnection
+
+
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': 'localhost:9200'
-    },
+        'hosts': 'localhost:9200',
+    }
 }
+
 INSTALLED_APPS = [
     'jazzmin',
     'django.contrib.admin',
@@ -40,6 +44,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'sass_processor',
     'useraccount',
+    'django_elasticsearch_dsl',
 ]
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',

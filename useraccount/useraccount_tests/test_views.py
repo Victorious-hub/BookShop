@@ -33,7 +33,7 @@ class TestViews(TestCase):
 
         self.assertEquals(response_reverse.status_code, 200)
 
-        self.assertTemplateUsed(response_reverse, 'users/login.html')
+        self.assertTemplateUsed(response_reverse, 'users/register.html')
 
     def test_sign_up_GET(self):
         response_reverse = self.client.get(reverse('register'))

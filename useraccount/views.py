@@ -1,20 +1,19 @@
-from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.utils.decorators import method_decorator
-from django.views import View, generic
-from Books.models import WishList, Book, Feedback, Cart, Contact
-from .forms import LoginForm, HyperLinkkForm
-from useraccount.forms import RegisterForm, EditForm
-from useraccount.models import SimpleUser
-from django.views.generic import UpdateView, CreateView
-from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
 from django.core.paginator import Paginator
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+from django.views import View
+from django.views.generic import UpdateView, CreateView
+
+from Books.models import WishList, Feedback, Cart
+from useraccount.forms import RegisterForm
+from useraccount.models import SimpleUser
 from .forms import EditForm
+from .forms import LoginForm, HyperLinkkForm
 
 
 class AddHyperlinksView(LoginRequiredMixin, UpdateView):
@@ -30,7 +29,43 @@ class AddHyperlinksView(LoginRequiredMixin, UpdateView):
         return context
 
 
+class ChangePasswordView(LoginRequiredMixin, View):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.profile = None
+        self.id = None
+
+    model = SimpleUser
+    template_name = "users/profile_change.html"
+    form_class = PasswordChangeForm
+    success_url = reverse_lazy("register")
+
+    def post(self, request, *args, **kwargs):
+        self.id = kwargs.get("id")
+        self.profile = self.model.objects.get(id=self.id)
+        form = self.form_class(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, "Your password was successfully updated!")
+            return redirect(self.success_url)
+        else:
+            messages.error(request, "Please correct the error below.")
+        return render(request, self.template_name, {"form": form})
+
+
 class EditProfileView(LoginRequiredMixin, UpdateView):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.cart = None
+        self.accepted_order = []
+        self.cartitems = []
+        self.orderitems = []
+        self.books_page = None
+        self.nums = None
+        self.feedbacks = []
+        self.contact = None
+
     model = SimpleUser
     form_class = EditForm
     template_name = 'users/profile_change.html'
@@ -40,51 +75,46 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        cart, accepted_order = None, []
-        cartitems, orderitems = [], []
-        books_page = None
-        nums, feedbacks = None, []
-        contact = None
         if not self.request.user.is_admin:
-            cart, created = WishList.objects.get_or_create(user=self.request.user.simpleuser, completed=False)
+            self.cart, created = WishList.objects.get_or_create(user=self.request.user.simpleuser, completed=False)
 
-            cartitems = cart.wisthlistitems.all().order_by('id')  # Упорядочиваем по полю 'id'
+            self.cartitems = self.cart.wisthlistitems.all().order_by('id')
 
-            accepted_order = Cart.objects.filter(user=self.request.user.simpleuser, completed=True).first()
-            print(accepted_order)
+            self.accepted_order = Cart.objects.filter(user=self.request.user.simpleuser, completed=True).first()
 
-            if accepted_order != None:
-                orderitems = accepted_order.cartitems.all()
+            if self.accepted_order is not None:
+                self.orderitems = self.accepted_order.cartitems.all()
 
-            p = Paginator(cartitems, 1)  # Измените число на желаемый размер страницы
+            p = Paginator(self.cartitems, 1)  # Измените число на желаемый размер страницы
             page = self.request.GET.get('page')
-            books_page = p.get_page(page)
-            nums = "a" * books_page.paginator.num_pages
+            self.books_page = p.get_page(page)
+            self.nums = "a" * self.books_page.paginator.num_pages
+            self.feedbacks = Feedback.objects.filter(author_id=self.request.user.simpleuser)
 
-            feedbacks = Feedback.objects.filter(author_id=self.request.user.simpleuser)
-
-        context['contact'] = contact
-        context['orderitems'] = orderitems
-        context['accepted_order'] = accepted_order
-        context['cart'] = cart
-        context['items'] = cartitems
-        context['nums'] = nums
-        context['books_page'] = books_page
-        context['feedbacks'] = feedbacks
+        context["contact"] = self.contact
+        context["orderitems"] = self.orderitems
+        context["accepted_order"] = self.accepted_order
+        context["cart"] = self.cart
+        context["items"] = self.cartitems
+        context["nums"] = self.nums
+        context["books_page"] = self.books_page
+        context["feedbacks"] = self.feedbacks
         return context
 
 
-@method_decorator(login_required, name="dispatch")
-class SignOut(View):
+class SignOut(LoginRequiredMixin, View):
+    success_url = reverse_lazy("register")
+
     def get(self, request):
         logout(request)
-        messages.success(request, f'You have been logged out.')
-        return redirect('register')
+        messages.success(request, f"You have been logged out.")
+        return redirect(self.success_url)
 
 
 class SignIn(View):
     template_name = 'users/register.html'
     form_class = LoginForm
+    success_url = reverse_lazy("tovar_page")
 
     def get(self, request):
         form = self.form_class()
@@ -100,9 +130,9 @@ class SignIn(View):
             )
             if user:
                 login(request, user)
-                return redirect('tovar_page')
+                return redirect(self.success_url)
 
-        messages.error(request, f'Invalid username or password')
+        messages.error(request, f"Invalid username or password")
         return render(request, self.template_name, {'form': form})
 
 
@@ -113,18 +143,17 @@ class SignUpView(CreateView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect('tovar_page')
+            return redirect(self.success_url)
         return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
         response = super().form_valid(form)
         user = form.save(commit=False)
-        # user.username = user.username.lower()
         user.save()
-        messages.success(self.request, 'You have signed up successfully.')
+        messages.success(self.request, "You have signed up successfully.")
         login(self.request, user)
         return response
 
     def form_invalid(self, form):
-        messages.error(self.request, 'Invalid form submission. Please check the entered values.')
+        messages.error(self.request, "Invalid form submission. Please check the entered values.")
         return super().form_invalid(form)

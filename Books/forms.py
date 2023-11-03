@@ -41,10 +41,7 @@ class FeedbackForm(forms.ModelForm):
 class ContactForm(forms.ModelForm):
     class Meta:
         model = Contact
-        fields = ('first_name','address','email','phone')
-        widgets = {
-            'desc': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
-        }
+        fields = ('first_name', 'address', 'email', 'phone')
 
     def __init__(self, *args, **kwargs):
         super(ContactForm, self).__init__(*args, **kwargs)

@@ -1,10 +1,6 @@
-from unittest import TestCase
-
 from django.test import SimpleTestCase
 from django.urls import reverse, resolve
 import random
-
-from useraccount.forms import EditForm
 from useraccount.views import EditProfileView, SignOut, SignIn, SignUpView, AddHyperlinksView
 
 
