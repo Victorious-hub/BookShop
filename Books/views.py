@@ -38,9 +38,9 @@ class CreatePDFView(LoginRequiredMixin, View):
         pdf.drawCentredString(page_width / 2, page_height - 50, title)
 
         pdf.setFont("Helvetica", content_font_size)
-        textobject = pdf.beginText(50, page_height - 100)
-        textobject.setFont("Helvetica", content_font_size)
-        textobject.setTextOrigin(50, page_height - 100)
+        text_object = pdf.beginText(50, page_height - 100)
+        text_object.setFont("Helvetica", content_font_size)
+        text_object.setTextOrigin(50, page_height - 100)
 
         text = """
             Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
@@ -89,9 +89,9 @@ class CreatePDFView(LoginRequiredMixin, View):
 
         lines = text.splitlines()
         for line in lines:
-            textobject.textLine(line)
+            text_object.textLine(line)
 
-        pdf.drawText(textobject)
+        pdf.drawText(text_object)
 
         # Add page 2
         pdf.showPage()
@@ -99,14 +99,14 @@ class CreatePDFView(LoginRequiredMixin, View):
         pdf.setFont("Helvetica-Bold", title_font_size)
 
         pdf.setFont("Helvetica", content_font_size)
-        textobject = pdf.beginText(50, page_height - 100)
-        textobject.setFont("Helvetica", content_font_size)
-        textobject.setTextOrigin(50, page_height - 100)
+        text_object = pdf.beginText(50, page_height - 100)
+        text_object.setFont("Helvetica", content_font_size)
+        text_object.setTextOrigin(50, page_height - 100)
 
         for line in lines:
-            textobject.textLine(line)
+            text_object.textLine(line)
 
-        pdf.drawText(textobject)
+        pdf.drawText(text_object)
 
         pdf.showPage()
         pdf.save()
@@ -115,165 +115,138 @@ class CreatePDFView(LoginRequiredMixin, View):
 
 
 class CartView(LoginRequiredMixin, View):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.cart = None
-        self.cartitems = None
-
+    template_name = "Cart/CartTest.html"
+    model = Cart
     def get(self, request):
-        self.cart = None
-        self.cartitems = []
+        cart = None
+        cart_items = []
         if request.user.is_authenticated and not request.user.is_admin:
-            self.cart, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
-            self.cartitems = self.cart.cartitems.all()
-        context = {"cart": self.cart, "items": self.cartitems}
-        return render(request, 'Cart/CartTest.html', context)
+            cart, created = self.model.objects.get_or_create(user=request.user.simpleuser, completed=False)
+            cart_items = cart.cartitems.all()
+        context = {"cart": cart, "items": cart_items}
+        return render(request, self.template_name, context)
 
 
 class AddToCartView(LoginRequiredMixin, View):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.product = None
-        self.cartitem = None
-        self.cart = None
+        self.cart_item = None
         self.num_of_item = None
 
     model = Book
     cart_model = Cart
-    cartitem_model = CartItem
+    cart_item_model = CartItem
 
     def post(self, request):
         data = json.loads(request.body)
         product_id = data["id"]
-        self.product = self.model.objects.get(id=product_id)
-        self.cart, created = self.cart_model.objects.get_or_create(user=request.user.simpleuser, completed=False)
+        product = self.model.objects.get(id=product_id)
+        cart, created = self.cart_model.objects.get_or_create(user=request.user.simpleuser, completed=False)
 
-        self.cartitem, created = self.cartitem_model.objects.get_or_create(cart=self.cart, book_product=self.product)
+        self.cart_item, created = self.cart_item_model.objects.get_or_create(cart=cart, book_product=product)
+        self.cart_item.quantity += 1
+        self.cart_item.save()
+        self.num_of_item = cart.num_of_items
 
-        self.cartitem.quantity += 1
-
-        self.cartitem.save()
-
-        num_of_item = self.cart.num_of_items
-
-        return JsonResponse({'price': self.cartitem.price, 'num_of_items': num_of_item}, safe=False)
+        return JsonResponse({'price':  self.cart_item.price, 'num_of_items': self.num_of_item}, safe=False)
 
 
 class RemoveFromCart(LoginRequiredMixin, View):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.product = None
-        self.cartitem = None
-        self.cart = None
+        self.cart_item = None
         self.num_of_item = None
 
     model = Book
     cart_model = Cart
-    cartitem_model = CartItem
+    cart_item_model = CartItem
 
     def post(self, request):
         data = json.loads(request.body)
         product_id = data["id"]
-        self.product = self.model.objects.get(id=product_id)
-        self.cart, created = self.cart_model.objects.get_or_create(user=request.user.simpleuser, completed=False)
-        self.cartitem, created = self.cartitem_model.objects.get_or_create(cart=self.cart, book_product=self.product)
+        product = self.model.objects.get(id=product_id)
+        cart, created = self.cart_model.objects.get_or_create(user=request.user.simpleuser, completed=False)
+        self.cart_item, created = self.cart_item_model.objects.get_or_create(cart=cart, book_product=product)
 
-        self.cartitem.quantity -= 1
-        if self.cartitem.quantity <= 0:
-            self.cartitem.delete()
+        self.cart_item.quantity -= 1
+        if self.cart_item.quantity <= 0:
+            self.cart_item.delete()
         else:
-            self.cartitem.save()
+            self.cart_item.save()
+        self.num_of_item = cart.num_of_items
 
-        self.num_of_item = self.cart.num_of_items
-
-        return JsonResponse({'price': self.cartitem.price, 'num_of_items': self.num_of_item}, safe=False)
+        return JsonResponse({'price': self.cart_item.price, 'num_of_items': self.num_of_item}, safe=False)
 
 
 class RemoveAllCartView(LoginRequiredMixin, View):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.product = None
-        self.cartitem = None
-        self.cart = None
+        self.cart_item = None
         self.num_of_item = None
 
     model = Book
     cart_model = Cart
-    cartitem_model = CartItem
-    def post(self, request, id):
+    cart_item_model = CartItem
+    def post(self, request, *args,**kwargs):
         data = json.loads(request.body)
         product_id = data["id"]
-        self.product = self.model.objects.get(id=product_id)
+        product = self.model.objects.get(id=product_id)
 
         if request.user.is_authenticated:
-            self.cart_model, created = Cart.objects.get_or_create(user=request.user.simpleuser, completed=False)
+            cart, created = self.cart_model.objects.get_or_create(user=request.user.simpleuser, completed=False)
+            self.cart_item, created = self.cart_item_model.objects.get_or_create(cart=cart, book_product=product)
+            self.cart_item.delete()
+            self.num_of_item = cart.num_of_items
 
-            self.cartitem_model, created = CartItem.objects.get_or_create(cart=self.cart, book_product=self.product)
-
-            self.cartitem_model.delete()
-
-            self.num_of_item = self.cart.num_of_items
-
-        return JsonResponse({'price': self.cartitem.price, 'num_of_items': self.num_of_item}, safe=False)
+        return JsonResponse({"price": self.cart_item.price, "num_of_items": self.num_of_item}, safe=False)
 
 
 class Main(TemplateView):
-    template_name = 'users/main.html'
+    template_name = "users/main.html"
 
 
 class BookDetailView(LoginRequiredMixin, DetailView):
-    def __init__(self, *args, **kwargs):
-        super().__init__(args, kwargs)
-        self.id = None
-        self.book = None
-        self.feedbacks = None
-
     model = Book
     feedback_model = Feedback
-    template_name = 'books/book_detail.html'
-    context_object_name = 'book'
+    template_name = "books/book_detail.html"
+    context_object_name = "book"
 
     def get(self, request, *args, **kwargs):
-        self.id = kwargs.get('id')
-        self.book = self.model.objects.get(id=id)
-        self.feedbacks = self.feedback_model.objects.filter(book_id=self.book)
-        context = {'book': self.book, 'feedbacks': self.feedbacks}
+        id = kwargs.get("id")
+        book = self.model.objects.get(id=id)
+        feedbacks = self.feedback_model.objects.filter(book_id=book)
+        context = {"book": book, "feedbacks": feedbacks}
         return render(request, self.template_name, context)
 
 
 class AuthenticatedView(LoginRequiredMixin, TemplateView):
     model = Book
-    template_name = 'users/tovar_page.html'
+    template_name = "users/tovar_page.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['books'] = self.model.objects.all()
+        context["books"] = self.model.objects.all()
 
         p = Paginator(Book.objects.all(), 6)
-        page = self.request.GET.get('page')
+        page = self.request.GET.get("page")
 
         books_page = p.get_page(page)
 
-        context['books_page'] = books_page
-        context['nums'] = "a" * books_page.paginator.num_pages
+        context["books_page"] = books_page
+        context["nums"] = "a" * books_page.paginator.num_pages
         if self.request.user.is_authenticated and not self.request.user.is_admin:
-            cart, created = Cart.objects.get_or_create(user=self.request.user.simpleuser, completed=False)
+            _, created = Cart.objects.get_or_create(user=self.request.user.simpleuser, completed=False)
         return context
 
-
 class BookDeleteView(LoginRequiredMixin, DeleteView):
-    def __init__(self, *args, **kwargs):
-        super().__init__(args, kwargs)
-        self.object = None
-
     model = Book
     success_url = reverse_lazy("main")
     template_name = "books/delete_book.html"
 
     def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        if self.object.user == request.user:
-            self.object.delete()
+        book = self.get_object()
+        if book.user == request.user:
+            book.delete()
             return HttpResponseRedirect(self.get_success_url())
         else:
             raise Http404
@@ -281,15 +254,16 @@ class BookDeleteView(LoginRequiredMixin, DeleteView):
 
 class SearchBooksView(LoginRequiredMixin, View):
     model = Book
-    template_name = ["books/search_book.html", "users/main.html"]
+    template_book_search_name = "books/search_book.html"
+    template_users_name = "users/main.html"
 
     def post(self, request):
         searched = request.POST["searched"]
         if len(searched) != 0:
             book_names = Book.objects.filter(Q(book_name__contains=searched) | Q(book_author__contains=searched))
-            return render(request, self.template_name[0], {"searched": searched, "book_names": book_names, })
+            return render(request, self.template_book_search_name, {"searched": searched, "book_names": book_names})
         else:
-            return render(request, self.template_name[1], {})
+            return render(request, self.template_users_name, {})
 
 
 class BookUpdateView(LoginRequiredMixin, UpdateView):
@@ -315,42 +289,36 @@ class CreateBookView(LoginRequiredMixin, CreateView):
 
 
 class AddFeedBackView(LoginRequiredMixin, View):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.feedbacks = None
-        self.books = None
-        self.id = None
-        self.feedback = None
-
     model = Book
     feedback_model = Feedback
-    template_name = 'Feedback/add_feedback.html'
+    template_add_feedback_name = "Feedback/add_feedback.html"
+    template_product_template = "users/tovar_page.html"
     form_class = FeedbackForm
 
     def get(self, request, *args, **kwargs):
-        self.id = kwargs.get('id')
-        self.books = self.model.objects.get(id=self.id)
-        self.feedbacks = self.feedback_model.objects.filter(book_id=self.books)
-        context = {'form': self.form_class(instance=self.books), 'id': self.id}
-        return render(request, self.template_name, context)
+        id = kwargs.get("id")
+        books = self.model.objects.get(id=id)
+        self.feedback_model.objects.filter(book_id=books)
+        context = {"form": self.form_class(instance=books), "id": id}
+        return render(request, self.template_add_feedback_name, context)
 
     def post(self, request, *args, **kwargs):
-        self.id = kwargs.get('id')
-        self.books = self.model.objects.get(id=self.id)
-        self.feedbacks = self.feedback_model.objects.filter(book_id=self.books)
-        if len(self.feedbacks) == 0:
+        id = kwargs.get("id")
+        books = self.model.objects.get(id=id)
+        feedbacks = self.feedback_model.objects.filter(book_id=books)
+        if len(feedbacks) == 0:
             form = self.form_class(request.POST)
             if form.is_valid():
-                self.feedback = form.save(commit=False)
-                self.feedback.author = request.user.simpleuser
-                self.feedback.book_id = self.books
-                self.feedback.save()
-                return redirect('tovar_page')
+                feedback = form.save(commit=False)
+                feedback.author = request.user.simpleuser
+                feedback.book_id = books
+                feedback.save()
+                return redirect("tovar_page")
 
             else:
-                messages.error(request, 'Please correct the following errors:')
-                return render(request, self.template_name, {'form': form})
-        return render(request, 'users/tovar_page.html', )
+                messages.error(request, "Please correct the following errors:")
+                return render(request, self.template_add_feedback_name, {"form": form})
+        return render(request, self.template_product_template, )
 
 
 """class FeedBacksView(LoginRequiredMixin, View):
@@ -362,110 +330,86 @@ class AddFeedBackView(LoginRequiredMixin, View):
 
 
 class CheckersView(LoginRequiredMixin, View):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.searched = None
-        self.year_searched = None
-        self.price_min = None
-        self.price_max = None
-        self.books = None
-
     model = Book
     template_name = "books/checker.html"
 
     def post(self, request):
-        self.searched = request.POST.getlist('searched')
-        self.year_searched = request.POST.getlist('year_searched')
-        self.price_min = request.POST.get('priceMin')
-        self.price_max = request.POST.get('priceMax')
+        searched = request.POST.getlist('searched')
+        year_searched = request.POST.getlist('year_searched')
+        price_min = request.POST.get('priceMin')
+        price_max = request.POST.get('priceMax')
 
         filters = {
-            'genre__in': self.searched,
-            'book_year__in': self.year_searched,
-            'price__gte': self.price_min,
-            'price__lte': self.price_max,
+            'genre__in': searched,
+            'book_year__in': year_searched,
+            'price__gte': price_min,
+            'price__lte': price_max,
         }
-
         books_queryset = self.model.objects.filter(**filters)
 
         if not any(filters.values()):
             return render(request, 'users/main.html')
 
-        self.books = books_queryset.exclude(**{k: v for k, v in filters.items() if v == '0'})
-        context = {'books': self.books}
+        books = books_queryset.exclude(**{k: v for k, v in filters.items() if v == '0'})
+        context = {'books': books}
         return render(request, self.template_name, context)
 
 
 class AddToWishlistView(View):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.product = None
-        self.cart = None
-        self.cartitem = None
-
     model = Book
     wishlist_model = WishList
-    wishlistitem_model = WisthlistItem
+    wishlist_item_model = WisthlistItem
 
     def post(self, request):
         data = json.loads(request.body)
         product_id = data["id"]
-        self.product = self.model.objects.get(id=product_id)
+        product = self.model.objects.get(id=product_id)
 
         if request.user.is_authenticated:
-            self.cart, created = self.wishlist_model.objects.get_or_create(user=request.user.simpleuser,
+            cart, created = self.wishlist_model.objects.get_or_create(user=request.user.simpleuser,
                                                                            completed=False)
-            self.cart.save()
-            self.cartitem, created = self.wishlistitem_model.objects.get_or_create(wisthlist_item=self.cart,
-                                                                                   book_product=self.product)
-
-            self.cartitem.quantity += 1
-            self.cartitem.save()
+            cart.save()
+            cart_item, created = self.wishlist_item_model.objects.get_or_create(wishlist_item=cart,
+                                                                                   book_product=product)
+            cart_item.quantity += 1
+            cart_item.save()
         return JsonResponse("Working", safe=False)
 
 
 class RemoveWishList(LoginRequiredMixin, View):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.product = None
-        self.cart = None
-        self.cartitem = None
-
     model = Book
     wishlist_model = WishList
-    wishlistitem_model = WisthlistItem
+    wishlist_item_model = WisthlistItem
 
     def post(self, request):
         data = json.loads(request.body)
         product_id = data["id"]
-        self.product = self.model.objects.get(id=product_id)
+        product = self.model.objects.get(id=product_id)
 
         if request.user.is_authenticated:
-            self.cart, created = self.wishlist_model.objects.get_or_create(user=request.user.simpleuser,
+            cart, created = self.wishlist_model.objects.get_or_create(user=request.user.simpleuser,
                                                                            completed=False)
-            self.cart.save()
-
-            self.cartitem, created = self.wishlistitem_model.objects.get_or_create(wisthlist_item=self.cart,
-                                                                                   book_product=self.product)
-
-            self.cartitem.quantity -= 1
-            self.cartitem.remove()
+            cart.save()
+            cart_item, created = self.wishlist_item_model.objects.get_or_create(wisthlist_item=cart,
+                                                                                   book_product=product)
+            cart_item.quantity -= 1
+            cart_item.remove()
         return JsonResponse("Working", safe=False)
 
 
 class AcceptContact(LoginRequiredMixin, View):
     model = Cart
-    template_name = 'Payment/Contact.html'
+    template_name = "Payment/Contact.html"
     form_class = ContactForm
-    success_url = reverse_lazy('main')
+    success_url = reverse_lazy("main")
 
     def get(self, request):
-        form = ContactForm(request.GET)
+        form = self.form_class(request.GET)
         return render(request, self.template_name, {"form": form})
 
     def post(self, request):
-        email = request.POST.get('email')
-        first_name = request.POST.get('first_name')
+        email = request.POST.get("email")
+        first_name = request.POST.get("first_name")
 
         subject = "Hey, dude"
         message = f"Hi {first_name}, you have accepted your purchase"
@@ -475,7 +419,7 @@ class AcceptContact(LoginRequiredMixin, View):
         try:
             cart = self.model.objects.get(user=request.user.simpleuser, completed=False)
         except self.model.DoesNotExist:
-            return HttpResponseRedirect('cart')
+            return HttpResponseRedirect("cart")
 
         ordered_books = []
         cart_items = cart.cartitems.all()
@@ -495,58 +439,47 @@ class AcceptContact(LoginRequiredMixin, View):
             send_mail(subject, message, email_from, [email])
             return HttpResponseRedirect(self.success_url)
         else:
-            return render(request, self.template_name, {'form': form})
+            return render(request, self.template_name, {"form": form})
 
 
 class DeleteFeedBackView(LoginRequiredMixin, DetailView):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.id = None
-        self.books = None
-        self.feedbacks = None
-
     model = Book
     feedback_model = Feedback
-    success_url = reverse_lazy('main')
-    template_name = 'users/profile_change.html'
+    success_url = reverse_lazy("main")
+    template_name = "users/profile_change.html"
 
     def get(self, request, *args, **kwargs):
-        self.id = kwargs.get('id')
-        self.books = self.model.objects.get(id=id)
-        self.feedbacks = self.feedback_model.objects.filter(book_id=self.books).delete()
+        id = kwargs.get("id")
+        books = self.model.objects.get(id=id)
+        self.feedback_model.objects.filter(book_id=books).delete()
 
-        messages.success(request, 'The post has been deleted successfully.')
+        messages.success(request, "The post has been deleted successfully.")
         return redirect(self.success_url)
 
 
 class EditFeedbackView(LoginRequiredMixin, View):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.id = None
-        self.books = None
-        self.feedbacks = None
-
     model = Book
     feedback_model = Feedback
-    template_name = 'users/profile_change.html'
+    template_name = "users/profile_change.html"
     form_class = FeedbackForm
-    success_url = reverse_lazy('main')
+    success_url = reverse_lazy("main")
 
     def get(self, request, *args, **kwargs):
-        self.id = kwargs.get('id')
-        self.books = self.model.objects.get(id=self.id)
-        self.feedbacks = self.feedback_model.objects.filter(book_id=self.books)
-        context = {'feedbacks': self.feedbacks, 'id': self.id}
+        id = kwargs.get("id")
+        books = self.model.objects.get(id=id)
+        feedbacks = self.feedback_model.objects.filter(book_id=books)
+        context = {"feedbacks": feedbacks, "id": id}
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        self.books = self.model.objects.get(id=id)
-        self.feedbacks = self.feedback_model.objects.filter(book_id=self.books)
-        form = self.form_class(request.POST or None, instance=self.feedbacks.first())
+        id = kwargs.get("id")
+        books = self.model.objects.get(id=id)
+        feedbacks = self.feedback_model.objects.filter(book_id=books)
+        form = self.form_class(request.POST or None, instance=feedbacks.first())
         if form.is_valid():
             form.save()
-            messages.success(request, 'The post has been updated successfully.')
+            messages.success(request, "The post has been updated successfully.")
             return redirect(self.success_url)
         else:
-            messages.error(request, 'Please correct the following errors:')
-            return render(request, self.template_name, {'form': form})
+            messages.error(request, "Please correct the following errors:")
+            return render(request, self.template_name, {"form": form})
