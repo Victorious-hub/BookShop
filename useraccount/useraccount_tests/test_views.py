@@ -2,8 +2,8 @@ from django.http import response
 from django.test import TestCase, Client
 from django.urls import reverse
 
-from Books.models import Cart
-from useraccount.models import *
+from books.models import Cart
+from accounts.models import *
 import json
 
 
@@ -60,7 +60,7 @@ class TestViews(TestCase):
         })
 
         self.assertEquals(response_reverse.status_code, 302)
-        #self.assertTemplateUsed(response_reverse, 'users/main.html')
+        #self.assertTemplateUsed(response_reverse, 'users/base.html')
 
     def test_logout_GET(self):
         response_reverse = self.client.get(reverse('logout'))

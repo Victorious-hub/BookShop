@@ -9,9 +9,9 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import UpdateView, CreateView
 
-from Books.models import WishList, Feedback, Cart
-from useraccount.forms import RegisterForm
-from useraccount.models import SimpleUser
+from books.models import WishList, Feedback, Cart
+from accounts.forms import RegisterForm
+from accounts.models import SimpleUser
 from .forms import EditForm
 from .forms import LoginForm, HyperLinkkForm
 
@@ -19,7 +19,7 @@ from .forms import LoginForm, HyperLinkkForm
 class AddHyperlinksView(LoginRequiredMixin, UpdateView):
     model = SimpleUser
     form_class = HyperLinkkForm
-    template_name = "users/profile_change.html"
+    template_name = "users/profileChange.html"
     pk_url_kwarg = "id"
     success_url = reverse_lazy("main")
 
@@ -31,7 +31,7 @@ class AddHyperlinksView(LoginRequiredMixin, UpdateView):
 
 class ChangePasswordView(LoginRequiredMixin, View):
     model = SimpleUser
-    template_name = "users/profile_change.html"
+    template_name = "users/profileChange.html"
     form_class = PasswordChangeForm
     success_url = reverse_lazy("register")
 
@@ -50,7 +50,7 @@ class ChangePasswordView(LoginRequiredMixin, View):
 class EditProfileView(LoginRequiredMixin, UpdateView):
     model = SimpleUser
     form_class = EditForm
-    template_name = "users/profile_change.html"
+    template_name = "users/profileChange.html"
     slug_url_kwarg = "slug"
     slug_field = "slug"
     success_url = reverse_lazy("main")
@@ -60,7 +60,7 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
         if not self.request.user.is_admin:
             cart, created = WishList.objects.get_or_create(user=self.request.user.simpleuser, completed=False)
 
-            cart_items = cart.wisthlistitems.all().order_by('id')
+            cart_items = cart.wisthlistitems.all().order_by("id")
 
             accepted_order = Cart.objects.filter(user=self.request.user.simpleuser, completed=True).first()
 
@@ -68,8 +68,8 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
                 order_items = accepted_order.cartitems.all()
                 context["order_items"] = order_items
 
-            p = Paginator(cart_items, 1)  # Измените число на желаемый размер страницы
-            page = self.request.GET.get('page')
+            p = Paginator(cart_items, 1)
+            page = self.request.GET.get("page")
             books_page = p.get_page(page)
             nums = "a" * books_page.paginator.num_pages
             feedbacks = Feedback.objects.filter(author_id=self.request.user.simpleuser)

@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from useraccount.models import SimpleUser, UserAccount, HyperLinks
+from accounts.models import SimpleUser, UserAccount, HyperLinks
 
 
 class ModelTest(TestCase):

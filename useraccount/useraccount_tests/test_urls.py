@@ -1,7 +1,7 @@
 from django.test import SimpleTestCase
 from django.urls import reverse, resolve
 import random
-from useraccount.views import EditProfileView, SignOut, SignIn, SignUpView, AddHyperlinksView
+from accounts.views import EditProfileView, SignOut, SignIn, SignUpView, AddHyperlinksView
 
 
 class TestUrls(SimpleTestCase):
