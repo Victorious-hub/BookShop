@@ -116,6 +116,7 @@ class CreatePDFView(LoginRequiredMixin, View):
 class CartView(LoginRequiredMixin, View):
     template_name = "Cart/CartTest.html"
     model = Cart
+
     def get(self, request):
         cart = None
         cart_items = []
