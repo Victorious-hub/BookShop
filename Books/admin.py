@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import *
+from .models import Book, Cart, CartItem, WishList, WisthlistItem, Feedback, Contact
 admin.site.register(Book)
 admin.site.register(Cart)
 admin.site.register(CartItem)

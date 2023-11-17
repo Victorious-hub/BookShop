@@ -9,11 +9,9 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import UpdateView, CreateView
 
-from books.models import WishList, Feedback, Cart
-from accounts.forms import RegisterForm
-from accounts.models import SimpleUser
-from .forms import EditForm
-from .forms import LoginForm, HyperLinkkForm
+from Books.models import WishList, Feedback, Cart
+from useraccount.forms import RegisterForm, LoginForm, EditForm, HyperLinkkForm
+from useraccount.models import SimpleUser
 
 
 class AddHyperlinksView(LoginRequiredMixin, UpdateView):
@@ -89,7 +87,6 @@ class SignOut(LoginRequiredMixin, View):
 
     def get(self, request):
         logout(request)
-        messages.success(request, f"You have been logged out.")
         return redirect(self.success_url)
 
 
@@ -114,7 +111,6 @@ class SignIn(View):
                 login(request, user)
                 return redirect(self.success_url)
 
-        messages.error(request, f"Invalid username or password")
         return render(request, self.template_name, {"form": form})
 
 
@@ -137,5 +133,5 @@ class SignUpView(CreateView):
         return response
 
     def form_invalid(self, form):
-        messages.error(self.request, "Invalid form submission. Please check the entered values.")
+        messages.error(self.request, "Invalid submission.")
         return super().form_invalid(form)

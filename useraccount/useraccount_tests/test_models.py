@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from accounts.models import SimpleUser, UserAccount, HyperLinks
+from useraccount.models import SimpleUser, HyperLinks
 
 
 class ModelTest(TestCase):
@@ -31,7 +31,7 @@ class ModelTest(TestCase):
         self.assertEqual(self.hyperlinks.user, self.simpleuser)
 
     def test_slug(self):
-        self.assertEqual(self.simpleuser.slug,'john')
+        self.assertEqual(self.simpleuser.slug, 'john')
 
     def test_save(self):
         self.assertIsNotNone(self.simpleuser.slug)

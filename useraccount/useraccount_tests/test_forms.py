@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from accounts.forms import (
+from useraccount.forms import (
     EditForm,
     LoginForm,
     HyperLinkkForm,

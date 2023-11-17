@@ -1,5 +1,9 @@
-from pathlib import Path
+import environ
 import os
+from pathlib import Path
+
+env = environ.Env()
+environ.Env.read_env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,14 +25,8 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'shyskov@inbox.ru'
 EMAIL_HOST_PASSWORD = 'pCa2JiNGhKhbiQBF9dSq'
 
-from elasticsearch import RequestsHttpConnection
 
 
-ELASTICSEARCH_DSL = {
-    'default': {
-        'hosts': 'localhost:9200',
-    }
-}
 
 INSTALLED_APPS = [
     'jazzmin',
@@ -41,18 +39,14 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'Books',
-    'drf_yasg',
     'sass_processor',
     'useraccount',
-    'django_elasticsearch_dsl',
 ]
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'sass_processor.finders.CssFinder',
 ]
-PAYPAL_TEST = True
-PAYPAL_RECEIVER_EMAIL = 'sandbox@gmail.com'
 
 CORS_ORIGIN_ALLOW_ALL = False
 
@@ -99,7 +93,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'BookShop',
         'USER': 'postgres',
-        'PASSWORD': '74385201',
+        'PASSWORD':'74385201',
     }
 }
 

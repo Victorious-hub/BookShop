@@ -1,11 +1,14 @@
 FROM python:3.11
 
-COPY ./BookShop BookShop
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+COPY ./BookShop .
 
 WORKDIR /BookShop
-COPY requirements.txt /tmp/
-RUN pip install --requirement /tmp/requirements.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN python manage.py migrate
-
+EXPOSE 8000
 CMD ["python","manage.py","runserver", "0.0.0.0:8000"]
+

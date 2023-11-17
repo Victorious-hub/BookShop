@@ -1,6 +1,5 @@
 import uuid
 
-from django.core.validators import MinLengthValidator
 from django.db import models
 from django.utils import timezone
 
@@ -35,16 +34,6 @@ class Book(models.Model):
     genre = models.CharField(max_length=255, null=True, choices=GENRE, blank=True)
     price = models.IntegerField(max_length=100, default=0, blank=True)
     book_image = models.ImageField(null=True, blank=True, upload_to='images/')
-
-    """def genre_to_string(self):
-        if self.genre == 'Fantasy':
-            return 'Fantasy'
-        elif self.genre == 'Adventure':
-            return 'Adventure'
-        elif self.genre == 'Love':
-            return 'Love'
-        elif self.genre == 'Historic':
-            return 'Historic'"""
 
     def __str__(self):
         return str(self.id)

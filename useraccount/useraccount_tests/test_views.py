@@ -1,45 +1,43 @@
-from django.http import response
 from django.test import TestCase, Client
 from django.urls import reverse
 
-from books.models import Cart
-from accounts.models import *
-import json
+from Books.models import Cart
+from useraccount.models import HyperLinks, SimpleUser
 
 
 class TestViews(TestCase):
     client = Client()
-    simpleuser, created = SimpleUser.objects.get_or_create(
-        first_name='John',
-        last_name='Doe',
-        email='john@example.com',
-        password='12345',
-    )
 
-    hyper_user, created = HyperLinks.objects.get_or_create(
-        user=simpleuser,
-        user_linkedin='https://www.youtube.com/watch?v=hA_VxnxCHbo',
-        user_github='https://www.youtube.com/watch?v=hA_VxnxCHbo',
-    )
+    def setUp(self):
+        self.simpleuser, created = SimpleUser.objects.get_or_create(
+            first_name='John',
+            last_name='Doe',
+            email='john@example.com',
+            password='12345',
+        )
 
-    cart, created = Cart.objects.get_or_create(
-        id=1,
-        user=simpleuser,
-        completed=False
-    )
+        self.hyper_user, created = HyperLinks.objects.get_or_create(
+            user=self.simpleuser,
+            user_linkedin='https://www.youtube.com/watch?v=hA_VxnxCHbo',
+            user_github='https://www.youtube.com/watch?v=hA_VxnxCHbo',
+        )
+
+        self.cart, created = Cart.objects.get_or_create(
+            id=1,
+            user=self.simpleuser,
+            completed=False
+        )
 
     def test_sign_in_GET(self):
         response_reverse = self.client.get(reverse('login'))
 
-        self.assertEquals(response_reverse.status_code, 200)
-
+        self.assertEqual(response_reverse.status_code, 200)
         self.assertTemplateUsed(response_reverse, 'users/register.html')
 
     def test_sign_up_GET(self):
         response_reverse = self.client.get(reverse('register'))
 
-        self.assertEquals(response_reverse.status_code, 200)
-
+        self.assertEqual(response_reverse.status_code, 200)
         self.assertTemplateUsed(response_reverse, 'users/register.html')
 
     def test_sign_up_POST(self):
@@ -49,7 +47,7 @@ class TestViews(TestCase):
             'email': self.simpleuser.email,
             'password': self.simpleuser.password,
         })
-        self.assertEquals(response_reverse.status_code, 200)
+        self.assertEqual(response_reverse.status_code, 200)
         self.assertTemplateUsed(response_reverse, 'users/register.html')
 
     def test_hyperlinks_POST(self):
@@ -59,19 +57,14 @@ class TestViews(TestCase):
             'user': self.simpleuser
         })
 
-        self.assertEquals(response_reverse.status_code, 302)
-        #self.assertTemplateUsed(response_reverse, 'users/base.html')
+        self.assertEqual(response_reverse.status_code, 302)
 
     def test_logout_GET(self):
         response_reverse = self.client.get(reverse('logout'))
-        self.assertEquals(response_reverse.status_code,302)
+        self.assertEqual(response_reverse.status_code, 302)
 
-        self.assertEquals(self.client.get(reverse('register')).status_code, 200)
+        self.assertEqual(self.client.get(reverse('register')).status_code, 200)
 
     def test_profile_change_orders(self):
-        response_reverse = self.client.get(reverse('edit_profile',args=['slug']))
-        self.assertEquals(response_reverse.status_code,302)
-
-
-
-
+        response_reverse = self.client.get(reverse('edit_profile', args=['slug']))
+        self.assertEqual(response_reverse.status_code, 302)
