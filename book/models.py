@@ -3,7 +3,7 @@ import uuid
 from django.db import models
 from django.utils import timezone
 
-from useraccount.models import SimpleUser
+from users.models import SimpleUser
 
 tz = timezone.get_default_timezone()
 
@@ -32,7 +32,7 @@ class Book(models.Model):
     book_year = models.CharField(max_length=4, null=False, blank=True, choices=YEAR)
     desc = models.TextField(blank=True)
     genre = models.CharField(max_length=255, null=True, choices=GENRE, blank=True)
-    price = models.IntegerField(max_length=100, default=0, blank=True)
+    price = models.IntegerField(default=0, blank=True)
     book_image = models.ImageField(null=True, blank=True, upload_to='images/')
 
     def __str__(self):

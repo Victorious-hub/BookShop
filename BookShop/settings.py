@@ -19,13 +19,11 @@ CSRF_COOKIE_HTTPONLY = False
 SESSION_COOKIE_HTTPONLY = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.mail.ru'
+EMAIL_HOST = env('EMAIL_HOST')
 EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'shyskov@inbox.ru'
-EMAIL_HOST_PASSWORD = 'pCa2JiNGhKhbiQBF9dSq'
-
-
+EMAIL_PORT = env('EMAIL_PORT')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
 
 INSTALLED_APPS = [
@@ -38,9 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'Books',
+    'book',
     'sass_processor',
-    'useraccount',
+    'users',
 ]
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -54,7 +52,7 @@ CORS_ORIGIN_WHITELIST = (
     'https://localhost:3000',
 )
 
-AUTH_USER_MODEL = 'useraccount.UserAccount'
+AUTH_USER_MODEL = 'users.UserAccount'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -91,9 +89,9 @@ WSGI_APPLICATION = 'BookShop.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'BookShop',
-        'USER': 'postgres',
-        'PASSWORD':'74385201',
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD':env('DB_PASSWORD'),
     }
 }
 
@@ -132,7 +130,6 @@ STATICFILES_DIRS = (
 SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# Redis configuration
 
 CELERY_BROKER_URL = 'redis://default:xWy6FlSoEfNEnofjP3lD@containers-us-west-129.railway.app:5479'
 

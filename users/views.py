@@ -9,9 +9,9 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import UpdateView, CreateView
 
-from Books.models import WishList, Feedback, Cart
-from useraccount.forms import RegisterForm, LoginForm, EditForm, HyperLinkkForm
-from useraccount.models import SimpleUser
+from book.models import WishList, Feedback, Cart
+from users.forms import RegisterForm, LoginForm, EditForm, HyperLinkkForm
+from users.models import SimpleUser
 
 
 class AddHyperlinksView(LoginRequiredMixin, UpdateView):

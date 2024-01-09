@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2c4cee53-6266-43ea-b1ac-1227f17de5bf" name="Changes" comment="" />
+    <list default="true" id="2c4cee53-6266-43ea-b1ac-1227f17de5bf" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/useraccount/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/useraccount/views.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -49,7 +52,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/Asus/PycharmProjects/BookShop",
+    "last_opened_file_path": "C:/Users/Asus/PycharmProjects/Epam",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -60,7 +63,7 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Django Server.BookShop">
     <configuration name="views" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="BookShop" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -82,6 +85,29 @@
       <option name="MODULE_MODE" value="false" />
       <option name="REDIRECT_INPUT" value="false" />
       <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="BookShop" type="Python.DjangoServer" factoryName="Django server">
+      <module name="BookShop" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <option name="port" value="8000" />
+      <option name="host" value="" />
+      <option name="additionalOptions" value="" />
+      <option name="browserUrl" value="" />
+      <option name="runTestServer" value="false" />
+      <option name="runNoReload" value="false" />
+      <option name="useCustomRunCommand" value="false" />
+      <option name="customRunCommand" value="" />
       <method v="2" />
     </configuration>
   </component>
@@ -157,6 +183,9 @@
       <workItem from="1699961698084" duration="18000" />
       <workItem from="1699974092416" duration="44000" />
       <workItem from="1700226309627" duration="5731000" />
+      <workItem from="1700232133095" duration="1093000" />
+      <workItem from="1700290583234" duration="253000" />
+      <workItem from="1700315809077" duration="17000" />
     </task>
     <servers />
   </component>

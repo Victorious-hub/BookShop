@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.urls import path
 
 from BookShop import settings
-from Books.views import (
+from book.views import (
     Main,
     CreateBookView,
     AddToWishlistView,
@@ -24,7 +24,7 @@ from Books.views import (
     DeleteFeedBackView,
     RemoveFromCart
 )
-from useraccount.views import (
+from users.views import (
     SignOut,
     EditProfileView,
     AddHyperlinksView,
